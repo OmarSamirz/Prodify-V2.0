@@ -1,0 +1,8 @@
+{
+    "device": "cuda",
+    "dtype": "float16",
+    "convert_to_numpy": true,
+    "convert_to_tensor": false,
+    "model_id": "intfloat/multilingual-e5-large-instruct",
+    "truncate_dim": null
+}

@@ -1,0 +1,25 @@
+{
+    "embedding_config": {
+        "device": "cuda",
+        "dtype": "float16",
+        "convert_to_numpy": true,
+        "convert_to_tensor": false,
+        "model_id": "intfloat/multilingual-e5-large-instruct",
+        "truncate_dim": null
+    },
+    "xgb_config": {
+        "model_name": "embedding_xgb.joblib",
+        "n_estimators": 500,
+        "learning_rate": 0.1,
+        "max_depth": 6,
+        "min_child_weight": 2,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "gamma": 0.0,
+        "reg_lambda": 1,
+        "reg_alpha": 0,
+        "objective": "multi:softmax",
+        "n_jobs": -1,
+        "eval_metric": "mlogloss"
+    }
+}

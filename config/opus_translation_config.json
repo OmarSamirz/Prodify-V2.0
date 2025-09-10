@@ -1,0 +1,8 @@
+{
+    "padding": true,
+    "device": "cuda",
+    "dtype": "float16",
+    "truncation": true,
+    "skip_special_tokens": true,
+    "model_name": "Helsinki-NLP/opus-mt-tc-big-ar-en"
+}

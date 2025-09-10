@@ -1,0 +1,12 @@
+{
+    "model_name": "gpc_hierarchical_classifier.safetensors",
+    "dtype": "float32",
+    "device": "cuda",
+    "embedding_size": 1024,
+    "hidden_size": 2048,
+    "dropout": 0.2,
+    "segment_num_classes": 45,
+    "family_num_classes": 162,
+    "class_num_classes": 936,
+    "brick_num_classes": 5300
+}

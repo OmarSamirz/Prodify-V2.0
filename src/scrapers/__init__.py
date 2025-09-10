@@ -1,0 +1,2 @@
+from scrapers.carrefour_scraper import CarrefourScraper
+from scrapers.seoudi_scraper import SeoudiScraper
