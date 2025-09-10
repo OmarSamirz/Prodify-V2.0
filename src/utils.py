@@ -7,6 +7,8 @@ import unicodedata
 from sklearn.metrics import f1_score
 from safetensors.torch import save_file
 
+from modules.models import EmbeddingClassifier, EmbeddingClassifierConfig
+
 import re
 import json
 from typing import List, Union
@@ -180,6 +182,20 @@ def gpc_hierarchical_classifier_train(model: GpcHierarchicalClassifier, x_train 
         logger.info(f"Epoch {epoch+1}: loss = {loss:.4f}")
 
     return model
+
+def predict_brick_ensemble(
+        product_name: str, 
+        model,
+         exclusion_column = "BrickDefinition_Excludes"
+    ) -> str:
+
+        topk_bricks = model.get_gpc(product_name, "brick")
+
+        return model.predict_brick_by_exclusion(
+            product_name=product_name,
+            candidate_bricks=topk_bricks,
+            exclusion_column=exclusion_column
+        )
 
 def gpc_hierarchical_classifier_inference(model: GpcHierarchicalClassifier, x: Union[List[float], np.ndarray, torch.Tensor]):
     if not isinstance(x, torch.Tensor):

@@ -207,12 +207,12 @@ class EmbeddingClassifier:
         self.topk = config.topk
         self.df_gpc = pd.read_csv(config.gpc_csv_path)
 
-    def classify(self, product_name: Union[str, List[str]], labels: List[str]) -> Union[str, List[str]]:
+    def classify(self, product_name: Union[str, List[str]], labels: List[str], is_max: bool = True) -> Union[str, List[str]]:
         if len(labels) == 1:
             return labels[0]
 
         scores = self.embed_model.get_scores(product_name, labels)
-        idx = torch.argmax(scores, dim=1)
+        idx = torch.argmax(scores, dim=1) if is_max else torch.argmin(scores, dim=1)
         if isinstance(product_name, List):
             return [labels[i] for i in idx]
 
@@ -220,10 +220,11 @@ class EmbeddingClassifier:
 
     def classify_topk(self, product_name: Union[str, List[str]], labels: List[str]) -> Union[List[str], List[List[str]]]:
         if len(labels) == 1:
-            return labels[0]
+            return labels
 
         scores = self.embed_model.get_scores(product_name, labels)
-        _, topk_indices = torch.topk(scores, dim=1, k=self.topk)
+        k = min(self.topk, scores.size(1))
+        _, topk_indices = torch.topk(scores, dim=1, k=k)
         topk_indices = topk_indices.squeeze(0)
         if isinstance(product_name, List):
             return [labels[i][j] for i in topk_indices[0] for j in topk_indices[1]]
@@ -269,6 +270,46 @@ class EmbeddingClassifier:
             raise ValueError(f"Level `{level}` is not supported.")
 
         return pred_labels
+    
+    def predict_brick_by_exclusion(
+        self, 
+        product_name: str, 
+        candidate_bricks: List[str],
+        exclusion_column: str = "BrickDefinition_Excludes"
+    ) -> str:
+        
+        candidate_df = self.df_gpc[
+            self.df_gpc["BrickTitle"].isin(candidate_bricks)
+        ].copy()
+       
+        null_exclusions = candidate_df[
+            candidate_df[exclusion_column].isnull() | 
+            (candidate_df[exclusion_column].astype(str).str.strip() == "")
+        ]
+
+        if not null_exclusions.empty:
+            return null_exclusions.iloc[0]["BrickTitle"]
+        
+        exclusion_texts = candidate_df[exclusion_column].tolist()
+        inclusion_texts = candidate_df["BrickDefinition_Includes"].tolist()
+        concatenated_texts = [e + " " + i for e, i in zip(exclusion_texts, inclusion_texts)]
+        
+        # exclusion_embeddings = self.embed_model.get_embeddings(exclusion_texts)
+        # similarities = self.embed_model.calculate_scores(
+        #     product_embedding, exclusion_embeddings
+        # )
+
+        least_excluison = self.classify(product_name, exclusion_texts, False)
+        top_brick = candidate_df[candidate_df[exclusion_column]==least_excluison]["BrickTitle"].values.item()
+
+        # least_excluison = self.classify(product_name, concatenated_texts)
+
+        # candidate_df["concat_text"] = (
+        #     candidate_df[exclusion_column] + " " + candidate_df["BrickDefinition_Includes"]
+        # )
+
+        # top_brick = candidate_df.loc[candidate_df["concat_text"] == least_excluison, "BrickTitle"].iloc[0]
+        return top_brick
 
 
 @dataclass
