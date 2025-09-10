@@ -1,5 +1,6 @@
 import torch
 import joblib
+import pandas as pd
 import xgboost as xgb
 from torch import nn
 from torch import Tensor
@@ -16,7 +17,7 @@ from transformers import BitsAndBytesConfig
 
 import os
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 
 from constants import MODEL_PATH, RANDOM_STATE, DTYPE_MAP
 
@@ -115,9 +116,9 @@ class OpusTranslationModel:
             return text
         
         tokens = self.tokenizer(
-            text, 
-            padding=self.config.padding, 
-            truncation=self.config.truncation, 
+            text,
+            padding=self.config.padding,
+            truncation=self.config.truncation,
             return_tensors="pt"
         ).to(self.config.device)
         translated_tokens = self.model.generate(**tokens)
@@ -191,6 +192,83 @@ class SentenceEmbeddingModel:
         query_embeddings = self.get_embeddings(queries, "query")
         document_embeddings = self.get_embeddings(documents)
         return self.calculate_scores(query_embeddings, document_embeddings)
+
+
+@dataclass
+class EmbeddingClassifierConfig:
+    embed_model_config: SentenceEmbeddingConfig
+    topk: int
+    gpc_csv_path: str
+
+class EmbeddingClassifier:
+
+    def __init__(self, config: EmbeddingClassifierConfig):
+        self.embed_model = SentenceEmbeddingModel(config.embed_model_config)
+        self.topk = config.topk
+        self.df_gpc = pd.read_csv(config.gpc_csv_path)
+
+    def classify(self, product_name: Union[str, List[str]], labels: List[str]) -> Union[str, List[str]]:
+        if len(labels) == 1:
+            return labels[0]
+
+        scores = self.embed_model.get_scores(product_name, labels)
+        idx = torch.argmax(scores, dim=1)
+        if isinstance(product_name, List):
+            return [labels[i] for i in idx]
+
+        return labels[idx]
+
+    def classify_topk(self, product_name: Union[str, List[str]], labels: List[str]) -> Union[List[str], List[List[str]]]:
+        if len(labels) == 1:
+            return labels[0]
+
+        scores = self.embed_model.get_scores(product_name, labels)
+        _, topk_indices = torch.topk(scores, dim=1, k=self.topk)
+        topk_indices = topk_indices.squeeze(0)
+        if isinstance(product_name, List):
+            return [labels[i][j] for i in topk_indices[0] for j in topk_indices[1]]
+
+        topk_labels = [labels[i] for i in topk_indices]
+
+        return topk_labels
+    
+    def get_gpc(
+        self, 
+        product_name: str, 
+        labels: Optional[List[str]] = None, 
+        level: str = "segment", 
+        is_topk: bool = True
+    ) -> List[str]:
+        pred_labels = []
+        if level == "segment":
+            if labels is None:
+                labels = self.df_gpc["SegmentTitle"].drop_duplicates().tolist()
+
+            seg_label = self.classify(product_name, labels)
+            candidates = self.df_gpc[self.df_gpc["SegmentTitle"] == seg_label]["FamilyTitle"].drop_duplicates().tolist()
+            pred_labels.append(seg_label)
+            pred_labels.extend(self.get_gpc(product_name, candidates, "family"))
+
+        elif level == "family":
+            fam_label = self.classify(product_name, labels)
+            candidates = self.df_gpc[self.df_gpc["FamilyTitle"] == fam_label]["ClassTitle"].drop_duplicates().tolist()
+            pred_labels.append(fam_label)
+            pred_labels.extend(self.get_gpc(product_name, candidates, "class"))
+
+        elif level == "class":
+            cls_label = self.classify(product_name, labels)
+            candidates = self.df_gpc[self.df_gpc["ClassTitle"] == cls_label]["BrickTitle"].drop_duplicates().tolist()
+            pred_labels.append(cls_label)
+            pred_labels.extend(self.get_gpc(product_name, candidates, "brick"))
+
+        elif level == "brick":
+            brk_label = self.classify_topk(product_name, labels) if is_topk else self.classify(product_name, labels)
+            pred_labels.extend(brk_label) if is_topk else pred_labels.append(brk_label)
+
+        else:
+            raise ValueError(f"Level `{level}` is not supported.")
+
+        return pred_labels
 
 
 @dataclass

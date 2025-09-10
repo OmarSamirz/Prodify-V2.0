@@ -25,6 +25,8 @@ from modules.models import (
     EmbeddingXGBoostModel,
     GpcHierarchicalClassifierConfig,
     GpcHierarchicalClassifier,
+    EmbeddingClassifier,
+    EmbeddingClassifierConfig
 )
 
 def evaluation_score(y_true: List[str], y_pred: List[str], average: str) -> float:
@@ -112,6 +114,20 @@ def load_embedding_xgb_model(config_path: str):
         raise ValueError(f"Invalid configuration keys: {e}.")
     
     model = EmbeddingXGBoostModel(config)
+
+    return model
+
+def load_embedding_classifier_model(config_path: str):
+    with open(config_path, "r") as f:
+        config_dict = json.load(f)
+
+    try:
+        embedding_config = SentenceEmbeddingConfig(**config_dict["embedding_config"])
+        config = EmbeddingClassifierConfig(embedding_config, **config_dict["classification_config"])
+    except TypeError as e:
+        raise ValueError(f"Invalid configuration keys: {e}.")
+    
+    model = EmbeddingClassifier(config)
 
     return model
 

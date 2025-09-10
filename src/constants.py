@@ -84,6 +84,8 @@ OPUS_TRANSLATION_CONFIG_PATH = CONFIG_PATH / "opus_translation_config.json"
 
 TFIDF_CLASSIFIER_CONFIG_PATH = CONFIG_PATH / "tfidf_classifier_config.json"
 
+EMBEDDING_CLASSIFIER_CONFIG_PATH = CONFIG_PATH / "embedding_classifier_config.json"
+
 EMBEDDING_XGB_CONFIG_PATH = CONFIG_PATH / "embedding_xgb_config.json"
 
 GPC_HIERARCHICAL_CLASSIFIER_CONFIG = CONFIG_PATH / "gpc_hierarchical_classifier_config.json"

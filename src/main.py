@@ -1,4 +1,5 @@
 
+from utils import load_embedding_classifier_model
 from pipelines import AmurdPipeline, GpcPipeline
 from constants import (
     GPC_PATH,
@@ -6,7 +7,8 @@ from constants import (
     TEST_DATA_PATH,
     E5_LARGE_INSTRUCT_CONFIG_PATH,
     OPUS_TRANSLATION_CONFIG_PATH,
-    TFIDF_CLASSIFIER_CONFIG_PATH
+    TFIDF_CLASSIFIER_CONFIG_PATH,
+    EMBEDDING_CLASSIFIER_CONFIG_PATH
 )
 
 def amurd_pipeline():
@@ -30,8 +32,13 @@ def gpc_pipeline():
     )
     pipe.run_pipeline()
 
+def embedding_classifier_test():
+    embed_cls = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    gpc_labels = embed_cls.get_gpc("Apple iphone 12 pro max")
+    print(gpc_labels)
+
 def main():
-    amurd_pipeline()
+    embedding_classifier_test()
 
 
 if __name__ == "__main__":
