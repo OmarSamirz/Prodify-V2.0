@@ -294,17 +294,12 @@ class EmbeddingClassifier:
             return null_exclusions.iloc[0]["BrickTitle"]
         
         exclusion_texts = candidate_df[exclusion_column].tolist()
-        inclusion_texts = candidate_df["BrickDefinition_Includes"].tolist()
-        concatenated_texts = [e + " " + i for e, i in zip(exclusion_texts, inclusion_texts)]
-        
-        # exclusion_embeddings = self.embed_model.get_embeddings(exclusion_texts)
-        # similarities = self.embed_model.calculate_scores(
-        #     product_embedding, exclusion_embeddings
-        # )
 
         least_excluison = self.classify(product_name, exclusion_texts, False)
         top_brick = candidate_df[candidate_df[exclusion_column]==least_excluison]["BrickTitle"].values.item()
 
+        # inclusion_texts = candidate_df["BrickDefinition_Includes"].tolist()
+        # concatenated_texts = [e + " " + i for e, i in zip(exclusion_texts, inclusion_texts)]
         # least_excluison = self.classify(product_name, concatenated_texts)
 
         # candidate_df["concat_text"] = (
@@ -312,6 +307,7 @@ class EmbeddingClassifier:
         # )
 
         # top_brick = candidate_df.loc[candidate_df["concat_text"] == least_excluison, "BrickTitle"].iloc[0]
+        
         return top_brick
 
 
