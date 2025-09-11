@@ -1,0 +1,17 @@
+{
+    "embedding_config": {
+        "device": "cuda",
+        "dtype": "float16",
+        "convert_to_numpy": true,
+        "convert_to_tensor": false,
+        "model_id": "intfloat/multilingual-e5-large-instruct",
+        "truncate_dim": null
+    },
+    "embedding_classifier_config": {
+        "topk": 3,
+        "gpc_csv_path": "data/gpc.csv"
+    },
+    "brand_embedding_classifier_config": {
+        "brand_json_path": "data/brands_dataset.json"
+    }
+}

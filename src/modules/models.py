@@ -1,10 +1,12 @@
 import torch
 import joblib
+import numpy as np
 import pandas as pd
 import xgboost as xgb
 from torch import nn
 from torch import Tensor
 import torch.nn.functional as F
+from rapidfuzz.process import extractOne
 from langid import classify
 from sklearn.pipeline import Pipeline
 from sklearn.dummy import DummyClassifier
@@ -16,6 +18,7 @@ from transformers import MarianMTModel, MarianTokenizer
 from transformers import BitsAndBytesConfig
 
 import os
+import json
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Any, Union
 
@@ -147,8 +150,11 @@ class SentenceEmbeddingModel:
         self.config = config
         self.model_id = config.model_id
         self.device = config.device
-        self.dtype = config.dtype
         self.truncate_dim = config.truncate_dim
+        if config.dtype in DTYPE_MAP:
+            self.dtype = DTYPE_MAP[config.dtype]
+        else:
+            raise ValueError(f"This dtype {config.dtype} is not supported.")
 
         model_kwargs = config.model_kwargs or {}
 
@@ -309,6 +315,100 @@ class EmbeddingClassifier:
 
 
 @dataclass
+class BrandEmbeddingClassifierConfig:
+    embed_classifer_config: EmbeddingClassifierConfig
+    brand_json_path: str
+
+
+class BrandEmbeddingClassifier:
+
+    def __init__(self, config: BrandEmbeddingClassifierConfig):
+        self.embed_classifier = EmbeddingClassifier(config.embed_classifer_config)
+        with open(config.brand_json_path, "r") as f:
+            self.brand_dataset = json.load(f)
+
+        self.brand_names = list(self.brand_dataset.keys())
+        brand_names_lower = [name.lower() for name in self.brand_names]
+
+        self.token_to_brand = {}
+        for idx, brand_name in enumerate(brand_names_lower):
+            for token in brand_name.split():
+                self.token_to_brand.setdefault(token, []).append(self.brand_names[idx])
+
+    def get_brand_data(self, product_name: str) -> List[Dict[str, Any]]:
+        tokens = product_name.lower().split()
+
+        for token in tokens:
+            if token in self.token_to_brand:
+                brand = self.token_to_brand[token][0]
+                print(f"The brand is {brand}")
+                return self.brand_dataset[brand]
+
+        return []
+
+    def get_gpc(
+        self, 
+        product_name: str, 
+        labels: Optional[List[str]] = None, 
+        level: str = "segment", 
+        is_topk: bool = True
+    ) -> List[str]:
+        pred_labels = []
+        brand = self.get_brand_name(product_name)
+
+        brand_map = self.brand_mapping.get(brand, {})
+        if level == "segment":
+            segments = list(brand_map.keys())
+            if not segments:
+                return pred_labels
+            seg_label = self.classify(product_name, segments)
+            pred_labels.append(seg_label)
+            families = list(brand_map[seg_label].keys()) if seg_label in brand_map else []
+            if families:
+                pred_labels.extend(self.get_gpc(product_name, families, level="family", is_topk=is_topk))
+        elif level == "family":
+            fam_label = self.classify(product_name, labels)
+            pred_labels.append(fam_label)
+            for seg, fams in brand_map.items():
+                if fam_label in fams:
+                    classes = list(fams[fam_label].keys())
+                    break
+            else:
+                classes = []
+            if classes:
+                pred_labels.extend(self.get_gpc(product_name, classes, level="class", is_topk=is_topk))
+        elif level == "class":
+            cls_label = self.classify(product_name, labels)
+            pred_labels.append(cls_label)
+            found = False
+            for seg, fams in brand_map.items():
+                for fam, classes in fams.items():
+                    if cls_label in classes:
+                        bricks = classes[cls_label]
+                        found = True
+                        break
+                if found:
+                    break
+            else:
+                bricks = []
+            if bricks:
+                pred_labels.extend(self.get_gpc(product_name, bricks, level="brick", is_topk=is_topk))
+        elif level == "brick":
+            if labels is None or len(labels) == 0:
+                return pred_labels
+            if is_topk:
+                brk_labels = self.classify_topk(product_name, labels)
+                pred_labels.extend(brk_labels)
+            else:
+                brk_label = self.classify(product_name, labels)
+                pred_labels.append(brk_label)
+        else:
+            raise ValueError(f"Level `{level}` is not supported.")
+        return pred_labels
+
+
+
+@dataclass
 class TfidfClassifierConfig:
     model_name: str
     analyzer: str
@@ -460,20 +560,3 @@ class EmbeddingXGBoostModel:
     def load(self) -> None:
         model_path = MODEL_PATH / self.model_name
         self.xgb_model = joblib.load(model_path)
-
-
-@dataclass
-class DummyModelConfig:
-    strategy: str
-
-
-class DummyModel:
-
-    def __init__(self, config: DummyModelConfig):
-        self.model = DummyClassifier(strategy=config.strategy)
-
-    def fit_model(self, X, y):
-        self.model.fit(X, y)
-
-    def predict(self, X):
-        return self.model.predict(X)

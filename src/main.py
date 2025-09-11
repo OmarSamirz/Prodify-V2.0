@@ -1,40 +1,15 @@
-
-from utils import load_embedding_classifier_model, predict_brick_ensemble
-
-from pipelines import AmurdPipeline, GpcPipeline
+from utils import load_embedding_classifier_model, load_brand_embedding_classifier_model
 
 from constants import (
-    GPC_PATH,
-    TRAIN_VAL_DATA_PATH,
-    TEST_DATA_PATH,
-    E5_LARGE_INSTRUCT_CONFIG_PATH,
-    OPUS_TRANSLATION_CONFIG_PATH,
-    TFIDF_CLASSIFIER_CONFIG_PATH,
-    EMBEDDING_CLASSIFIER_CONFIG_PATH
+    EMBEDDING_CLASSIFIER_CONFIG_PATH,
+    BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH,
 )
 
-hierarchy = ['segment','family','class','brick']
+def test_brand_embedding_model():
+    model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    brand_data = model.get_brand_data("Harry Potter and The Chamber of Secrets")
+    print(brand_data)
 
-def amurd_pipeline():
-    pipe = AmurdPipeline(
-        df_train_path=TRAIN_VAL_DATA_PATH,
-        df_test_path=TEST_DATA_PATH,
-        embedding_model_config_path=E5_LARGE_INSTRUCT_CONFIG_PATH,
-        translation_model_config_path=OPUS_TRANSLATION_CONFIG_PATH,
-        tfidf_classifier_config_path=TFIDF_CLASSIFIER_CONFIG_PATH
-    )
-    pipe.run_pipeline()
-
-def gpc_pipeline():
-    pipe = GpcPipeline(
-        df_gpc_path=GPC_PATH,
-        df_train_path=TRAIN_VAL_DATA_PATH,
-        df_test_path=TEST_DATA_PATH,
-        embedding_model_config_path=E5_LARGE_INSTRUCT_CONFIG_PATH,
-        translation_model_config_path=OPUS_TRANSLATION_CONFIG_PATH,
-        tfidf_classifier_config_path=TFIDF_CLASSIFIER_CONFIG_PATH
-    )
-    pipe.run_pipeline()
 
 def embedding_classifier_test():
     embed_cls = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
@@ -62,17 +37,9 @@ def exclusion_test():
                 f.write(i)
                 f.write("\n")
             f.write("\n")
-    # for product in test_products:
-    #     for level in hierarchy:
-    #         if level != "brick":
-    #             pred = model.get_gpc(product, level)
-    #             print(f"[{product}] → {level} → {pred}")
-    #         else:
-    #             pred = predict_brick_ensemble(product, model)
-    #             print(f"[{product}] → {level} → {pred}")
 
 def main():
-    exclusion_test()
+    test_brand_embedding_model()
 
 if __name__ == "__main__":
     main()
