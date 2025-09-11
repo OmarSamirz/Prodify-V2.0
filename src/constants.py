@@ -14,6 +14,7 @@ ASSETS_PATH = BASE_DIR / "assets"
 
 DATA_PATH = BASE_DIR / "data"
 
+MAPPED_BRAND_DB = "brands_mapped.json"
 SEOUDI_DATA_PATH = BASE_DIR / DATA_PATH / "seoudi"
 
 SEOUDI_DATA_PATH.mkdir(parents=True, exist_ok=True)

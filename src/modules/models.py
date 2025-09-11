@@ -233,6 +233,9 @@ class EmbeddingClassifier:
 
         return topk_labels
     
+    
+
+    
     def get_gpc(
         self, 
         product_name: str, 
