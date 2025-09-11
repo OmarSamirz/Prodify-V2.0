@@ -51,7 +51,7 @@ CLEANED_ACTUAL_CLASSES_PATH = DATA_PATH / "cleaned_actual_classes.csv"
 
 CLEANED_CLASSES_PATH = DATA_PATH / "cleaned_classes.csv"
 
-GPC_PATH = DATA_PATH / "gpc.xlsx"
+GPC_PATH = DATA_PATH / "gpc.csv"
 
 GPC_TRAIN_PATH = DATA_PATH / "gpc_train.csv"
 
@@ -88,6 +88,8 @@ TFIDF_CLASSIFIER_CONFIG_PATH = CONFIG_PATH / "tfidf_classifier_config.json"
 EMBEDDING_CLASSIFIER_CONFIG_PATH = CONFIG_PATH / "embedding_classifier_config.json"
 
 EMBEDDING_XGB_CONFIG_PATH = CONFIG_PATH / "embedding_xgb_config.json"
+
+BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH = CONFIG_PATH / "brand_embedding_classifier_config.json"
 
 GPC_HIERARCHICAL_CLASSIFIER_CONFIG = CONFIG_PATH / "gpc_hierarchical_classifier_config.json"
 
