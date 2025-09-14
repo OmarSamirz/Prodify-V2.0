@@ -11,7 +11,8 @@ from constants import (
     EMBEDDING_CLASSIFIER_CONFIG_PATH,
     BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH,
     FINAL_DB,
-    FULL_OUTPUT_DATASET_PATH
+    FULL_BRAND_OUTPUT_DATASET_PATH,
+    FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH
 )
 
 def test_brand_embedding_model():
@@ -69,21 +70,15 @@ def main():
     df["product_name"] = df["product_name"].astype(str)
     for _, row in tqdm(df.iterrows(), total=len(df)):
         pr = row["product_name"]
-        if brand_model.get_brand_data(pr):
-            gpc_labels = brand_model.get_gpc(pr)
-            segments.append(gpc_labels[0])
-            families.append(gpc_labels[1])
-            classes.append(gpc_labels[2])
-        else:
-            gpc_labels = model.get_gpc(pr)
-            segments.append(gpc_labels[0])
-            families.append(gpc_labels[1])
-            classes.append(gpc_labels[2])
-    
+        gpc_labels = model.get_gpc(pr)
+        segments.append(gpc_labels[0])
+        families.append(gpc_labels[1])
+        classes.append(gpc_labels[2])
+
     df["pred_segment"] = segments
     df["pred_family"] = families
     df["pred_class"] = classes
-    df.to_csv(FULL_OUTPUT_DATASET_PATH, index=False)
+    df.to_csv(FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH, index=False)
 
     true_segment = df["segment"].tolist()
     true_family = df["pred_family"].tolist()

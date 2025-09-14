@@ -40,7 +40,9 @@ FULL_TRAIN_DATASET_PATH = DATA_PATH / "full_train_dataset.csv"
 
 FULL_TEST_DATASET_PATH = DATA_PATH / "full_test_dataset.csv"
 
-FULL_OUTPUT_DATASET_PATH = DATA_PATH / "full_output_dataset.csv"
+FULL_BRAND_OUTPUT_DATASET_PATH = DATA_PATH / "full_brand_output_dataset.csv"
+
+FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "full_embedding_model_output_dataset.csv"
 
 GPC_PATH = DATA_PATH / "gpc.csv"
 
