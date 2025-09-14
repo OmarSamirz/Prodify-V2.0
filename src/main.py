@@ -25,21 +25,18 @@ def exclusion_test():
         "Chipsy Tomato"
     ]
 
-    model = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    model = load_brand_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
     with open("testing.txt", "w") as f:
         for pr in test_products:
             gpc_labels = model.get_gpc(pr)
-            best_brick = model.predict_brick_by_exclusion(pr, gpc_labels[-3:])
-            ls = gpc_labels[:3]
-            ls.append(best_brick)
             f.write(f"Product: {pr}\n")
-            for i in ls:
+            for i in gpc_labels:
                 f.write(i)
                 f.write("\n")
             f.write("\n")
 
 def main():
-    test_brand_embedding_model()
+    exclusion_test()
 
 if __name__ == "__main__":
     main()

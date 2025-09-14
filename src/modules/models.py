@@ -20,6 +20,7 @@ from transformers import BitsAndBytesConfig
 import os
 import json
 from dataclasses import dataclass
+from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union
 
 from constants import MODEL_PATH, RANDOM_STATE, DTYPE_MAP
@@ -323,10 +324,10 @@ class BrandEmbeddingClassifierConfig:
     brand_json_path: str
 
 
-class BrandEmbeddingClassifier:
+class BrandEmbeddingClassifier(EmbeddingClassifier):
 
     def __init__(self, config: BrandEmbeddingClassifierConfig):
-        self.embed_classifier = EmbeddingClassifier(config.embed_classifer_config)
+        super().__init__(config.embed_classifer_config)
         with open(config.brand_json_path, "r") as f:
             self.brand_dataset = json.load(f)
 
@@ -346,9 +347,9 @@ class BrandEmbeddingClassifier:
                 brand = self.token_to_brand[token][0]
                 print(f"The brand is {brand}")
                 return self.brand_dataset[brand]
-
         return []
-
+    
+    @override
     def get_gpc(
         self, 
         product_name: str, 
@@ -357,47 +358,40 @@ class BrandEmbeddingClassifier:
         is_topk: bool = True
     ) -> List[str]:
         pred_labels = []
-        brand = self.get_brand_name(product_name)
+        brand_data = self.get_brand_data(product_name)
+        if not brand_data:
+            return []
 
-        brand_map = self.brand_mapping.get(brand, {})
         if level == "segment":
-            segments = list(brand_map.keys())
-            if not segments:
-                return pred_labels
+            segments = list({entry["Segment"] for entry in brand_data})
             seg_label = self.classify(product_name, segments)
             pred_labels.append(seg_label)
-            families = list(brand_map[seg_label].keys()) if seg_label in brand_map else []
+            families = [entry["Family"] for entry in brand_data if entry["Segment"] == seg_label]
             if families:
                 pred_labels.extend(self.get_gpc(product_name, families, level="family", is_topk=is_topk))
+
         elif level == "family":
             fam_label = self.classify(product_name, labels)
             pred_labels.append(fam_label)
-            for seg, fams in brand_map.items():
-                if fam_label in fams:
-                    classes = list(fams[fam_label].keys())
-                    break
-            else:
-                classes = []
+            classes = []
+            for entry in brand_data:
+                if entry["Family"] == fam_label:
+                    classes.extend(entry["Class"])
             if classes:
                 pred_labels.extend(self.get_gpc(product_name, classes, level="class", is_topk=is_topk))
+
         elif level == "class":
             cls_label = self.classify(product_name, labels)
             pred_labels.append(cls_label)
-            found = False
-            for seg, fams in brand_map.items():
-                for fam, classes in fams.items():
-                    if cls_label in classes:
-                        bricks = classes[cls_label]
-                        found = True
-                        break
-                if found:
-                    break
-            else:
-                bricks = []
+            bricks = []
+            for entry in brand_data:
+                if cls_label in entry["Class"]:
+                    bricks.extend(entry["Brick"])
             if bricks:
                 pred_labels.extend(self.get_gpc(product_name, bricks, level="brick", is_topk=is_topk))
+
         elif level == "brick":
-            if labels is None or len(labels) == 0:
+            if not labels:
                 return pred_labels
             if is_topk:
                 brk_labels = self.classify_topk(product_name, labels)
@@ -405,9 +399,13 @@ class BrandEmbeddingClassifier:
             else:
                 brk_label = self.classify(product_name, labels)
                 pred_labels.append(brk_label)
+
         else:
             raise ValueError(f"Level `{level}` is not supported.")
+
         return pred_labels
+
+
 
 
 
