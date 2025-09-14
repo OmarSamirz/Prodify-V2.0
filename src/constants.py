@@ -16,6 +16,8 @@ SEOUDI_DATA_PATH.mkdir(parents=True, exist_ok=True)
 
 SEOUDI_EN_DATA_PATH = SEOUDI_DATA_PATH / "seoudi_products_en.csv"
 
+FINAL_DB = DATA_PATH / "all_data_0.85.csv"
+
 SEOUDI_AR_DATA_PATH = SEOUDI_DATA_PATH / "seoudi_products_ar.csv"
 
 CARREFOUR_DATA_PATH = BASE_DIR / DATA_PATH / "carrefour"

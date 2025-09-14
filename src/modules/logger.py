@@ -40,6 +40,8 @@ class Logger:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         default_log_path = os.path.join(log_dir, f"borai_{timestamp}.log")
         self.log_file_path = os.path.abspath(os.getenv("LOG_FILE_PATH", default_log_path))
+        
+        os.makedirs(os.path.dirname(self.log_file_path), exist_ok=True)
 
         self.logger = logging.getLogger()
         self.logger.setLevel(logging.DEBUG)

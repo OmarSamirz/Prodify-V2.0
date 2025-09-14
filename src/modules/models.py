@@ -115,7 +115,7 @@ class SentenceEmbeddingModel:
             texts,
             convert_to_numpy=self.config.convert_to_numpy,
             convert_to_tensor=self.config.convert_to_tensor,
-            show_progress_bar=True
+            show_progress_bar=False,
         )
         return embeddings
 
@@ -173,7 +173,7 @@ class EmbeddingClassifier:
         product_name: str, 
         labels: Optional[List[str]] = None, 
         level: str = "segment", 
-        is_topk: bool = True
+        is_topk: bool = False
     ) -> List[str]:
         pred_labels = []
         if level == "segment":
@@ -270,7 +270,7 @@ class BrandEmbeddingClassifier(EmbeddingClassifier):
         for token in tokens:
             if token in self.token_to_brand:
                 brand = self.token_to_brand[token][0]
-                print(f"The brand is {brand}")
+                # print(f"The brand is {brand}")
                 return self.brand_dataset[brand]
 
         return []

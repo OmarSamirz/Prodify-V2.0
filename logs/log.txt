@@ -1,4 +1,0 @@
-[2025-09-14 16:22:43] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
-[2025-09-14 16:22:44] - warnings:_showwarnmsg - WARNING - c:\internship\Prodify-V2.0\src\utils.py:64: DtypeWarning: Columns (2,6) have mixed types. Specify dtype option on import or set low_memory=False.
-  df = pd.read_csv(dataset_path)
-

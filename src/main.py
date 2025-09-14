@@ -7,6 +7,7 @@ from constants import (
     FULL_TEST_DATASET_PATH,
     EMBEDDING_CLASSIFIER_CONFIG_PATH,
     BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH,
+    FINAL_DB
 )
 
 def test_brand_embedding_model():
@@ -14,31 +15,45 @@ def test_brand_embedding_model():
     brand_data = model.get_brand_data("Harry Potter and The Chamber of Secrets")
     print(brand_data)
 
-
-
 def embedding_classifier_test():
     embed_cls = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
     gpc_labels = embed_cls.get_gpc("Apple iphone 12 pro max")
     print(gpc_labels)
 
+def load_data_set_from_db():
+    #tdf = td_db.execute_query("Select * from demo_user.full_dataset")
+    df = pd.read_csv(FINAL_DB)
+    return df
+
 def exclusion_test():
     test_products = [
-        "Apple MacBook",
-        "Harry Potter and The Chamber of Secrets",
-        "Sharp Fridge",
-        "Oxy Hand powder",
-        "Chipsy Tomato"
+        "Apple MacBook Pro",
+        "Harry Potter and the Goblet of Fire Book",
+        "Samsung Galaxy S22 Smartphone",
+        "Nike Air Max Running Shoes",
+        "Colgate Total Toothpaste",
+        "Nestle KitKat Chocolate Bar",
+        "Sony Bravia 55 Inch TV",
+        "Sharp Double Door Refrigerator",
+        "Oxy Whitening Face Wash",
+        "Chipsy Salted Potato Chips"
     ]
 
-    model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
-    with open("testing.txt", "w") as f:
+    brand_model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    model = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    with open("data/testing_mixed.txt", "w") as f:
         for pr in test_products:
-            gpc_labels = model.get_gpc(pr)
-            f.write(f"Product: {pr}\n")
+            if brand_model.get_brand_data(pr):
+                f.write(f"Brand Found for Product: {pr}\n")
+                gpc_labels = brand_model.get_gpc(pr)
+            else:
+                gpc_labels= model.get_gpc(pr)
+                f.write(f"Brand not Found for Product: {pr}\n")
             for i in gpc_labels:
                 f.write(i)
                 f.write("\n")
             f.write("\n")
+
 
 def main():
     split_dataset(
