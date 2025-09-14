@@ -1,17 +1,11 @@
 import torch
 import joblib
-import numpy as np
 import pandas as pd
 import xgboost as xgb
-from torch import nn
 from torch import Tensor
-import torch.nn.functional as F
-from rapidfuzz.process import extractOne
 from langid import classify
+from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
-from sklearn.dummy import DummyClassifier
-from sklearn.multioutput import MultiOutputClassifier
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sentence_transformers import SentenceTransformer
 from transformers import MarianMTModel, MarianTokenizer
@@ -24,73 +18,6 @@ from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union
 
 from constants import MODEL_PATH, RANDOM_STATE, DTYPE_MAP
-
-
-@dataclass
-class GpcHierarchicalClassifierConfig:
-    model_name: str
-    dtype: str
-    device: str
-    embedding_size: int
-    hidden_size: int
-    dropout: float
-    segment_num_classes: int
-    family_num_classes: int
-    class_num_classes: int
-    brick_num_classes: int
-
-
-class GpcHierarchicalClassifier(nn.Module):
-
-    def __init__(self, config: GpcHierarchicalClassifierConfig):
-        super().__init__()
-        self.model_name = config.model_name
-        self.device = config.device
-
-        if config.dtype in DTYPE_MAP:
-            self.dtype = DTYPE_MAP[config.dtype]
-        else:
-            raise ValueError(f"This dtype {config.dtype} is not supported.")
-
-        self.shared_head = nn.Sequential(
-            nn.Linear(config.embedding_size, config.hidden_size),
-            nn.ReLU(),
-            nn.Dropout(config.dropout),
-            nn.Linear(config.hidden_size, config.embedding_size)
-        )
-
-        self.segment_head = nn.Linear(config.embedding_size, config.segment_num_classes, bias=False)
-
-        self.family_input_dim = config.embedding_size + config.segment_num_classes
-        self.family_head = nn.Linear(self.family_input_dim, config.family_num_classes, bias=False)
-
-        self.class_input_dim = config.embedding_size + config.segment_num_classes + config.family_num_classes
-        self.class_head = nn.Linear(self.class_input_dim, config.class_num_classes, bias=False)
-
-        self.brick_input_dim = config.embedding_size + config.segment_num_classes + config.family_num_classes + config.class_num_classes
-        self.brick_head = nn.Linear(self.brick_input_dim, config.brick_num_classes, bias=False)
-
-    def forward(self, x: Tensor) -> Dict[str, Tensor]:
-        shared = self.shared_head(x)
-
-        segment_out = self.segment_head(x)
-
-        family_inp = torch.cat([shared, segment_out], dim=1)
-        family_out = self.family_head(family_inp)
-
-        class_inp = torch.cat([shared, segment_out, family_out], dim=1)
-        class_out = self.class_head(class_inp)
-
-        brick_inp = torch.cat([shared, segment_out, family_out, class_out], dim=1)
-        brick_out = self.brick_head(brick_inp)
-
-
-        return {
-            "segment": segment_out,
-            "family": family_out,
-            "class": class_out,
-            "brick": brick_out
-        }
 
 
 @dataclass
@@ -206,6 +133,7 @@ class EmbeddingClassifierConfig:
     embed_model_config: SentenceEmbeddingConfig
     topk: int
     gpc_csv_path: str
+
 
 class EmbeddingClassifier:
 
@@ -404,9 +332,6 @@ class BrandEmbeddingClassifier(EmbeddingClassifier):
         return pred_labels
 
 
-
-
-
 @dataclass
 class TfidfClassifierConfig:
     model_name: str
@@ -420,18 +345,8 @@ class TfidfClassifierConfig:
     norm: str
     strip_accents: str
     stop_words: set
-    n_estimators: int
-    learning_rate: float
-    max_depth: int
-    min_child_weight: int
-    subsample: float
-    colsample_bytree: float
-    gamma: float
-    reg_lambda: float
-    reg_alpha: float
-    objective: str
-    n_jobs: int
-    eval_metric: str
+    C: float
+    class_weight: str
 
 
 class TfidfClassifier:
@@ -451,30 +366,18 @@ class TfidfClassifier:
             stop_words=config.stop_words,
             token_pattern=None if config.analyzer in ("char", "char_wb") else r'(?u)\b\w+\b',
         )
-        self.xgb_model = xgb.XGBClassifier(
-            n_estimators=config.n_estimators,
-            learning_rate=config.learning_rate,
-            max_depth=config.max_depth,
-            min_child_weight=config.min_child_weight,
-            subsample=config.subsample,
-            colsample_bytree=config.colsample_bytree,
-            gamma=config.gamma,
-            reg_lambda=config.reg_lambda,
-            reg_alpha=config.reg_alpha,
-            objective=config.objective,
-            n_jobs=config.n_jobs,
-            eval_metric=config.eval_metric,
-            random_state=RANDOM_STATE,
+        self.svm = LinearSVC(
+            C=config.C,
+            class_weight=config.class_weight
         )
 
         self.clf = None
 
     def fit(self, X_train, y_train) -> None:
-        
         self.clf = Pipeline(
             [
                 ("vectorizer_tfidf", self.vectorizer),
-                ("xgboost", self.xgb_model)
+                ("svm", self.svm)
             ]
         )
         self.clf.fit(X_train, y_train)

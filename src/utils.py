@@ -1,11 +1,7 @@
-import numpy as np
-import torch
-from torch.optim import Adam
-from torch.nn import CrossEntropyLoss
-import torch.nn.functional as F
 import unicodedata
+import pandas as pd
 from sklearn.metrics import f1_score
-from safetensors.torch import save_file
+from sklearn.model_selection import train_test_split
 
 from modules.models import EmbeddingClassifier, EmbeddingClassifierConfig
 
@@ -13,9 +9,8 @@ import re
 import json
 from typing import List, Union
 
-from constants import MODEL_PATH
+from constants import RANDOM_STATE
 from modules.logger import logger
-
 from modules.models import (
     SentenceEmbeddingModel, 
     SentenceEmbeddingConfig,
@@ -25,13 +20,10 @@ from modules.models import (
     TfidfClassifierConfig,
     EmbeddingXGBoostConfig,
     EmbeddingXGBoostModel,
-    GpcHierarchicalClassifierConfig,
-    GpcHierarchicalClassifier,
     EmbeddingClassifier,
     EmbeddingClassifierConfig,
     BrandEmbeddingClassifier,
     BrandEmbeddingClassifierConfig,
-    
 )
 
 def evaluation_score(y_true: List[str], y_pred: List[str], average: str) -> float:
@@ -67,6 +59,14 @@ def clean_text(text) -> str:
     text = remove_extra_space(text)
 
     return text.lower()
+
+def split_dataset(dataset_path: str, train_dataset_path: str, test_dataset_path: str):
+    df = pd.read_csv(dataset_path)
+    df.dropna(subset=["class"], inplace=True)
+    train_df, test_df = train_test_split(df, test_size=0.2, random_state=RANDOM_STATE)
+
+    train_df.to_csv(train_dataset_path, index=False)
+    test_df.to_csv(test_dataset_path, index=False)
 
 def load_embedding_model(config_path: str):
     with open(config_path, "r") as f:
@@ -105,19 +105,6 @@ def load_embedding_classifier_model(config_path: str):
         raise ValueError(f"Invalid configuration keys: {e}.")
     
     model = EmbeddingClassifier(config)
-
-    return model
-
-def load_gpc_hierarchical_classifier(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
-
-    try:
-        config = GpcHierarchicalClassifierConfig(**config_dict)
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-    
-    model = GpcHierarchicalClassifier(config)
 
     return model
 

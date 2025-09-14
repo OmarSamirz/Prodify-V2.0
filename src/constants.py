@@ -8,13 +8,8 @@ RANDOM_STATE = 42
 
 BASE_DIR = Path(__file__).parents[1]
 
-IMG_PATH = BASE_DIR / "img"
-
-ASSETS_PATH = BASE_DIR / "assets"
-
 DATA_PATH = BASE_DIR / "data"
 
-MAPPED_BRAND_DB = "brands_mapped.json"
 SEOUDI_DATA_PATH = BASE_DIR / DATA_PATH / "seoudi"
 
 SEOUDI_DATA_PATH.mkdir(parents=True, exist_ok=True)
@@ -39,43 +34,11 @@ TEST_DATA_PATH = DATA_PATH / "test.csv"
 
 FULL_DATASET_PATH = DATA_PATH / "full_dataset.csv"
 
-CLEANED_TEST_DATA_PATH = DATA_PATH / "cleaned_test.csv"
+FULL_TRAIN_DATASET_PATH = DATA_PATH / "full_train_dataset.csv"
 
-CLEANED_TRAIN_DATA_PATH = DATA_PATH / "cleaned_train.csv"
-
-CLEANED_FULL_DATASET_PATH = DATA_PATH / "cleaned_full_dataset.csv"
-
-CLEANED_PRODUCTS_PATH = DATA_PATH / "cleaned_products.csv"
-
-CLEANED_ACTUAL_CLASSES_PATH = DATA_PATH / "cleaned_actual_classes.csv"
-
-CLEANED_CLASSES_PATH = DATA_PATH / "cleaned_classes.csv"
+FULL_TEST_DATASET_PATH = DATA_PATH / "full_test_dataset.csv"
 
 GPC_PATH = DATA_PATH / "gpc.csv"
-
-GPC_TRAIN_PATH = DATA_PATH / "gpc_train.csv"
-
-CLEANED_GPC_PATH = DATA_PATH / "cleaned_gpc.csv"
-
-LABELED_GPC_PATH = DATA_PATH / "gpc_labeled.csv"
-
-LABELED_GPC_PRED_PATH = DATA_PATH / "gpc_labeled_pred.csv"
-
-SAMPLE_PRODUCTS_PATH = DATA_PATH / "products_sample.csv"
-
-LABELED_PRODUCTS_PATH = DATA_PATH / "labeled_products.csv"
-
-PRODUCT_TEST_EMBEDDINGS_PATH = DATA_PATH / "product_test_embeddings.csv"
-
-PRODUCT_TRAIN_EMBEDDINGS_PATH = DATA_PATH / "product_train_embeddings.csv"
-
-PRODUCT_FULL_DATASET_EMBEDDINGS_PATH = DATA_PATH / "product_full_dataset_embeddings.csv"
-
-PRODUCT_FULL_DATASET_EMBEDDINGS_QWEN_PATH  = DATA_PATH / "product_full_dataset_embeddings_qwen.csv"
-
-CLASS_EMBEDDINGS_PATH = DATA_PATH / "class_embeddings.csv"
-
-CLASS_EMBEDDINGS_PATH_QWEN = DATA_PATH / "class_embeddings_qwen.csv"
 
 CONFIG_PATH = BASE_DIR / "config"
 

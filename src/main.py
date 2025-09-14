@@ -1,6 +1,10 @@
-from utils import load_embedding_classifier_model, load_brand_embedding_classifier_model
+import pandas as pd
 
+from utils import load_embedding_classifier_model, load_brand_embedding_classifier_model, split_dataset
 from constants import (
+    FULL_DATASET_PATH,
+    FULL_TRAIN_DATASET_PATH,
+    FULL_TEST_DATASET_PATH,
     EMBEDDING_CLASSIFIER_CONFIG_PATH,
     BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH,
 )
@@ -9,6 +13,7 @@ def test_brand_embedding_model():
     model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
     brand_data = model.get_brand_data("Harry Potter and The Chamber of Secrets")
     print(brand_data)
+
 
 
 def embedding_classifier_test():
@@ -36,7 +41,11 @@ def exclusion_test():
             f.write("\n")
 
 def main():
-    exclusion_test()
+    split_dataset(
+        FULL_DATASET_PATH,
+        FULL_TRAIN_DATASET_PATH,
+        FULL_TEST_DATASET_PATH
+    )
 
 if __name__ == "__main__":
     main()
