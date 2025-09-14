@@ -25,7 +25,7 @@ def exclusion_test():
         "Chipsy Tomato"
     ]
 
-    model = load_brand_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
     with open("testing.txt", "w") as f:
         for pr in test_products:
             gpc_labels = model.get_gpc(pr)

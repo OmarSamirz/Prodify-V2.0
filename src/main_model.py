@@ -90,7 +90,7 @@ def split_by_key(df_all: pd.DataFrame, seed=RANDOM_SEED) -> pd.DataFrame:
 def clean_products_in_db(): 
 
     tdf = DataFrame.from_table("full_dataset", schema_name=TD_DB)
-    
+
     cleaning_query = """
     UPDATE demo_user.full_dataset
     SET product_name =
