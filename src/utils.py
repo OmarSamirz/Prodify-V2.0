@@ -68,6 +68,20 @@ def split_dataset(dataset_path: str, train_dataset_path: str, test_dataset_path:
     train_df.to_csv(train_dataset_path, index=False)
     test_df.to_csv(test_dataset_path, index=False)
 
+def load_tfidf_classifier_model(config_path: str):
+    with open(config_path, "r") as f:
+        config_dict = json.load(f)
+        config_dict["ngram_range"] = tuple(config_dict["ngram_range"])
+    
+    try:
+        config = TfidfClassifierConfig(**config_dict)
+    except TypeError as e:
+        raise ValueError(f"Invalid configuration keys: {e}.")
+    
+    model = TfidfClassifier(config)
+
+    return model
+
 def load_embedding_model(config_path: str):
     with open(config_path, "r") as f:
         config_dict = json.load(f)

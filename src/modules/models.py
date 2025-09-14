@@ -7,6 +7,7 @@ from langid import classify
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.multioutput import MultiOutputClassifier
 from sentence_transformers import SentenceTransformer
 from transformers import MarianMTModel, MarianTokenizer
 from transformers import BitsAndBytesConfig
@@ -374,12 +375,13 @@ class TfidfClassifier:
         self.clf = None
 
     def fit(self, X_train, y_train) -> None:
-        self.clf = Pipeline(
+        base_clf = Pipeline(
             [
                 ("vectorizer_tfidf", self.vectorizer),
                 ("svm", self.svm)
             ]
         )
+        self.clf = MultiOutputClassifier(base_clf)
         self.clf.fit(X_train, y_train)
 
     def predict(self, x):

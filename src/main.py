@@ -66,6 +66,7 @@ def main():
     df = pd.read_csv(FULL_TEST_DATASET_PATH)
     brand_model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
     model = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    df["product_name"] = df["product_name"].astype(str)
     for _, row in tqdm(df.iterrows(), total=len(df)):
         pr = row["product_name"]
         if brand_model.get_brand_data(pr):
