@@ -6,7 +6,11 @@ import torch.nn.functional as F
 import unicodedata
 from sklearn.metrics import f1_score
 from safetensors.torch import save_file
-
+import pandas as pd
+TRAIN_FRAC = 0.70
+VAL_FRAC = 0.20
+TEST_FRAC = 0.10
+RANDOM_SEED = 42
 from modules.models import EmbeddingClassifier, EmbeddingClassifierConfig
 
 import re
