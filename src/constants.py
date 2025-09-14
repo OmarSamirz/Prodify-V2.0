@@ -40,6 +40,8 @@ FULL_TRAIN_DATASET_PATH = DATA_PATH / "full_train_dataset.csv"
 
 FULL_TEST_DATASET_PATH = DATA_PATH / "full_test_dataset.csv"
 
+FULL_OUTPUT_DATASET_PATH = DATA_PATH / "full_output_dataset.csv"
+
 GPC_PATH = DATA_PATH / "gpc.csv"
 
 CONFIG_PATH = BASE_DIR / "config"
