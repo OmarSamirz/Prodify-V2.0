@@ -240,9 +240,6 @@ class EmbeddingClassifier:
 
         return topk_labels
     
-    
-
-    
     def get_gpc(
         self, 
         product_name: str, 
@@ -347,6 +344,7 @@ class BrandEmbeddingClassifier(EmbeddingClassifier):
                 brand = self.token_to_brand[token][0]
                 print(f"The brand is {brand}")
                 return self.brand_dataset[brand]
+
         return []
     
     @override
@@ -355,7 +353,7 @@ class BrandEmbeddingClassifier(EmbeddingClassifier):
         product_name: str, 
         labels: Optional[List[str]] = None, 
         level: str = "segment", 
-        is_topk: bool = True
+        is_topk: bool = False
     ) -> List[str]:
         pred_labels = []
         brand_data = self.get_brand_data(product_name)
@@ -363,7 +361,7 @@ class BrandEmbeddingClassifier(EmbeddingClassifier):
             return []
 
         if level == "segment":
-            segments = list({entry["Segment"] for entry in brand_data})
+            segments = [entry["Segment"] for entry in brand_data]
             seg_label = self.classify(product_name, segments)
             pred_labels.append(seg_label)
             families = [entry["Family"] for entry in brand_data if entry["Segment"] == seg_label]
