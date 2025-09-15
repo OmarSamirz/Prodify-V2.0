@@ -1,1 +1,0 @@
-[2025-09-15 14:22:04] - logger:_log - INFO - Logger initialized. Logs will be saved to c:\internship\Prodify-V2.0\src\logs\log.txt
