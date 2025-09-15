@@ -5,7 +5,8 @@
         "convert_to_numpy": true,
         "convert_to_tensor": false,
         "model_id": "intfloat/multilingual-e5-large-instruct",
-        "truncate_dim": null
+        "truncate_dim": null,
+        "show_progress_bar": false
     },
     "classification_config": {
         "topk": 3,

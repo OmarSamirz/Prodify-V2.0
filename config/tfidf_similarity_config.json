@@ -1,0 +1,14 @@
+{
+    "model_name": "tfidf_similarity.joblib",
+    "analyzer": "char_wb",
+    "ngram_range": [3, 5],
+    "min_df": 2,
+    "max_df": 0.9,
+    "lowercase": true,
+    "sublinear_tf": true,
+    "smooth_idf": true,
+    "norm": "l2",
+    "strip_accents": null,
+    "stop_words": null,
+    "topk": 10
+}

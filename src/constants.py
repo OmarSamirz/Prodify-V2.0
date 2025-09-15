@@ -16,8 +16,6 @@ SEOUDI_DATA_PATH.mkdir(parents=True, exist_ok=True)
 
 SEOUDI_EN_DATA_PATH = SEOUDI_DATA_PATH / "seoudi_products_en.csv"
 
-FINAL_DB = DATA_PATH / "all_data_0.85.csv"
-
 SEOUDI_AR_DATA_PATH = SEOUDI_DATA_PATH / "seoudi_products_ar.csv"
 
 CARREFOUR_DATA_PATH = BASE_DIR / DATA_PATH / "carrefour"
@@ -44,6 +42,10 @@ FULL_BRAND_OUTPUT_DATASET_PATH = DATA_PATH / "full_brand_output_dataset.csv"
 
 FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "full_embedding_model_output_dataset.csv"
 
+FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "ful_ensemble_model_output_dataset.csv"
+
+DETAILED_BRANDS_DATASET_PATH = DATA_PATH / "detailed_brands_dataset.csv"
+
 GPC_PATH = DATA_PATH / "gpc.csv"
 
 CONFIG_PATH = BASE_DIR / "config"
@@ -56,9 +58,13 @@ TFIDF_CLASSIFIER_CONFIG_PATH = CONFIG_PATH / "tfidf_classifier_config.json"
 
 EMBEDDING_CLASSIFIER_CONFIG_PATH = CONFIG_PATH / "embedding_classifier_config.json"
 
-EMBEDDING_XGB_CONFIG_PATH = CONFIG_PATH / "embedding_xgb_config.json"
+EMBEDDING_SVM_CONFIG_PATH = CONFIG_PATH / "embedding_svm_config.json"
+
+ENSEMBLE_CONFIG_PATH = CONFIG_PATH / "ensemble_config.json"
 
 BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH = CONFIG_PATH / "brand_embedding_classifier_config.json"
+
+TFIDF_SIMILARITY_CONFIG_PATH = CONFIG_PATH / "tfidf_similarity_config.json"
 
 GPC_HIERARCHICAL_CLASSIFIER_CONFIG = CONFIG_PATH / "gpc_hierarchical_classifier_config.json"
 

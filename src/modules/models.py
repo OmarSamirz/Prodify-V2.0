@@ -1,19 +1,21 @@
 import torch
 import joblib
+import numpy as np
 import pandas as pd
-import xgboost as xgb
 from torch import Tensor
 from langid import classify
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.multioutput import MultiOutputClassifier
+from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 from transformers import MarianMTModel, MarianTokenizer
 from transformers import BitsAndBytesConfig
 
 import os
 import json
+from collections import Counter
 from dataclasses import dataclass
 from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union
@@ -67,6 +69,7 @@ class SentenceEmbeddingConfig:
     truncate_dim: Optional[int]
     convert_to_numpy: bool
     convert_to_tensor: bool
+    show_progress_bar: bool = False
     use_prompt: bool = False
     prompt_config: Optional[Dict[str, str]] = None
     model_kwargs: Optional[Dict[str, Any]] = None
@@ -80,6 +83,7 @@ class SentenceEmbeddingModel:
         self.model_id = config.model_id
         self.device = config.device
         self.truncate_dim = config.truncate_dim
+        self.show_progrees_bar = config.show_progress_bar
         if config.dtype in DTYPE_MAP:
             self.dtype = DTYPE_MAP[config.dtype]
         else:
@@ -116,7 +120,7 @@ class SentenceEmbeddingModel:
             texts,
             convert_to_numpy=self.config.convert_to_numpy,
             convert_to_tensor=self.config.convert_to_tensor,
-            show_progress_bar=False,
+            show_progress_bar=self.show_progrees_bar,
         )
         return embeddings
 
@@ -196,7 +200,7 @@ class EmbeddingClassifier:
             cls_label = self.classify(product_name, labels)
             candidates = self.df_gpc[self.df_gpc["ClassTitle"] == cls_label]["BrickTitle"].drop_duplicates().tolist()
             pred_labels.append(cls_label)
-            pred_labels.extend(self.get_gpc(product_name, candidates, "brick"))
+            # pred_labels.extend(self.get_gpc(product_name, candidates, "brick"))
 
         elif level == "brick":
             brk_label = self.classify_topk(product_name, labels) if is_topk else self.classify(product_name, labels)
@@ -314,8 +318,8 @@ class BrandEmbeddingClassifier(EmbeddingClassifier):
             for entry in brand_data:
                 if cls_label in entry["Class"]:
                     bricks.extend(entry["Brick"])
-            if bricks:
-                pred_labels.extend(self.get_gpc(product_name, bricks, level="brick", is_topk=is_topk))
+            # if bricks:
+                # pred_labels.extend(self.get_gpc(product_name, bricks, level="brick", is_topk=is_topk))
 
         elif level == "brick":
             if not labels:
@@ -405,62 +409,183 @@ class TfidfClassifier:
 
 
 @dataclass
-class EmbeddingXGBoostConfig:
-    embedding_config: SentenceEmbeddingConfig
+class TfidfSimilarityConfig:
     model_name: str
-    n_estimators: int
-    learning_rate: float
-    max_depth: int
-    min_child_weight: int
-    subsample: float
-    colsample_bytree: float
-    gamma: float
-    reg_lambda: float
-    reg_alpha: float
-    objective: str
-    n_jobs: int
-    eval_metric: str
+    analyzer: str
+    ngram_range: tuple
+    min_df: int
+    max_df: float
+    lowercase: bool
+    sublinear_tf: bool
+    smooth_idf: bool
+    norm: str
+    strip_accents: str
+    stop_words: set
+    topk: int
 
 
-class EmbeddingXGBoostModel:
+class TfidfSimilarityModel:
 
-    def __init__(self, config: EmbeddingXGBoostConfig) -> None:
+    def __init__(self, config: Optional[TfidfSimilarityConfig]):
+        self.topk = config.topk
         self.model_name = config.model_name
-        self.embedding_model = SentenceEmbeddingModel(config.embedding_config)
-        self.xgb_model = xgb.XGBClassifier(
-            n_estimators=config.n_estimators,
-            learning_rate=config.learning_rate,
-            max_depth=config.max_depth,
-            min_child_weight=config.min_child_weight,
-            subsample=config.subsample,
-            colsample_bytree=config.colsample_bytree,
-            gamma=config.gamma,
-            reg_lambda=config.reg_lambda,
-            reg_alpha=config.reg_alpha,
-            objective=config.objective,
-            n_jobs=config.n_jobs,
-            eval_metric=config.eval_metric,
-            random_state=RANDOM_STATE,
+        self.vectorizer = TfidfVectorizer(
+            analyzer=config.analyzer,
+            ngram_range=config.ngram_range,
+            min_df=config.min_df,
+            max_df=config.max_df,
+            lowercase=config.lowercase,
+            sublinear_tf=config.sublinear_tf,
+            smooth_idf=config.smooth_idf,
+            norm=config.norm,
+            strip_accents=config.strip_accents,
+            stop_words=config.stop_words,
+            token_pattern=None if config.analyzer in ("char", "char_wb") else r'(?u)\b\w+\b',
         )
 
-    def fit(self, X_train, y_train):
-        embeddings = self.embedding_model.get_embeddings(X_train)
-        # self.clf = MultiOutputClassifier(self.xgb_model)
-        self.xgb_model.fit(embeddings, y_train)
+    def fit(self, documents) -> None:
+        self.vectorizer.fit(documents)
 
-    def predict(self, x):
-        embeddings = self.embedding_model.get_embeddings(x)
-        if embeddings.ndim == 1:
-            embeddings = embeddings.reshape(1, -1)
-        return self.xgb_model.predict(embeddings)
-    
+    def find_similarity(self, query: str, documents: List[str]) -> List[str]:
+        if isinstance(query, str):
+            query = [query]
+
+        tfidf_1 = self.vectorizer.transform(query)
+        tfidf_2 = self.vectorizer.transform(documents)
+
+        similarities = cosine_similarity(tfidf_1, tfidf_2).flatten()
+        top_indicies = np.argsort(similarities)[-self.topk:][::-1]
+
+        return [documents[idx] for idx in top_indicies.tolist()]
+
     def save(self) -> None:
         if not os.path.exists(MODEL_PATH):
             os.makedirs(MODEL_PATH, exist_ok=True)
 
         model_path = MODEL_PATH / self.model_name
-        joblib.dump(self.xgb_model, model_path)
+        joblib.dump(self.vectorizer, model_path)
 
     def load(self) -> None:
+        if not os.path.exists(MODEL_PATH / self.model_name):
+            raise ValueError("You need to fit the model first.")
+
         model_path = MODEL_PATH / self.model_name
-        self.xgb_model = joblib.load(model_path)
+        self.vectorizer = joblib.load(model_path)
+
+
+@dataclass
+class EmbeddingSvmConfig:
+    embedding_config: SentenceEmbeddingConfig
+    model_name: str
+    C: float
+    class_weight: str
+
+
+class EmbeddingSvmModel:
+
+    def __init__(self, config: EmbeddingSvmConfig) -> None:
+        self.model_name = config.model_name
+        self.embedding_model = SentenceEmbeddingModel(config.embedding_config)
+        self.svm = LinearSVC(C=config.C, class_weight=config.class_weight)
+        self.clf = None
+
+    def fit(self, X_train, y_train):
+        embeddings = self.embedding_model.get_embeddings(X_train)
+        self.clf = MultiOutputClassifier(self.svm)
+        self.clf.fit(embeddings, y_train)
+
+    def predict(self, x):
+        if self.clf is None:
+            raise ValueError("You need to fit the model first.")
+
+        embeddings = self.embedding_model.get_embeddings(x)
+        if embeddings.ndim == 1:
+            embeddings = embeddings.reshape(1, -1)
+
+        return self.clf.predict(embeddings)
+
+    def save(self) -> None:
+        if not os.path.exists(MODEL_PATH):
+            os.makedirs(MODEL_PATH, exist_ok=True)
+
+        model_path = MODEL_PATH / self.model_name
+        joblib.dump(self.clf, model_path)
+
+    def load(self) -> None:
+        if self.clf is None:
+            raise ValueError("You need to fit the model first.")
+        
+        model_path = MODEL_PATH / self.model_name
+        self.clf = joblib.load(model_path)
+
+@dataclass
+class EnsembleConfig:
+    embedding_classifier_config: EmbeddingClassifierConfig
+    brand_embedding_classifier_config: BrandEmbeddingClassifier
+    tfidf_classifier_config: TfidfClassifierConfig
+
+
+class EnsembleModel:
+
+    def __init__(self, config: EnsembleConfig):
+        self.embed_clf = EmbeddingClassifier(config.embedding_classifier_config)
+        self.brand_embed_clf = BrandEmbeddingClassifier(config.brand_embedding_classifier_config)
+        self.tfidf_clf = TfidfClassifier(config.tfidf_classifier_config)
+        self.tfidf_clf.load()
+
+    def predict(self, product_name: str) -> Dict[str, Any]:
+        embed_clf_pred = self.embed_clf.get_gpc(product_name)
+        brand_embed_clf_pred = self.brand_embed_clf.get_gpc(product_name)
+        tfidf_clf_pred = self.tfidf_clf.predict([product_name])
+
+        return {
+            "embed_clf": embed_clf_pred,
+            "brand_embed_clf": brand_embed_clf_pred,
+            "tfidf_clf": tfidf_clf_pred.tolist()[0]
+        }
+
+    def vote(self, predictions: Dict[str, Any]) -> Dict[str, Any]:
+        pred_segments = []
+        pred_segments.append(predictions["embed_clf"][0])
+        if predictions["brand_embed_clf"]:
+            pred_segments.append(predictions["brand_embed_clf"][0])
+        pred_segments.append(predictions["tfidf_clf"][0])
+
+        seg_counter = Counter(pred_segments)
+        voted_seg, seg_count = seg_counter.most_common(1)[0]
+        if seg_count < 2:
+            voted_seg = predictions["tfidf_clf"][0]
+
+        pred_families = []
+        pred_families.append(predictions["embed_clf"][1])
+        if predictions["brand_embed_clf"]:
+            pred_families.append(predictions["brand_embed_clf"][1])
+        pred_families.append(predictions["tfidf_clf"][1])
+
+        fam_counter = Counter(pred_families)
+        voted_fam, fam_count = fam_counter.most_common(1)[0]
+        if fam_count < 2:
+            voted_fam = predictions["tfidf_clf"][1]
+
+        pred_classes = []
+        pred_classes.append(predictions["embed_clf"][2])
+        if predictions["brand_embed_clf"]:
+            pred_classes.append(predictions["brand_embed_clf"][2])
+        pred_classes.append(predictions["tfidf_clf"][2])
+
+        cls_counter = Counter(pred_classes)
+        voted_cls, cls_count = cls_counter.most_common(1)[0]
+        if cls_count < 2:
+            voted_cls = predictions["tfidf_clf"][2]
+
+        return {
+            "segment": voted_seg,
+            "family": voted_fam,
+            "class": voted_cls
+        }
+    
+    def run_pipeline(self, invoice_item: str) -> Dict[str, Any]:
+        preds = self.predict(invoice_item)
+        voted = self.vote(preds)
+
+        return voted

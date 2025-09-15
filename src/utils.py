@@ -18,12 +18,16 @@ from modules.models import (
     OpusTranslationModelConfig,
     TfidfClassifier, 
     TfidfClassifierConfig,
-    EmbeddingXGBoostConfig,
-    EmbeddingXGBoostModel,
+    EmbeddingSvmConfig,
+    EmbeddingSvmModel,
     EmbeddingClassifier,
     EmbeddingClassifierConfig,
     BrandEmbeddingClassifier,
     BrandEmbeddingClassifierConfig,
+    EnsembleConfig,
+    EnsembleModel,
+    TfidfSimilarityConfig,
+    TfidfSimilarityModel
 )
 
 def evaluation_score(y_true: List[str], y_pred: List[str], average: str) -> float:
@@ -134,6 +138,51 @@ def load_brand_embedding_classifier_model(config_path: str):
         raise ValueError(f"Invalid configuration keys: {e}.")
     
     model = BrandEmbeddingClassifier(config)
+
+    return model
+
+def load_embedding_svm_model(config_path: str):
+    with open(config_path, "r") as f:
+        config_dict = json.load(f)
+
+    try:
+        embedding_config = SentenceEmbeddingConfig(**config_dict["embedding_config"])
+        config = EmbeddingSvmConfig(embedding_config, **config_dict["classification_config"])
+    except TypeError as e:
+        raise ValueError(f"Invalid configuration keys: {e}.")
+
+    model = EmbeddingSvmModel(config)
+
+    return model
+
+def load_ensemble_pipeline(config_path: str):
+    with open(config_path, "r") as f:
+        config_dict = json.load(f)
+
+    try:
+        embedding_config = SentenceEmbeddingConfig(**config_dict["embedding_classifier"]["embedding_config"])
+        embed_clf_config = EmbeddingClassifierConfig(embedding_config, **config_dict["embedding_classifier"]["classification_config"])
+        brand_embed_clf_config = BrandEmbeddingClassifierConfig(embed_clf_config, **config_dict["brand_embedding_classifier"]["brand_embedding_classifier_config"])
+        tfidf_clf_config = TfidfClassifierConfig(**config_dict["tfidf_classifier"])
+        config = EnsembleConfig(embed_clf_config, brand_embed_clf_config, tfidf_clf_config)
+    except TypeError as e:
+        raise ValueError(f"Invalid configuration keys: {e}.")
+
+    model = EnsembleModel(config)
+
+    return model
+
+def load_tfidf_similarity_model(config_path: str):
+    with open(config_path, "r") as f:
+        config_dict = json.load(f)
+        config_dict["ngram_range"] = tuple(config_dict["ngram_range"])
+
+    try:
+        config = TfidfSimilarityConfig(**config_dict)
+    except TypeError as e:
+        raise ValueError(f"Invalid configuration keys: {e}.")
+
+    model = TfidfSimilarityModel(config)
 
     return model
 

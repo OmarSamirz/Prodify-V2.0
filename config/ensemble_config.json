@@ -1,0 +1,50 @@
+{
+    "embedding_classifier": {
+        "embedding_config": {
+            "device": "cuda",
+            "dtype": "float16",
+            "convert_to_numpy": true,
+            "convert_to_tensor": false,
+            "model_id": "intfloat/multilingual-e5-large-instruct",
+            "truncate_dim": null,
+            "show_progress_bar": false
+        },
+        "classification_config": {
+            "topk": 3,
+            "gpc_csv_path": "data/gpc.csv"
+        }
+    },
+    "brand_embedding_classifier": {
+        "embedding_config": {
+            "device": "cuda",
+            "dtype": "float16",
+            "convert_to_numpy": true,
+            "convert_to_tensor": false,
+            "model_id": "intfloat/multilingual-e5-large-instruct",
+            "truncate_dim": null,
+            "show_progress_bar": false
+        },
+        "embedding_classifier_config": {
+            "topk": 3,
+            "gpc_csv_path": "data/gpc.csv"
+        },
+        "brand_embedding_classifier_config": {
+            "brand_json_path": "data/brands_dataset.json"
+        }
+    },
+    "tfidf_classifier": {
+        "model_name": "tfidf_svm.joblib",
+        "analyzer": "char_wb",
+        "ngram_range": [3, 5],
+        "min_df": 2,
+        "max_df": 0.9,
+        "lowercase": true,
+        "sublinear_tf": true,
+        "smooth_idf": true,
+        "norm": "l2",
+        "strip_accents": null,
+        "stop_words": null,
+        "C": 1.0,
+        "class_weight": "balanced"
+    }
+}
