@@ -9,7 +9,8 @@ from utils import (
     load_embedding_classifier_model,
     load_brand_embedding_classifier_model,
     load_ensemble_pipeline,
-    load_tfidf_similarity_model
+    load_tfidf_similarity_model,
+    load_tfidf_classifier_model
 )
 from constants import (
     FULL_DATASET_PATH,
@@ -22,7 +23,9 @@ from constants import (
     FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH,
     ENSEMBLE_CONFIG_PATH,
     DETAILED_BRANDS_DATASET_PATH,
-    TFIDF_SIMILARITY_CONFIG_PATH
+    TFIDF_SIMILARITY_CONFIG_PATH,
+    TFIDF_CLASSIFIER_CONFIG_PATH,
+    CLASS_ONLY_CLASSIFIER
 )
 
 def clean(text: str) -> str:
@@ -57,25 +60,72 @@ def test_ensemble():
     logger.info(f"Level family: {accuracy_score(true_family, families)}")
     logger.info(f"Level class: {accuracy_score(true_class, classes)}")
 
+def test_classifier():
+    model = load_tfidf_classifier_model(TFIDF_CLASSIFIER_CONFIG_PATH)
+    df_train = pd.read_csv(FULL_TRAIN_DATASET_PATH)
+    df_test = pd.read_csv(FULL_TEST_DATASET_PATH)
+    # df["product_name"] = df["product_name"].astype(str)
+    X_train = df_train["product_name"].fillna("").astype(str).tolist()
+    y_train = df_train["class"].fillna("").astype(str).tolist()
+
+    X_test = df_test["product_name"].fillna("").astype(str).tolist()
+
+    model.fit(X_train, y_train)
+
+    X_test = df_test["product_name"].fillna("").astype(str).tolist()
+    y_pred = model.predict(X_test)
+
+    class_to_segment = df_train.set_index("class")["segment"].to_dict()
+    class_to_family = df_train.set_index("class")["family"].to_dict()
+
+    pred_segment = [class_to_segment.get(c, None) for c in y_pred]
+    pred_family = [class_to_family.get(c, None) for c in y_pred]
+
+    df_test["pred_segment"] = pred_segment
+    df_test["pred_family"] = pred_family
+    df_test["pred_class"] = y_pred
+
+    df_test.to_csv(CLASS_ONLY_CLASSIFIER, index=False)
+
+    true_segment = df_test["segment"].tolist()
+    true_family = df_test["family"].tolist()
+    true_class = df_test["class"].tolist()
+
+    logger.info(f"Level segment accuracy: {accuracy_score(true_segment, pred_segment)}")
+    logger.info(f"Level family accuracy: {accuracy_score(true_family, pred_family)}")
+    logger.info(f"Level class accuracy: {accuracy_score(true_class, y_pred)}")
+
 def test_tfidf_similarity_model():
     df = pd.read_csv(DETAILED_BRANDS_DATASET_PATH)
     df["documents"] = df["Sector"] + " " + df["Brand"] + " " + df["Product"]
     documents = df["documents"].tolist()
     df["documents"] = df["documents"].apply(clean)
+    
+    df_test = pd.read_csv(FULL_TEST_DATASET_PATH)
+    X_test = df_test["product_name"].fillna("").astype(str).apply(clean).tolist()
 
     # df["target_label"] =  df["Segment"] + " " + df["Family"] + " " + df["Class"]
     model = load_tfidf_similarity_model(TFIDF_SIMILARITY_CONFIG_PATH)
     model.fit(documents)
     model.save()
-    product = "Sprite 100 ml extra lemon"
-    product = clean(product)
 
-    indices = model.find_similarity("Chai Latte 100 ml", documents)
-    predicted_rows = df.iloc[indices]
-    items = [(row["Segment"] + " " + row["Family"] + " " + row["Class"]) for _, row in predicted_rows.iterrows()]
+    pred_segments, pred_families, pred_classes = [], [], []
 
-    
-    logger.info(f"The top {model.topk} predictions: {items}")
+    for product in X_test:
+        indices = model.find_similarity(product, documents)
+        top_row = df.iloc[indices[0]]
+        pred_segments.append(top_row["Segment"])
+        pred_families.append(top_row["Family"])
+        pred_classes.append(top_row["Class"])
+
+    true_segments = df_test["segment"].tolist()
+    true_families = df_test["family"].tolist()
+    true_classes = df_test["class"].tolist()
+
+    logger.info(f"BRAND MODEL FROM HERE! {accuracy_score(true_segments, pred_segments)}")
+    logger.info(f"Level segment accuracy: {accuracy_score(true_segments, pred_segments)}")
+    logger.info(f"Level family accuracy: {accuracy_score(true_families, pred_families)}")
+    logger.info(f"Level class accuracy: {accuracy_score(true_classes, pred_classes)}")
 
 def test_brand_embedding_model():
     model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
@@ -117,6 +167,7 @@ def exclusion_test():
             f.write("\n")
 
 def main():
+    test_classifier()
     test_tfidf_similarity_model()
     # segments = []
     # families = []

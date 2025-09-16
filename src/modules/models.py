@@ -379,13 +379,12 @@ class TfidfClassifier:
         self.clf = None
 
     def fit(self, X_train, y_train) -> None:
-        base_clf = Pipeline(
+        self.clf = Pipeline(
             [
                 ("vectorizer_tfidf", self.vectorizer),
                 ("svm", self.svm)
             ]
         )
-        self.clf = MultiOutputClassifier(base_clf)
         self.clf.fit(X_train, y_train)
 
     def predict(self, x):
