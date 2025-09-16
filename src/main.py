@@ -61,12 +61,21 @@ def test_tfidf_similarity_model():
     df = pd.read_csv(DETAILED_BRANDS_DATASET_PATH)
     df["documents"] = df["Sector"] + " " + df["Brand"] + " " + df["Product"]
     documents = df["documents"].tolist()
+    df["documents"] = df["documents"].apply(clean)
 
+    # df["target_label"] =  df["Segment"] + " " + df["Family"] + " " + df["Class"]
     model = load_tfidf_similarity_model(TFIDF_SIMILARITY_CONFIG_PATH)
     model.fit(documents)
     model.save()
-    predictions = model.find_similarity("Apple", documents)
-    logger.info(f"The top {model.topk} predictions: {predictions}")
+    product = "Sprite 100 ml extra lemon"
+    product = clean(product)
+
+    indices = model.find_similarity("Chai Latte 100 ml", documents)
+    predicted_rows = df.iloc[indices]
+    items = [(row["Segment"] + " " + row["Family"] + " " + row["Class"]) for _, row in predicted_rows.iterrows()]
+
+    
+    logger.info(f"The top {model.topk} predictions: {items}")
 
 def test_brand_embedding_model():
     model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)

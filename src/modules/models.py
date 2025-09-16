@@ -454,9 +454,9 @@ class TfidfSimilarityModel:
         tfidf_2 = self.vectorizer.transform(documents)
 
         similarities = cosine_similarity(tfidf_1, tfidf_2).flatten()
-        top_indicies = np.argsort(similarities)[-self.topk:][::-1]
+        top_indices = np.argsort(similarities)[-self.topk:][::-1]
 
-        return [documents[idx] for idx in top_indicies.tolist()]
+        return top_indices.tolist()
 
     def save(self) -> None:
         if not os.path.exists(MODEL_PATH):
