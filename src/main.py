@@ -71,6 +71,7 @@ def test_classifier():
     X_test = df_test["product_name"].fillna("").astype(str).tolist()
 
     model.fit(X_train, y_train)
+    model.save()
 
     X_test = df_test["product_name"].fillna("").astype(str).tolist()
     y_pred = model.predict(X_test)
@@ -168,7 +169,7 @@ def exclusion_test():
 
 def main():
     test_classifier()
-    test_tfidf_similarity_model()
+    # test_tfidf_similarity_model()
     # segments = []
     # families = []
     # classes = []

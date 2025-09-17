@@ -538,12 +538,13 @@ class EnsembleModel:
 
     def predict(self, product_name: str) -> Dict[str, Any]:
         embed_clf_pred = self.embed_clf.get_gpc(product_name)
-        brand_embed_clf_pred = self.brand_tfidf_similiraity.find_similarity(product_name)
+        brand_tfidf_similiraity_indicies = self.brand_tfidf_similiraity.find_similarity(product_name)
+        brand_tfidf_similiraity_pred = self.df_brands[brand_tfidf_similiraity_indicies[0]]
         tfidf_clf_pred = self.tfidf_clf.predict([product_name])
 
         return {
             "embed_clf": embed_clf_pred,
-            "brand_embed_clf": brand_embed_clf_pred,
+            "brand_embed_clf": brand_tfidf_similiraity_pred,
             "tfidf_clf": tfidf_clf_pred.tolist()[0]
         }
 
