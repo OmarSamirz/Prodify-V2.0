@@ -2,6 +2,7 @@ import torch
 import joblib
 import numpy as np
 import pandas as pd
+import torch.nn as nn
 from torch import Tensor
 from langid import classify
 from sklearn.svm import LinearSVC
@@ -21,6 +22,86 @@ from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union
 
 from constants import MODEL_PATH, RANDOM_STATE, DTYPE_MAP
+
+
+@dataclass
+class GpcHierarchicalClassifierConfig:
+    model_name: str
+    dtype: str
+    device: str
+    embedding_size: int
+    hidden_size: int
+    dropout: float
+    segment_num_classes: int
+    family_num_classes: int
+    class_num_classes: int
+    segments_to_families_path: str
+    families_to_classes_path: str
+
+
+class GpcHierarchicalClassifier(nn.Module):
+
+    def __init__(self, config: GpcHierarchicalClassifierConfig):
+        super().__init__()
+        self.model_name = config.model_name
+        self.device = config.device
+
+        if config.dtype in DTYPE_MAP:
+            self.dtype = DTYPE_MAP[config.dtype]
+        else:
+            raise ValueError(f"This dtype {config.dtype} is not supported.")
+        
+        with open(config.segments_to_families_path, "r") as f1, open(config.families_to_classes_path, "r") as f2:
+            self.segments_to_families = json.load(f1)
+            self.families_to_classies = json.load(f2)
+
+        self.shared_head = nn.Sequential(
+            nn.Linear(config.embedding_size, config.hidden_size),
+            nn.ReLU(),
+            nn.Dropout(config.dropout),
+            nn.Linear(config.hidden_size, config.embedding_size)
+        )
+
+        self.segment_head = nn.Linear(config.embedding_size, config.segment_num_classes, bias=False)
+
+        self.family_input_dim = config.embedding_size + config.segment_num_classes
+        self.family_head = nn.Linear(self.family_input_dim, config.family_num_classes, bias=False)
+
+        self.class_input_dim = config.embedding_size + config.segment_num_classes + config.family_num_classes
+        self.class_head = nn.Linear(self.class_input_dim, config.class_num_classes, bias=False)
+
+    def _mask_logits(self, logits, valid_indices):
+        mask = torch.full_like(logits, float("-inf"))
+        for i, indices in enumerate(valid_indices):
+            mask[i, indices] = logits[i, indices]
+
+        return mask
+
+    def forward(self, x: Tensor) -> Dict[str, Tensor]:
+        shared = self.shared_head(x)
+        
+        segment_out = self.segment_head(x)
+
+
+        family_inp = torch.cat([shared, segment_out], dim=1)
+        family_out = self.family_head(family_inp)
+        family_out = self._mask_logits(
+            segment_out, 
+            [self.segments_to_families[str(idx)] for idx in torch.argmax(segment_out, dim=1).tolist()]
+        )
+
+        class_inp = torch.cat([shared, segment_out, family_out], dim=1)
+        class_out = self.class_head(class_inp)
+        class_out = self._mask_logits(
+            segment_out, 
+            [self.families_to_classies[str(idx)] for idx in torch.argmax(family_out, dim=1).tolist()]
+        )
+
+        return {
+            "segment": segment_out,
+            "family": family_out,
+            "class": class_out,
+        }
 
 
 @dataclass

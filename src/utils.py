@@ -1,6 +1,11 @@
+import torch
+from torch.optim import Adam
+from torch.nn import CrossEntropyLoss
 import unicodedata
+import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score
+from safetensors.torch import save_file
 from sklearn.model_selection import train_test_split
 
 from modules.models import EmbeddingClassifier, EmbeddingClassifierConfig
@@ -9,7 +14,7 @@ import re
 import json
 from typing import List, Union
 
-from constants import RANDOM_STATE
+from constants import RANDOM_STATE, MODEL_PATH
 from modules.logger import logger
 from modules.models import (
     SentenceEmbeddingModel, 
@@ -27,7 +32,9 @@ from modules.models import (
     EnsembleConfig,
     EnsembleModel,
     TfidfSimilarityConfig,
-    TfidfSimilarityModel
+    TfidfSimilarityModel,
+    GpcHierarchicalClassifierConfig,
+    GpcHierarchicalClassifier
 )
 
 def evaluation_score(y_true: List[str], y_pred: List[str], average: str) -> float:
@@ -208,3 +215,115 @@ def predict_brick_ensemble(
             candidate_bricks=topk_bricks,
             exclusion_column=exclusion_column
         )
+
+def load_gpc_hierarchical_classifier(config_path: str):
+    with open(config_path, "r") as f:
+        config_dict = json.load(f)
+
+    try:
+        config = GpcHierarchicalClassifierConfig(**config_dict)
+    except TypeError as e:
+        raise ValueError(f"Invalid configuration keys: {e}.")
+    
+    model = GpcHierarchicalClassifier(config)
+
+    return model
+
+import torch
+import torch.nn.functional as F
+from torch.nn import CrossEntropyLoss
+from torch.optim import Adam
+from typing import Dict, Optional
+from tqdm import tqdm
+
+
+def gpc_hierarchical_classifier_train(
+    model, 
+    x_train,
+    y_train,
+    x_test,
+    y_test, 
+    epochs: int = 50, 
+    lr: float = 0.01,
+    verbose: bool = True,
+):
+    device = model.device
+    loss_fn = CrossEntropyLoss()
+    optimizer = Adam(model.parameters(), lr=lr)
+
+    # convert once to tensors on the right device
+    x_train = torch.tensor(x_train, dtype=model.dtype, device=device)
+    y_train = torch.tensor(y_train, dtype=torch.long, device=device)
+    x_test = torch.tensor(x_test, dtype=model.dtype, device=device)
+    y_test = torch.tensor(y_test, dtype=torch.long, device=device)
+
+    best_test_acc = 0.0
+    best_state = None
+
+    for epoch in tqdm(range(1, epochs + 1)):
+        model.train()
+        optimizer.zero_grad()
+
+        output = model(x_train)
+
+        segment_loss = loss_fn(output["segment"], y_train[:, 0])
+        family_loss  = loss_fn(output["family"],  y_train[:, 1])
+        class_loss   = loss_fn(output["class"],   y_train[:, 2])
+
+        loss = segment_loss + family_loss + class_loss
+        loss.backward()
+        optimizer.step()
+
+        # evaluate
+        if verbose and epoch % max(1, epochs // 10) == 0:
+            model.eval()
+            with torch.inference_mode():
+                logits = model(x_test)
+                seg_pred   = torch.argmax(logits["segment"], dim=1)
+                fam_pred   = torch.argmax(logits["family"], dim=1)
+                class_pred = torch.argmax(logits["class"], dim=1)
+
+                seg_acc   = (seg_pred   == y_test[:, 0]).float().mean().item()
+                fam_acc   = (fam_pred   == y_test[:, 1]).float().mean().item()
+                cls_acc = (class_pred == y_test[:, 2]).float().mean().item()
+
+                # we can define test_acc as average of available accuracies
+                accs = [seg_acc, fam_acc, cls_acc]
+                test_acc = sum(accs) / len(accs)
+
+            if test_acc > best_test_acc:
+                best_test_acc = test_acc
+                best_state = {
+                    "model": model.state_dict(),
+                    "epoch": epoch,
+                    "test_acc": test_acc
+                }
+
+            print(f"\nEpoch {epoch:03d} | Loss: {loss.item():.4f} | Test Acc: {test_acc:.4f}")
+            print(f"\nSegment Acc: {seg_acc:.4f} | Family Acc: {fam_acc:.4f} | Class Acc: {cls_acc:.4f}")
+
+    print("\nTraining finished. Best test acc:", best_test_acc)
+    return model, best_state
+
+
+def gpc_hierarchical_classifier_inference(model: GpcHierarchicalClassifier, x: Union[List[float], np.ndarray, torch.Tensor]):
+    if not isinstance(x, torch.Tensor):
+        x = torch.tensor(x, dtype=model.dtype, device=model.device)
+
+    with torch.inference_mode():
+        logits = model(x)
+        segment_prob = torch.softmax(logits["segment"], dim=1)
+        family_prob = torch.softmax(logits["family"], dim=1)
+        class_prob = torch.softmax(logits["class"], dim=1)
+
+    return (
+        torch.argmax(segment_prob, dim=1),
+        torch.argmax(family_prob, dim=1),
+        torch.argmax(class_prob, dim=1),
+    )
+
+def save_model(model: GpcHierarchicalClassifier) -> None:
+    model_path = MODEL_PATH / model.model_name
+    state_dict = model.state_dict()
+
+    save_file(state_dict, model_path)

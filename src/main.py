@@ -25,6 +25,56 @@ from constants import (
     TFIDF_SIMILARITY_CONFIG_PATH
 )
 
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from safetensors.torch import save_file, load_file
+
+from utils import (
+    load_gpc_hierarchical_classifier, 
+    gpc_hierarchical_classifier_train,
+    gpc_hierarchical_classifier_inference, 
+    load_embedding_model
+)
+from constants import (
+    GPC_HIERARCHICAL_CLASSIFIER_CONFIG, 
+    FULL_TRAIN_DATASET_PATH, 
+    FULL_TEST_DATASET_PATH, 
+    E5_LARGE_INSTRUCT_CONFIG_PATH
+)
+
+def test_gpc_model():
+    df_train = pd.read_csv(FULL_TRAIN_DATASET_PATH)
+    df_test = pd.read_csv(FULL_TEST_DATASET_PATH)
+    df_merged = pd.concat([df_train, df_test])
+    
+    seg_encoder = LabelEncoder()
+    fam_encoder = LabelEncoder()
+    cls_encoder = LabelEncoder()
+    df_merged["encoded_segment"] = seg_encoder.fit_transform(df_merged["segment"].tolist())
+    df_merged["encoded_family"] = fam_encoder.fit_transform(df_merged["family"].tolist())
+    df_merged["encoded_class"] = cls_encoder.fit_transform(df_merged["class"].tolist())
+
+    df_train_len = len(df_train)
+    df_train = df_merged.iloc[:df_train_len, :]
+    df_test = df_merged.iloc[df_train_len:, :]
+    X_train, y_train = df_train["product_name"].astype(str).tolist(), df_train[["encoded_segment", "encoded_family", "encoded_class"]].values.tolist()
+    X_test, y_test = df_test["product_name"].astype(str).tolist(), df_test[["encoded_segment", "encoded_family", "encoded_class"]].values.tolist()
+    
+    X_train = load_file("src/train_embeddings.safetensors")["input"]
+    X_test = load_file("src/test_embeddings.safetensors")["input"]
+
+    gpc_model = load_gpc_hierarchical_classifier(GPC_HIERARCHICAL_CLASSIFIER_CONFIG).to("cuda")
+    model, best_state = gpc_hierarchical_classifier_train(
+        model=gpc_model,
+        x_train=X_train,
+        y_train=y_train,
+        x_test=X_test,
+        y_test=y_test,
+        epochs=500,
+        lr=0.01
+    )
+    logger.info(f"The best epoch is {best_state["epoch"]}")
+
 def clean(text: str) -> str:
     text = text.lower()
     text = re.sub(r"[^\w\s]", " ", text)
@@ -117,7 +167,7 @@ def exclusion_test():
             f.write("\n")
 
 def main():
-    test_tfidf_similarity_model()
+    test_gpc_model()
     # segments = []
     # families = []
     # classes = []
