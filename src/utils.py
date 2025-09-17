@@ -175,9 +175,9 @@ def load_ensemble_pipeline(config_path: str):
     try:
         embedding_config = SentenceEmbeddingConfig(**config_dict["embedding_classifier"]["embedding_config"])
         embed_clf_config = EmbeddingClassifierConfig(embedding_config, **config_dict["embedding_classifier"]["classification_config"])
-        brand_embed_clf_config = BrandEmbeddingClassifierConfig(embed_clf_config, **config_dict["brand_embedding_classifier"]["brand_embedding_classifier_config"])
+        brand_tfidf_similiraity_config = TfidfSimilarityConfig(**config_dict["brand_tfidf_similiraity"])
         tfidf_clf_config = TfidfClassifierConfig(**config_dict["tfidf_classifier"])
-        config = EnsembleConfig(embed_clf_config, brand_embed_clf_config, tfidf_clf_config)
+        config = EnsembleConfig(embed_clf_config, brand_tfidf_similiraity_config, tfidf_clf_config)
     except TypeError as e:
         raise ValueError(f"Invalid configuration keys: {e}.")
 

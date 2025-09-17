@@ -42,9 +42,11 @@ FULL_BRAND_OUTPUT_DATASET_PATH = DATA_PATH / "full_brand_output_dataset.csv"
 
 FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "full_embedding_model_output_dataset.csv"
 
+FULL_TFIDF_SIMILARITY_OUTPUT_DATASET_PATH = DATA_PATH / "full_tfidf_similarity_output_dataset.csv"
+
 FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "ful_ensemble_model_output_dataset.csv"
 
-CLASS_ONLY_CLASSIFIER = DATA_PATH / "class_only_predictions.csv"
+CLASS_ONLY_CLASSIFIER = DATA_PATH / "full_tfidf_svm_output_dataset.csv"
 
 DETAILED_BRANDS_DATASET_PATH = DATA_PATH / "brand_dataset_half_mapped_to_gpc.csv"
 
