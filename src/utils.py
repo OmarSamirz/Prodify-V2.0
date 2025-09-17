@@ -2,6 +2,7 @@ import unicodedata
 import pandas as pd
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 from modules.models import EmbeddingClassifier, EmbeddingClassifierConfig
 
@@ -214,3 +215,84 @@ def predict_brick_ensemble(
             candidate_bricks=topk_bricks,
             exclusion_column=exclusion_column
         )
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+def plot_classification_results(df, level: str):
+    df = df.copy()
+    col_true = level
+    col_pred = f"pred_{level}"
+
+    df["correct"] = df[col_true] == df[col_pred]
+
+    counts = (
+        df.groupby([col_true, "correct"])
+        .size()
+        .unstack(fill_value=0)
+    )
+
+    colors = {False: "red", True: "green"}
+    ax = counts.plot(
+        kind="bar",
+        stacked=False,   # side-by-side instead of stacked
+        figsize=(14, 6),
+        color=[colors[c] for c in counts.columns]
+    )
+
+    
+    ax.set_ylabel("Number of Predictions (log scale)")
+    ax.set_title(f"Distribution of Correctly Classified {level.title()}s")
+    ax.legend(["Incorrect", "Correct"], title="Prediction")
+    ax.set_yscale("log")
+
+    if level == "segment":
+        plt.xticks(rotation=45, ha="right")
+        for p, label in zip(ax.patches, [*counts.columns] * len(counts)):
+            height = p.get_height()
+            if height > 0:
+                ax.text(
+                    p.get_x() + p.get_width() / 2,
+                    height * 1.1,
+                    f"{int(height)}",
+                    ha="center",
+                    va="bottom",
+                    fontsize=7,
+                    color="green" if label else "red",
+                    weight="bold",
+                )
+    else:
+        ax.set_xticklabels([])
+        ax.set_xlabel("")
+
+
+
+    correct_counts = counts.get(True, pd.Series(dtype=int)).sort_values(ascending=False)
+    top5 = correct_counts.head(5)
+    bottom5 = correct_counts.tail(5)
+
+    textstr = "Top 5 Correctly Classified:\n"
+    for idx, val in top5.items():
+        textstr += f"{idx}: {val}\n"
+
+    textstr += "\nLowest 5 Correctly Classified:\n"
+    for idx, val in bottom5.items():
+        textstr += f"{idx}: {val}\n"
+
+    props = dict(boxstyle="round", facecolor="white", alpha=0.8)
+    ax.text(
+        1.05,
+        0.5,
+        textstr,
+        transform=ax.transAxes,
+        fontsize=9,
+        verticalalignment="center",
+        bbox=props,
+        color="black"
+    )
+
+    ymin, ymax = ax.get_ylim()
+    ax.set_ylim(ymin, ymax * 1.2)
+
+    plt.tight_layout()
+    plt.show()
