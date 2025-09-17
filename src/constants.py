@@ -44,6 +44,8 @@ FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "full_embedding_model_out
 
 FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "ful_ensemble_model_output_dataset.csv"
 
+CLASS_ONLY_CLASSIFIER = DATA_PATH / "class_only_predictions.csv"
+
 DETAILED_BRANDS_DATASET_PATH = DATA_PATH / "brand_dataset_half_mapped_to_gpc.csv"
 
 GPC_PATH = DATA_PATH / "gpc.csv"
