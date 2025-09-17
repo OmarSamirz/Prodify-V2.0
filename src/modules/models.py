@@ -520,7 +520,7 @@ class EmbeddingSvmModel:
 @dataclass
 class EnsembleConfig:
     embedding_classifier_config: EmbeddingClassifierConfig
-    brand_embedding_classifier_config: BrandEmbeddingClassifier
+    brand_tfidf_similiraity_config: TfidfSimilarityConfig
     tfidf_classifier_config: TfidfClassifierConfig
 
 
@@ -528,13 +528,17 @@ class EnsembleModel:
 
     def __init__(self, config: EnsembleConfig):
         self.embed_clf = EmbeddingClassifier(config.embedding_classifier_config)
-        self.brand_embed_clf = BrandEmbeddingClassifier(config.brand_embedding_classifier_config)
+        self.brand_tfidf_similiraity = TfidfSimilarityConfig(config.brand_tfidf_similiraity_config)
         self.tfidf_clf = TfidfClassifier(config.tfidf_classifier_config)
         self.tfidf_clf.load()
+        self.df_brands = pd.read_csv(config.brand_tfidf_similiraity_config.brands_csv_path)
+        self.df_brands["documents"] = self.df_brands["Sector"] + " " + self.df_brands["Brand"] + " " + self.df_brands["Product"]
+        documents = self.df_brands["documents"].tolist()
+        self.brand_tfidf_similiraity.fit(documents)
 
     def predict(self, product_name: str) -> Dict[str, Any]:
         embed_clf_pred = self.embed_clf.get_gpc(product_name)
-        brand_embed_clf_pred = self.brand_embed_clf.get_gpc(product_name)
+        brand_embed_clf_pred = self.brand_tfidf_similiraity.find_similarity(product_name)
         tfidf_clf_pred = self.tfidf_clf.predict([product_name])
 
         return {
