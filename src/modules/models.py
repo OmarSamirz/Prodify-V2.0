@@ -20,7 +20,7 @@ import json
 from collections import Counter
 from dataclasses import dataclass
 from typing_extensions import override
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any, Union, Tuple
 
 from constants import MODEL_PATH, RANDOM_STATE, DTYPE_MAP, DETAILED_BRANDS_DATASET_PATH
 
@@ -617,21 +617,31 @@ class EnsembleModel:
         self.df_brands["documents"] = self.df_brands["Sector"] + " " + self.df_brands["Brand"] + " " + self.df_brands["Product"]
         self.df_gpc = self.embed_clf.df_gpc
 
+    def extract_labels(self, cls_label: str) -> Tuple[str, str]:
+        seg, fam, cls = None, None, None
+        classes = self.df_gpc["ClassTitle"].unique().tolist()
+        if cls_label in classes:
+            seg = self.df_gpc[self.df_gpc["ClassTitle"]==cls_label]["SegmentTitle"].tolist()[0]
+            fam = self.df_gpc[self.df_gpc["ClassTitle"]==cls_label]["FamilyTitle"].tolist()[0]
+        else:
+            seg = self.df_gpc[self.df_gpc["BrickTitle"]==cls_label]["SegmentTitle"].tolist()[0]
+            fam = self.df_gpc[self.df_gpc["BrickTitle"]==cls_label]["FamilyTitle"].tolist()[0]
+            cls = self.df_gpc[self.df_gpc["BrickTitle"]==cls_label]["ClassTitle"].tolist()[0]
+
+        return seg, fam, cls
+
     def predict(self, product_name: str) -> Dict[str, Any]:
         embed_clf_pred = self.embed_clf.get_gpc(product_name)
         brand_tfidf_similiraity_indicies = self.brand_tfidf_similiraity.find_similarity(product_name, self.df_brands["documents"].tolist())
         brand_tfidf_similiraity_pred = self.df_brands.iloc[brand_tfidf_similiraity_indicies[0]]
         tfidf_clf_pred_class = self.tfidf_clf.predict([product_name])
 
-        if isinstance(tfidf_clf_pred_class, str):
-            tfidf_clf_pred_class = [tfidf_clf_pred_class]
+        if isinstance(tfidf_clf_pred_class, (List, np.ndarray)):
+            tfidf_clf_pred_class = str(tfidf_clf_pred_class[0])
 
-        class_to_segment = self.df_gpc.set_index("ClassTitle")["SegmentTitle"].to_dict()
-        class_to_family = self.df_gpc.set_index("ClassTitle")["FamilyTitle"].to_dict()
-
-        tfidf_clf_pred_segment = [class_to_segment.get(c, None) for c in tfidf_clf_pred_class]
-        tfidf_clf_pred_family = [class_to_family.get(c, None) for c in tfidf_clf_pred_class]
-
+        tfidf_clf_pred_segment, tfidf_clf_pred_family, cls = self.extract_labels(tfidf_clf_pred_class)
+        if cls is not None:
+            tfidf_clf_pred_class = cls
         tfidf_clf_pred = [tfidf_clf_pred_segment, tfidf_clf_pred_family, tfidf_clf_pred_class]
 
         return {
@@ -641,13 +651,10 @@ class EnsembleModel:
         }
 
     def vote(self, predictions: Dict[str, Any]) -> Dict[str, Any]:
-
         pred_classes = []
         pred_classes.append(predictions["embed_clf"][2])
         pred_classes.append(predictions["brand_tfidf_similiraity"]["Class"])
         tfidf_pred = predictions["tfidf_clf"][2]
-        if isinstance(tfidf_pred, np.ndarray):
-            tfidf_pred = tfidf_pred.item() 
         pred_classes.append(tfidf_pred)
 
         cls_counter = Counter(pred_classes)
@@ -656,14 +663,9 @@ class EnsembleModel:
         if cls_count < 2:
             voted_cls = predictions["tfidf_clf"][2]
 
-        if isinstance(voted_cls, str):
-            voted_cls = [voted_cls]
-        
-        class_to_segment = self.df_gpc.set_index("ClassTitle")["SegmentTitle"].to_dict()
-        class_to_family = self.df_gpc.set_index("ClassTitle")["FamilyTitle"].to_dict()
-
-        voted_seg = [class_to_segment.get(c, None) for c in voted_cls]
-        voted_fam = [class_to_family.get(c, None) for c in voted_cls]
+        voted_seg, voted_fam, cls = self.extract_labels(voted_cls)
+        if cls is not None:
+            voted_cls = cls
 
         return {
             "segment": voted_seg,

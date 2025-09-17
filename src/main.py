@@ -101,7 +101,7 @@ def test_ensemble():
         segments.append(preds["segment"])
         families.append(preds["family"])
         classes.append(preds["class"])
-    
+
     df["pred_segment"] = segments
     df["pred_family"] = families
     df["pred_class"] = classes
@@ -134,8 +134,8 @@ def test_classifier():
     class_to_segment = df_train.set_index("class")["segment"].to_dict()
     class_to_family = df_train.set_index("class")["family"].to_dict()
 
-    pred_segment = [class_to_segment.get(c, None) for c in y_pred]
-    pred_family = [class_to_family.get(c, None) for c in y_pred]
+    pred_segment = [class_to_segment.get(c, "") for c in y_pred]
+    pred_family = [class_to_family.get(c, "") for c in y_pred]
 
     df_test["pred_segment"] = pred_segment
     df_test["pred_family"] = pred_family
