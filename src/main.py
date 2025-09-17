@@ -86,29 +86,32 @@ def clean(text: str) -> str:
 
 def test_ensemble():
     pipe = load_ensemble_pipeline(ENSEMBLE_CONFIG_PATH)
-    df = pd.read_csv(FULL_TEST_DATASET_PATH)
-    df["product_name"] = df["product_name"].astype(str)
+    pred = pipe.run_pipeline("Apple MacBook Pro 20 inch")
+    logger.info(f"Level segment: {pred}")
 
-    segments = []
-    families = []
-    classes = []
-    for _, row in tqdm(df.iterrows(), total=len(df)):
-        preds = pipe.run_pipeline(row["product_name"])
-        segments.append(clean(preds["segment"]))
-        families.append(clean(preds["family"]))
-        classes.append(clean(preds["class"]))
+    # df = pd.read_csv(FULL_TEST_DATASET_PATH)
+    # df["product_name"] = df["product_name"].astype(str)
+
+    # segments = []
+    # families = []
+    # classes = []
+    # for _, row in tqdm(df.iterrows(), total=len(df)):
+    #     preds = pipe.run_pipeline(row["product_name"])
+    #     segments.append(clean(preds["segment"]))
+    #     families.append(clean(preds["family"]))
+    #     classes.append(clean(preds["class"]))
     
-    df["pred_segment"] = segments
-    df["pred_family"] = families
-    df["pred_class"] = classes
-    df.to_csv(FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH, index=False)
+    # df["pred_segment"] = segments
+    # df["pred_family"] = families
+    # df["pred_class"] = classes
+    # df.to_csv(FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH, index=False)
 
-    true_segment = df["segment"].tolist()
-    true_family = df["pred_family"].tolist()
-    true_class = df["pred_class"].tolist()
-    logger.info(f"Level segment: {accuracy_score(true_segment, segments)}")
-    logger.info(f"Level family: {accuracy_score(true_family, families)}")
-    logger.info(f"Level class: {accuracy_score(true_class, classes)}")
+    # true_segment = df["segment"].tolist()
+    # true_family = df["pred_family"].tolist()
+    # true_class = df["pred_class"].tolist()
+    # logger.info(f"Level segment: {accuracy_score(true_segment, segments)}")
+    # logger.info(f"Level family: {accuracy_score(true_family, families)}")
+    # logger.info(f"Level class: {accuracy_score(true_class, classes)}")
 
 def test_classifier():
     model = load_tfidf_classifier_model(TFIDF_CLASSIFIER_CONFIG_PATH)
@@ -218,33 +221,36 @@ def exclusion_test():
             f.write("\n")
 
 def main():
-    test_classifier()
-    # test_tfidf_similarity_model()
-    # segments = []
-    # families = []
-    # classes = []
-    # df = pd.read_csv(FULL_TEST_DATASET_PATH)
-    # brand_model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
-    # model = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
-    # df["product_name"] = df["product_name"].astype(str)
-    # for _, row in tqdm(df.iterrows(), total=len(df)):
-    #     pr = row["product_name"]
-    #     gpc_labels = model.get_gpc(pr)
-    #     segments.append(gpc_labels[0])
-    #     families.append(gpc_labels[1])
-    #     classes.append(gpc_labels[2])
+    # test_classifier()
+    #test_tfidf_similarity_model()
 
-    # df["pred_segment"] = segments
-    # df["pred_family"] = families
-    # df["pred_class"] = classes
-    # df.to_csv(FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH, index=False)
 
-    # true_segment = df["segment"].tolist()
-    # true_family = df["pred_family"].tolist()
-    # true_class = df["pred_class"].tolist()
-    # logger.info(f"Level segment: {accuracy_score(true_segment, segments)}")
-    # logger.info(f"Level family: {accuracy_score(true_family, families)}")
-    # logger.info(f"Level class: {accuracy_score(true_class, classes)}")
+    # Run embedding model
+    segments = []
+    families = []
+    classes = []
+    df = pd.read_csv(FULL_TEST_DATASET_PATH)
+    
+    model = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    df["product_name"] = df["product_name"].astype(str)
+    for _, row in tqdm(df.iterrows(), total=len(df)):
+        pr = row["product_name"]
+        gpc_labels = model.get_gpc(pr)
+        segments.append(gpc_labels[0])
+        families.append(gpc_labels[1])
+        classes.append(gpc_labels[2])
+
+    df["pred_segment"] = segments
+    df["pred_family"] = families
+    df["pred_class"] = classes
+    df.to_csv(FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH, index=False)
+
+    true_segment = df["segment"].tolist()
+    true_family = df["pred_family"].tolist()
+    true_class = df["pred_class"].tolist()
+    logger.info(f"Level segment: {accuracy_score(true_segment, segments)}")
+    logger.info(f"Level family: {accuracy_score(true_family, families)}")
+    logger.info(f"Level class: {accuracy_score(true_class, classes)}")
 
 
 if __name__ == "__main__":

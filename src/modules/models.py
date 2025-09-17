@@ -15,6 +15,7 @@ from transformers import MarianMTModel, MarianTokenizer
 from transformers import BitsAndBytesConfig
 
 import os
+import re
 import json
 from collections import Counter
 from dataclasses import dataclass
@@ -22,7 +23,6 @@ from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union
 
 from constants import MODEL_PATH, RANDOM_STATE, DTYPE_MAP
-
 
 @dataclass
 class GpcHierarchicalClassifierConfig:
@@ -613,55 +613,52 @@ class EnsembleModel:
         self.tfidf_clf = TfidfClassifier(config.tfidf_classifier_config)
         self.tfidf_clf.load()
         self.df_brands = pd.read_csv(config.brand_tfidf_similiraity_config.brands_csv_path)
-        self.df_brands["documents"] = self.df_brands["Sector"] + " " + self.df_brands["Brand"] + " " + self.df_brands["Product"]
-        documents = self.df_brands["documents"].tolist()
-        self.brand_tfidf_similiraity.fit(documents)
+        self.df_gpc = self.embed_clf.df_gpc
 
     def predict(self, product_name: str) -> Dict[str, Any]:
         embed_clf_pred = self.embed_clf.get_gpc(product_name)
         brand_tfidf_similiraity_indicies = self.brand_tfidf_similiraity.find_similarity(product_name)
         brand_tfidf_similiraity_pred = self.df_brands[brand_tfidf_similiraity_indicies[0]]
-        tfidf_clf_pred = self.tfidf_clf.predict([product_name])
+        tfidf_clf_pred_class = self.tfidf_clf.predict([product_name])
+
+        if isinstance(tfidf_clf_pred_class, str):
+            tfidf_clf_pred_class = [tfidf_clf_pred_class]
+
+        class_to_segment = self.df_gpc.set_index("ClassTitle")["SegmentTitle"].to_dict()
+        class_to_family = self.df_gpc.set_index("ClassTitle")["FamilyTitle"].to_dict()
+
+        tfidf_clf_pred_segment = [class_to_segment.get(c, None) for c in tfidf_clf_pred_class]
+        tfidf_clf_pred_family = [class_to_family.get(c, None) for c in tfidf_clf_pred_class]
+
+        tfidf_clf_pred = [tfidf_clf_pred_segment, tfidf_clf_pred_family, tfidf_clf_pred_class]
 
         return {
             "embed_clf": embed_clf_pred,
-            "brand_embed_clf": brand_tfidf_similiraity_pred,
-            "tfidf_clf": tfidf_clf_pred.tolist()[0]
+            "brand_tfidf_similiraity": brand_tfidf_similiraity_pred,
+            "tfidf_clf": tfidf_clf_pred
         }
 
     def vote(self, predictions: Dict[str, Any]) -> Dict[str, Any]:
-        pred_segments = []
-        pred_segments.append(predictions["embed_clf"][0])
-        if predictions["brand_embed_clf"]:
-            pred_segments.append(predictions["brand_embed_clf"][0])
-        pred_segments.append(predictions["tfidf_clf"][0])
-
-        seg_counter = Counter(pred_segments)
-        voted_seg, seg_count = seg_counter.most_common(1)[0]
-        if seg_count < 2:
-            voted_seg = predictions["tfidf_clf"][0]
-
-        pred_families = []
-        pred_families.append(predictions["embed_clf"][1])
-        if predictions["brand_embed_clf"]:
-            pred_families.append(predictions["brand_embed_clf"][1])
-        pred_families.append(predictions["tfidf_clf"][1])
-
-        fam_counter = Counter(pred_families)
-        voted_fam, fam_count = fam_counter.most_common(1)[0]
-        if fam_count < 2:
-            voted_fam = predictions["tfidf_clf"][1]
 
         pred_classes = []
         pred_classes.append(predictions["embed_clf"][2])
-        if predictions["brand_embed_clf"]:
-            pred_classes.append(predictions["brand_embed_clf"][2])
+        pred_classes.append(predictions["brand_tfidf_similiraity"]["Class"])
         pred_classes.append(predictions["tfidf_clf"][2])
 
         cls_counter = Counter(pred_classes)
         voted_cls, cls_count = cls_counter.most_common(1)[0]
+
         if cls_count < 2:
             voted_cls = predictions["tfidf_clf"][2]
+
+        if isinstance(voted_cls, str):
+            voted_cls = [voted_cls]
+        
+        class_to_segment = self.df_gpc.set_index("ClassTitle")["SegmentTitle"].to_dict()
+        class_to_family = self.df_gpc.set_index("ClassTitle")["FamilyTitle"].to_dict()
+
+        voted_seg = [class_to_segment.get(c, None) for c in voted_cls]
+        voted_fam = [class_to_family.get(c, None) for c in voted_cls]
 
         return {
             "segment": voted_seg,

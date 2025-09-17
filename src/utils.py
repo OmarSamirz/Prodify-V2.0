@@ -61,6 +61,12 @@ def remove_punctuations(text: str) -> str:
 
     return " ".join(text.strip().split())
 
+def clean_(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r"[^\w\s]", " ", text)
+
+    return " ".join(text.strip().split())
+
 def remove_extra_space(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
