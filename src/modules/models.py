@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union
 
-from constants import MODEL_PATH, RANDOM_STATE, DTYPE_MAP
+from constants import MODEL_PATH, RANDOM_STATE, DTYPE_MAP, DETAILED_BRANDS_DATASET_PATH
 
 @dataclass
 class OpusTranslationModelConfig:
@@ -527,17 +527,19 @@ class EnsembleConfig:
 class EnsembleModel:
 
     def __init__(self, config: EnsembleConfig):
+        self.brand_tfidf_similiraity = TfidfSimilarityModel(config.brand_tfidf_similiraity_config)
         self.embed_clf = EmbeddingClassifier(config.embedding_classifier_config)
-        self.brand_tfidf_similiraity = TfidfSimilarityConfig(config.brand_tfidf_similiraity_config)
         self.tfidf_clf = TfidfClassifier(config.tfidf_classifier_config)
         self.tfidf_clf.load()
-        self.df_brands = pd.read_csv(config.brand_tfidf_similiraity_config.brands_csv_path)
+        self.brand_tfidf_similiraity.load()
+        self.df_brands = pd.read_csv(DETAILED_BRANDS_DATASET_PATH)
+        self.df_brands["documents"] = self.df_brands["Sector"] + " " + self.df_brands["Brand"] + " " + self.df_brands["Product"]
         self.df_gpc = self.embed_clf.df_gpc
 
     def predict(self, product_name: str) -> Dict[str, Any]:
         embed_clf_pred = self.embed_clf.get_gpc(product_name)
-        brand_tfidf_similiraity_indicies = self.brand_tfidf_similiraity.find_similarity(product_name)
-        brand_tfidf_similiraity_pred = self.df_brands[brand_tfidf_similiraity_indicies[0]]
+        brand_tfidf_similiraity_indicies = self.brand_tfidf_similiraity.find_similarity(product_name, self.df_brands["documents"].tolist())
+        brand_tfidf_similiraity_pred = self.df_brands.iloc[brand_tfidf_similiraity_indicies[0]]
         tfidf_clf_pred_class = self.tfidf_clf.predict([product_name])
 
         if isinstance(tfidf_clf_pred_class, str):
@@ -562,7 +564,10 @@ class EnsembleModel:
         pred_classes = []
         pred_classes.append(predictions["embed_clf"][2])
         pred_classes.append(predictions["brand_tfidf_similiraity"]["Class"])
-        pred_classes.append(predictions["tfidf_clf"][2])
+        tfidf_pred = predictions["tfidf_clf"][2]
+        if isinstance(tfidf_pred, np.ndarray):
+            tfidf_pred = tfidf_pred.item() 
+        pred_classes.append(tfidf_pred)
 
         cls_counter = Counter(pred_classes)
         voted_cls, cls_count = cls_counter.most_common(1)[0]

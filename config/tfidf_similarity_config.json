@@ -10,6 +10,5 @@
     "norm": "l2",
     "strip_accents": null,
     "stop_words": null,
-    "topk": 10,
-    "brands_csv_path": "data/brand_dataset_half_mapped_to_gpc.csv"
+    "topk": 10
 }
