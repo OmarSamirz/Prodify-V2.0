@@ -42,5 +42,8 @@
         "stop_words": null,
         "C": 1.0,
         "class_weight": "balanced"
+    },
+    "ensemble_config": {
+        "num_models": 3
     }
 }

@@ -96,15 +96,18 @@ def test_ensemble():
     segments = []
     families = []
     classes = []
+    confidences = []
     for _, row in tqdm(df.iterrows(), total=len(df)):
         preds = pipe.run_pipeline(row["product_name"])
         segments.append(preds["segment"])
         families.append(preds["family"])
         classes.append(preds["class"])
+        confidences.append(preds["confidence"])
 
     df["pred_segment"] = segments
     df["pred_family"] = families
     df["pred_class"] = classes
+    df["confidence"] = confidences
     df.to_csv(FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH, index=False)
 
     true_segment = df["segment"].tolist()

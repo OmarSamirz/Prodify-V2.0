@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union, Tuple
 
-from constants import MODEL_PATH, RANDOM_STATE, DTYPE_MAP, DETAILED_BRANDS_DATASET_PATH
+from constants import MODEL_PATH, DTYPE_MAP, DETAILED_BRANDS_DATASET_PATH
 
 @dataclass
 class GpcHierarchicalClassifierConfig:
@@ -603,7 +603,7 @@ class EnsembleConfig:
     embedding_classifier_config: EmbeddingClassifierConfig
     brand_tfidf_similiraity_config: TfidfSimilarityConfig
     tfidf_classifier_config: TfidfClassifierConfig
-
+    num_models: int
 
 class EnsembleModel:
 
@@ -613,6 +613,7 @@ class EnsembleModel:
         self.tfidf_clf = TfidfClassifier(config.tfidf_classifier_config)
         self.tfidf_clf.load()
         self.brand_tfidf_similiraity.load()
+        self.num_models = config.num_models
         self.df_brands = pd.read_csv(DETAILED_BRANDS_DATASET_PATH)
         self.df_brands["documents"] = self.df_brands["Sector"] + " " + self.df_brands["Brand"] + " " + self.df_brands["Product"]
         self.df_gpc = self.embed_clf.df_gpc
@@ -646,14 +647,14 @@ class EnsembleModel:
 
         return {
             "embed_clf": embed_clf_pred,
-            "brand_tfidf_similiraity": brand_tfidf_similiraity_pred,
+            "brand_tfidf_sim": brand_tfidf_similiraity_pred,
             "tfidf_clf": tfidf_clf_pred
         }
 
     def vote(self, predictions: Dict[str, Any]) -> Dict[str, Any]:
         pred_classes = []
         pred_classes.append(predictions["embed_clf"][2])
-        pred_classes.append(predictions["brand_tfidf_similiraity"]["Class"])
+        pred_classes.append(predictions["brand_tfidf_sim"]["Class"])
         tfidf_pred = predictions["tfidf_clf"][2]
         pred_classes.append(tfidf_pred)
 
@@ -668,11 +669,19 @@ class EnsembleModel:
             voted_cls = cls
 
         return {
-            "segment": voted_seg,
-            "family": voted_fam,
-            "class": voted_cls
+            "voted_segment": voted_seg,
+            "voted_family": voted_fam,
+            "voted_class": voted_cls,
+            "confidence": cls_count / self.num_models,
+            "embed_clf_pred": predictions["embed_clf"],
+            "brand_tfidf_sim_pred": [
+                predictions["brand_tfidf_sim"]["Segment"],
+                predictions["brand_tfidf_sim"]["Family"],
+                predictions["brand_tfidf_sim"]["Class"]
+            ],
+            "tfidf_clf_pred": predictions["tfidf_clf"]
         }
-    
+
     def run_pipeline(self, invoice_item: str) -> Dict[str, Any]:
         preds = self.predict(invoice_item)
         voted = self.vote(preds)

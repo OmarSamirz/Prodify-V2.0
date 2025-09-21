@@ -36,6 +36,10 @@ FULL_DATASET_PATH = DATA_PATH / "full_dataset.csv"
 
 FULL_TRAIN_DATASET_PATH = DATA_PATH / "full_train_dataset.csv"
 
+MWPD_FULL_DATASET_PATH = DATA_PATH / "mwpd_full_dataset.csv"
+
+USDA_FULL_DATASET_PATH = DATA_PATH / "usda_full_dataset.csv"
+
 FULL_TEST_DATASET_PATH = DATA_PATH / "full_test_dataset.csv"
 
 FULL_BRAND_OUTPUT_DATASET_PATH = DATA_PATH / "full_brand_output_dataset.csv"
