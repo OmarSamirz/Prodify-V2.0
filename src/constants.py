@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).parents[1]
 
 DATA_PATH = BASE_DIR / "data"
 
-SEOUDI_DATA_PATH = BASE_DIR / DATA_PATH / "seoudi"
+SEOUDI_DATA_PATH = DATA_PATH / "seoudi"
 
 SEOUDI_DATA_PATH.mkdir(parents=True, exist_ok=True)
 
@@ -18,7 +18,7 @@ SEOUDI_EN_DATA_PATH = SEOUDI_DATA_PATH / "seoudi_products_en.csv"
 
 SEOUDI_AR_DATA_PATH = SEOUDI_DATA_PATH / "seoudi_products_ar.csv"
 
-CARREFOUR_DATA_PATH = BASE_DIR / DATA_PATH / "carrefour"
+CARREFOUR_DATA_PATH = DATA_PATH / "carrefour"
 
 CARREFOUR_DATA_PATH.mkdir(parents=True, exist_ok=True)
 
@@ -34,13 +34,13 @@ TEST_DATA_PATH = DATA_PATH / "test.csv"
 
 FULL_DATASET_PATH = DATA_PATH / "full_dataset.csv"
 
+FULL_TEST_DATASET_PATH = DATA_PATH / "full_test_dataset.csv"
+
 FULL_TRAIN_DATASET_PATH = DATA_PATH / "full_train_dataset.csv"
 
 MWPD_FULL_DATASET_PATH = DATA_PATH / "mwpd_full_dataset.csv"
 
 USDA_FULL_DATASET_PATH = DATA_PATH / "usda_full_dataset.csv"
-
-FULL_TEST_DATASET_PATH = DATA_PATH / "full_test_dataset.csv"
 
 FULL_BRAND_OUTPUT_DATASET_PATH = DATA_PATH / "full_brand_output_dataset.csv"
 
@@ -48,13 +48,15 @@ FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "full_embedding_model_out
 
 FULL_TFIDF_SIMILARITY_OUTPUT_DATASET_PATH = DATA_PATH / "full_tfidf_similarity_output_dataset.csv"
 
-FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "ful_ensemble_model_output_dataset.csv"
+FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH = DATA_PATH / "full_ensemble_model_output_dataset.csv"
 
 CLASS_ONLY_CLASSIFIER = DATA_PATH / "full_tfidf_svm_output_dataset.csv"
 
-DETAILED_BRANDS_DATASET_PATH = DATA_PATH / "brand_dataset_half_mapped_to_gpc.csv"
+BRANDS_DATASET_PATH = DATA_PATH / "brands_dataset.csv"
 
 GPC_PATH = DATA_PATH / "gpc.csv"
+
+JIO_MART_DATASET_PATH = DATA_PATH / "jio_mart_dataset.csv"
 
 CONFIG_PATH = BASE_DIR / "config"
 
