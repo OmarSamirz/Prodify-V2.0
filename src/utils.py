@@ -403,3 +403,17 @@ def plot_classification_results(df, level: str):
 
     plt.tight_layout()
     plt.show()
+
+def get_labels(labels, true_labels):
+    correct_labels = []
+    incorrect_labels = []
+    for lbl in labels:
+        if lbl in true_labels:
+            correct_labels.append(lbl)
+        else:
+            incorrect_labels.append(lbl)
+    
+    return {
+        "correct_labels": correct_labels,
+        "incorrect_labels": incorrect_labels
+    }
