@@ -10,7 +10,6 @@ from modules.models import BrandsClassifier, TfidfClassifier, EmbeddingClassifie
 st.set_page_config(page_title="Prodify+ - Advanced Invoice Classifier", page_icon="🧾", layout="centered")
 
 @st.cache_resource
-@st.cache_resource
 def get_ensemble_model():
     brands_classifier = BrandsClassifier()
     embedding_classifier = EmbeddingClassifier()
@@ -33,19 +32,32 @@ def render_sidebar() -> None:
 
         st.markdown(
             """
-            <p style='color: grey; margin-bottom: 0px; font-size: 20px;'><b>App</b></p>
             <p style='color: grey; margin-bottom: 20px;'><b>Prodify+</b> is an AI-powered invoice product classification system.</p>
-            <p></p><p style='color: grey; margin-bottom: 20px;'>Enter a product description and our ensemble model will predict it's corresponding three level GPC classification (Segment, Family, Class).</p>
-            <p></p><p style='color: grey; margin-bottom: 0px; font-size: 20px;'><b>Ensemble Model Components</b></p>
-            <p style='color: grey; margin-bottom: 20px;'><b>1. Embedding Classifier:</b> E5-Large-Instruct for hierarchical semantic classification through cosine similarity.</p>
-            <p></p><p style='color: grey; margin-bottom: 20px;'><b>2. Brand Classifier Model:</b> TF-IDF cosine similarity matching against a handpicked brand, product dataset.</p>
-            <p></p><p style='color: grey; margin-bottom: 20px;'><b>3. TF-IDF + SVM Classifier:</b> Traditional ML pipeline for direct GPC prediction.</p>
-            <p></p>   <p style='color: grey; margin-bottom: 0px; font-size: 20px;'><b>Datasets</b></p>
-            <p style='color: grey; margin-bottom: 20px;'><b>Training/Test Data:</b> 76k products merged from: <br> 1) <a href='https://www.kaggle.com/datasets/mohit2512/jio-mart-product-items/data' target='_blank' style='color: #2c7be5;'>Jio Mart</a> (category/sub-category mapped to GPC levels). <br> 2) <a href='https://github.com/ir-ischool-uos/mwpd' target='_blank' style='color: #2c7be5;'>MWPD</a> (pre-labeled GPC levels). <br> 3) <a href='https://fdc.nal.usda.gov/download-datasets/#bkmk-2' target='_blank' style='color: #2c7be5;'>USDA FoodData</a> (category mapped to four GPC levels). Split: 61k training, 15k test.</p>
-            <p></p><p style='color: grey; margin-bottom: 20px;'><b>Brands Dataset:</b> 87 curated brands with 20 products each, manually mapped to first three GPC levels for similarity matching.</p>
+            <p style='color: grey; margin-bottom: 20px;'>Enter a product description and our ensemble model will predict it's corresponding three level GPC classification (Segment, Family, Class).</p>
             """,
             unsafe_allow_html=True
         )
+        
+        # Collapsible Ensemble Model Components section
+        with st.expander("AI Models"):
+            st.markdown(
+                """
+                <p style='color: grey; margin-bottom: 20px;'><b>1. Embedding Classifier:</b> E5-Large-Instruct for hierarchical semantic classification through cosine similarity.</p>
+                <p style='color: grey; margin-bottom: 20px;'><b>2. Brand Classifier Model:</b> TF-IDF cosine similarity matching against a handpicked brand, product dataset.</p>
+                <p style='color: grey; margin-bottom: 20px;'><b>3. TF-IDF + SVM Classifier:</b> Traditional ML pipeline for direct GPC prediction.</p>
+                """,
+                unsafe_allow_html=True
+            )
+        
+        # Collapsible Datasets section
+        with st.expander("Datasets"):
+            st.markdown(
+                """
+                <p style='color: grey; margin-bottom: 20px;'><b>Training/Test Data:</b> 76k products merged from: <br> 1) <a href='https://www.kaggle.com/datasets/mohit2512/jio-mart-product-items/data' target='_blank' style='color: #2c7be5;'>Jio Mart</a> (category/sub-category mapped to GPC levels). <br> 2) <a href='https://github.com/ir-ischool-uos/mwpd' target='_blank' style='color: #2c7be5;'>MWPD</a> (pre-labeled GPC levels). <br> 3) <a href='https://fdc.nal.usda.gov/download-datasets/#bkmk-2' target='_blank' style='color: #2c7be5;'>USDA FoodData</a> (category mapped to four GPC levels). Split: 61k training, 15k test.</p>
+                <p style='color: grey; margin-bottom: 20px;'><b>Brands Dataset:</b> 87 curated brands with 20 products each, manually mapped to first three GPC levels for similarity matching.</p>
+                """,
+                unsafe_allow_html=True
+            )
         st.markdown("---")
 
         # Github repo link
@@ -60,6 +72,7 @@ def render_sidebar() -> None:
             "<p style='color: grey;'>© 2025 Teradata.</p>",
             unsafe_allow_html=True
         )
+
 
 # --- MAIN APP ---
 def main():
