@@ -20,6 +20,7 @@ from abc import ABC, abstractmethod
 from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union, Tuple
 
+from modules.logger import logger
 from constants import MODEL_PATH, DTYPE_MAP
 
 load_dotenv()
@@ -130,11 +131,14 @@ class EmbeddingClassifier:
         if labels is None:
             labels = self.df_gpc["SegmentTitle"].drop_duplicates().tolist()
 
+        logger.info("Predicting `segments` for invoice(s) in `Embedding Classifer`.")
         pred_segments = self.classify(products_name, labels)
+        logger.info("Predicting `families` for invoice(s) in `Embedding Classifer`.")
         for prod, seg in tqdm(zip(products_name, pred_segments), total=len(products_name)):
             fam_candidates = self.df_gpc[self.df_gpc["SegmentTitle"]==seg]["FamilyTitle"].drop_duplicates().tolist()
             pred_families.append(self.classify(prod, fam_candidates))
 
+        logger.info("Predicting `classes` for invoice(s) in `Embedding Classifer`.")
         for prod, fam in tqdm(zip(products_name, pred_families), total=len(products_name)):
             cls_candidates = self.df_gpc[self.df_gpc["FamilyTitle"]==fam]["ClassTitle"].drop_duplicates().tolist()
             pred_classes.append(self.classify(prod, cls_candidates))
@@ -207,6 +211,7 @@ class TfidfClassifier(TfidfBaseModel):
         if isinstance(x, str):
             x = [x]
 
+        logger.info("Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.")
         cls = self.clf.predict(x).tolist()
         df_preds = pd.DataFrame({"ClassTitle": cls})
         df_merged = pd.merge(df_preds, self.df_gpc, on="ClassTitle", how="left")
@@ -272,6 +277,7 @@ class BrandsClassifier(TfidfBaseModel):
         query_vector = self.get_vector(query)
         documents_vectors = self.get_vector(self.documents)
 
+        logger.info("Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.")
         similarities = self.get_similarity(query_vector, documents_vectors)
         indices = np.argmax(similarities, axis=1)
         products = self.df_brands.iloc[indices]

@@ -1,12 +1,15 @@
 import pandas as pd
+from sklearn.metrics import accuracy_score
 
 from typing_extensions import override
 from typing import Optional, Dict, List, Any, Union
 
 from modules.logger import logger
 from pipelines.pipeline import Pipeline
-from modules.models import EnsembleModel, BrandsClassifier
 from train_models import train_tfidf_models
+from utils import get_confidence_level, draw_eda
+from modules.models import EnsembleModel, BrandsClassifier
+from constants import FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH
 
 class ProdifyPipeline(Pipeline):
 
@@ -194,3 +197,36 @@ class ProdifyPipeline(Pipeline):
         train_tfidf_models(self.brands_classifier, self.df_train, self.df_test)
         logger.info("`Brands Classifier` is done.")
 
+        self.df_test["product_name"] = self.df_test["product_name"].astype(str)
+        invoices = self.df_test["product_name"].tolist()
+
+        self.load_ensemble_model()
+        results = self.ensemble_model.run_ensemble(invoices)
+
+        self.df_test["pred_segment"] = results["voted_segments"]
+        self.df_test["pred_family"] = results["voted_families"]
+        self.df_test["pred_class"] = results["voted_classes"]
+        self.df_test["brand_segment"] = results["brand_tfidf_sim_preds"][0]
+        self.df_test["brand_family"] = results["brand_tfidf_sim_preds"][1]
+        self.df_test["brand_class"] = results["brand_tfidf_sim_preds"][2]
+        self.df_test["clf_segment"] = results["tfidf_clf_preds"][0]
+        self.df_test["clf_family"] = results["tfidf_clf_preds"][1]
+        self.df_test["clf_class"] = results["tfidf_clf_preds"][2]
+        self.df_test["embed_segment"] = results["embed_clf_preds"][0]
+        self.df_test["embed_family"] = results["embed_clf_preds"][1]
+        self.df_test["embed_class"] = results["embed_clf_preds"][2]
+        self.df_test["confidence_rate"] = results["confidences"]
+        self.df_test["confidence_level"] = get_confidence_level(results["confidences"])
+        self.df_test.to_csv(FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH, index=False)
+
+        true_segment = self.df_test["segment"].tolist()
+        true_family = self.df_test["pred_family"].tolist()
+        true_class = self.df_test["pred_class"].tolist()
+
+        logger.info(f"Level segment: {accuracy_score(true_segment, results["voted_segments"])}")
+        logger.info(f"Level family: {accuracy_score(true_family, results["voted_families"])}")
+        logger.info(f"Level class: {accuracy_score(true_class, results["voted_classes"])}")
+
+        logger.info("Drawing and saving the eda graphs.")
+        draw_eda(self.df_test)
+        logger.info("Saving the eda graphs is done.")

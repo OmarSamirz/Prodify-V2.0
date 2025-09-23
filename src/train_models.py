@@ -8,10 +8,9 @@ from modules.models import TfidfBaseModel, BrandsClassifier, TfidfClassifier
 
 def train_tfidf_models(
     tfidf_model: TfidfBaseModel, 
-    train_dataset_path: str,
-    test_dataset_path: Optional[str] = None
+    df_train: pd.DataFrame,
+    df_test: Optional[pd.DataFrame] = None
 ) -> None:
-    df_train = pd.read_csv(train_dataset_path)
     df_train["product_name"] = df_train["product_name"].astype(str)
 
     X_train = df_train["product_name"].tolist()
@@ -23,7 +22,6 @@ def train_tfidf_models(
     elif isinstance(tfidf_model, TfidfClassifier):
         tfidf_model.fit(X_train, y_train)
 
-    df_test = pd.read_csv(test_dataset_path)
     df_test["product_name"] = df_test["product_name"].astype(str)
 
     X_test = df_test["product_name"].tolist()
