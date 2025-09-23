@@ -7,8 +7,7 @@ from typing import Optional, Dict, List, Any, Union
 
 from modules.logger import logger
 from modules.db import TeradataDatabase
-from models.tfidf_classifier import TfidfClassifier
-from models.sentence_embedding_model import SentenceEmbeddingModel
+from models import SentenceEmbeddingModel, TfidfClassifier
 from db_queries import (
     cleansing_query,
     num_rows_query,

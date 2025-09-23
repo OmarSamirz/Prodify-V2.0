@@ -7,7 +7,7 @@ import os
 from typing import List, Union, Optional, Tuple
 
 from modules.logger import logger
-from models.sentence_embedding_model import SentenceEmbeddingModel
+from models import SentenceEmbeddingModel
 
 load_dotenv()
 

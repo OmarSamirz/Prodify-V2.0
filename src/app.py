@@ -4,16 +4,17 @@ import os
 
 from constants import IMG_PATH
 from utils import get_confidence_level
-from modules.models import BrandsClassifier, TfidfClassifier, EmbeddingClassifier, EnsembleModel
+from models import BrandsClassifier, TfidfClassifier, EmbeddingClassifier, EnsembleModel, SentenceEmbeddingModel
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Prodify+ - Advanced Invoice Classifier", page_icon="🧾", layout="centered")
 
 @st.cache_resource
 def get_ensemble_model():
+    tfidf_classifier =  TfidfClassifier()
     brands_classifier = BrandsClassifier()
-    embedding_classifier = EmbeddingClassifier()
-    tfidf_classifier =  TfidfClassifier() 
+    embedding_model = SentenceEmbeddingModel()
+    embedding_classifier = EmbeddingClassifier(embedding_model)
     ensemble_model = EnsembleModel(brands_classifier, embedding_classifier, tfidf_classifier)
     return ensemble_model
 

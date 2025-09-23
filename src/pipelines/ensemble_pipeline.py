@@ -5,13 +5,11 @@ from typing_extensions import override
 from typing import Optional, Dict, List, Any, Union
 
 from modules.logger import logger
-from pipelines.base_pipeline import Pipeline
 from train_models import train_tfidf_models
+from pipelines.base_pipeline import Pipeline
 from utils import get_confidence_level, draw_eda
 from constants import FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH
-from models.ensemble_model import EnsembleModel
-from models.brands_classifier import BrandsClassifier
-from models.embedding_classifier import EmbeddingClassifier
+from models import EnsembleModel, BrandsClassifier, EmbeddingClassifier
 
 
 class EnsemblePipeline(Pipeline):

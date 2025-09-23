@@ -1,27 +1,9 @@
-[2025-09-23 16:30:45] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
-[2025-09-23 16:30:46] - __init__:wrapper - DEBUG - matplotlib data path: C:\Users\os255022\AppData\Local\anaconda3\envs\prodify-v2\Lib\site-packages\matplotlib\mpl-data
-[2025-09-23 16:30:46] - __init__:wrapper - DEBUG - CONFIGDIR=C:\Users\os255022\.matplotlib
-[2025-09-23 16:30:46] - __init__:<module> - DEBUG - interactive is False
-[2025-09-23 16:30:46] - __init__:<module> - DEBUG - platform is win32
-[2025-09-23 16:30:46] - __init__:wrapper - DEBUG - CACHEDIR=C:\Users\os255022\.matplotlib
-[2025-09-23 16:30:46] - font_manager:_load_fontmanager - DEBUG - Using fontManager instance from C:\Users\os255022\.matplotlib\fontlist-v390.json
-[2025-09-23 16:31:10] - logger:_log - INFO - TeradataDatabase instance initialized
-[2025-09-23 16:31:10] - logger:_log - INFO - Operation 'Database connection' started - Details: {'host': 'iteration7-gwyyqrtdecxxq4xk.env.clearscape.teradata.com', 'database': 'demo_user'}
-[2025-09-23 16:31:17] - logger:_log - INFO - Operation 'Database connection' completed
-[2025-09-23 16:31:17] - logger:_log - INFO - Loading a CSV file of path `c:\internship\Prodify-V2.0\data\original_datasets\full_train_dataset.csv`.
-[2025-09-23 16:31:17] - logger:write - ERROR - Traceback (most recent call last):
-[2025-09-23 16:31:17] - logger:write - ERROR -   File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 14, in <module>
-[2025-09-23 16:31:17] - logger:write - ERROR - main()  File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 10, in main
-[2025-09-23 16:31:17] - logger:write - ERROR - run_pipeline()  File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 6, in run_pipeline
-[2025-09-23 16:31:17] - logger:write - ERROR - pipe = EnsemblePipeline(df_train_path=FULL_TRAIN_DATASET_PATH, df_test_path=FULL_TEST_DATASET_PATH)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "c:\internship\Prodify-V2.0\src\pipelines\ensemble_pipeline.py", line 25, in __init__
-[2025-09-23 16:31:17] - logger:write - ERROR - super().__init__(  File "c:\internship\Prodify-V2.0\src\pipelines\base_pipeline.py", line 40, in __init__
-[2025-09-23 16:31:17] - logger:write - ERROR - self.df_train = self.load_dataframe(df_train_path)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "c:\internship\Prodify-V2.0\src\pipelines\ensemble_pipeline.py", line 36, in load_dataframe
-[2025-09-23 16:31:17] - logger:write - ERROR - return super().load_dataframe(csv_path)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "c:\internship\Prodify-V2.0\src\pipelines\base_pipeline.py", line 55, in load_dataframe
-[2025-09-23 16:31:17] - logger:write - ERROR - df = pd.read_csv(df_path)^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\prodify-v2\Lib\site-packages\pandas\io\parsers\readers.py", line 1026, in read_csv
-[2025-09-23 16:31:17] - logger:write - ERROR - return _read(filepath_or_buffer, kwds)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\prodify-v2\Lib\site-packages\pandas\io\parsers\readers.py", line 620, in _read
-[2025-09-23 16:31:17] - logger:write - ERROR - parser = TextFileReader(filepath_or_buffer, **kwds)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\prodify-v2\Lib\site-packages\pandas\io\parsers\readers.py", line 1620, in __init__
-[2025-09-23 16:31:17] - logger:write - ERROR - self._engine = self._make_engine(f, self.engine)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\prodify-v2\Lib\site-packages\pandas\io\parsers\readers.py", line 1880, in _make_engine
-[2025-09-23 16:31:17] - logger:write - ERROR - self.handles = get_handle(^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\prodify-v2\Lib\site-packages\pandas\io\common.py", line 873, in get_handle
-[2025-09-23 16:31:17] - logger:flush - ERROR - handle = open(^^^^^FileNotFoundError: [Errno 2] No such file or directory: 'c:\\internship\\Prodify-V2.0\\data\\original_datasets\\full_train_dataset.csv'
-[2025-09-23 16:31:17] - logger:_log - INFO - Operation 'Database disconnection' started
-[2025-09-23 16:31:18] - logger:_log - INFO - Operation 'Database disconection' completed
+[2025-09-23 17:22:47] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
+[2025-09-23 17:22:53] - logger:write - ERROR - Traceback (most recent call last):
+[2025-09-23 17:22:53] - logger:write - ERROR -   File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 1, in <module>
+[2025-09-23 17:22:53] - logger:write - ERROR - from pipelines import EnsemblePipeline  File "c:\internship\Prodify-V2.0\src\pipelines\__init__.py", line 1, in <module>
+[2025-09-23 17:22:53] - logger:write - ERROR - from pipelines.ensemble_pipeline import EnsemblePipeline  File "c:\internship\Prodify-V2.0\src\pipelines\ensemble_pipeline.py", line 8, in <module>
+[2025-09-23 17:22:53] - logger:write - ERROR - from train_models import train_tfidf_models  File "c:\internship\Prodify-V2.0\src\train_models.py", line 7, in <module>
+[2025-09-23 17:22:53] - logger:write - ERROR - from models import TfidfBaseModel, BrandsClassifier, TfidfClassifier  File "c:\internship\Prodify-V2.0\src\models\__init__.py", line 3, in <module>
+[2025-09-23 17:22:53] - logger:write - ERROR - from models.brands_classifier import BrandsClassifier  File "c:\internship\Prodify-V2.0\src\models\brands_classifier.py", line 11, in <module>
+[2025-09-23 17:22:53] - logger:flush - ERROR - from src.constants import MODEL_PATHModuleNotFoundError: No module named 'src'

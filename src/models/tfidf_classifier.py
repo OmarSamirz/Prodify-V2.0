@@ -10,7 +10,7 @@ from typing_extensions import override
 
 from constants import MODEL_PATH
 from modules.logger import logger
-from models.base_tfidf_model import TfidfBaseModel
+from models import TfidfBaseModel
 
 load_dotenv()
 

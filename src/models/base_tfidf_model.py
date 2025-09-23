@@ -2,8 +2,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 import os
 import ast
-from abc import ABC, abstractmethod
 from typing import Any
+from abc import ABC, abstractmethod
 
 
 class TfidfBaseModel(ABC):

@@ -4,9 +4,7 @@ import os
 from collections import Counter
 from typing import List, Tuple, Dict, Union, Any
 
-from models.tfidf_classifier import TfidfClassifier
-from models.brands_classifier import BrandsClassifier
-from models.embedding_classifier import EmbeddingClassifier
+from models import TfidfClassifier, BrandsClassifier, EmbeddingClassifier
 
 load_dotenv()
 
