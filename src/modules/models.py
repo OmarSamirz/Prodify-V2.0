@@ -2,128 +2,47 @@ import torch
 import joblib
 import numpy as np
 import pandas as pd
-import torch.nn as nn
 from torch import Tensor
+from tqdm.auto import tqdm
 from langid import classify
+from dotenv import load_dotenv
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.multioutput import MultiOutputClassifier
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 from transformers import MarianMTModel, MarianTokenizer
-from transformers import BitsAndBytesConfig
 
 import os
-import re
-import json
+import ast
 from collections import Counter
-from dataclasses import dataclass
+from abc import ABC, abstractmethod 
 from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union, Tuple
 
-from constants import MODEL_PATH, DTYPE_MAP, BRANDS_DATASET_PATH
+from constants import MODEL_PATH, DTYPE_MAP
 
-@dataclass
-class GpcHierarchicalClassifierConfig:
-    model_name: str
-    dtype: str
-    device: str
-    embedding_size: int
-    hidden_size: int
-    dropout: float
-    segment_num_classes: int
-    family_num_classes: int
-    class_num_classes: int
-    segments_to_families_path: str
-    families_to_classes_path: str
-
-
-class GpcHierarchicalClassifier(nn.Module):
-
-    def __init__(self, config: GpcHierarchicalClassifierConfig):
-        super().__init__()
-        self.model_name = config.model_name
-        self.device = config.device
-
-        if config.dtype in DTYPE_MAP:
-            self.dtype = DTYPE_MAP[config.dtype]
-        else:
-            raise ValueError(f"This dtype {config.dtype} is not supported.")
-        
-        with open(config.segments_to_families_path, "r") as f1, open(config.families_to_classes_path, "r") as f2:
-            self.segments_to_families = json.load(f1)
-            self.families_to_classies = json.load(f2)
-
-        self.shared_head = nn.Sequential(
-            nn.Linear(config.embedding_size, config.hidden_size),
-            nn.ReLU(),
-            nn.Dropout(config.dropout),
-            nn.Linear(config.hidden_size, config.embedding_size)
-        )
-
-        self.segment_head = nn.Linear(config.embedding_size, config.segment_num_classes, bias=False)
-
-        self.family_input_dim = config.embedding_size + config.segment_num_classes
-        self.family_head = nn.Linear(self.family_input_dim, config.family_num_classes, bias=False)
-
-        self.class_input_dim = config.embedding_size + config.segment_num_classes + config.family_num_classes
-        self.class_head = nn.Linear(self.class_input_dim, config.class_num_classes, bias=False)
-
-    def _mask_logits(self, logits, valid_indices):
-        mask = torch.full_like(logits, float("-inf"))
-        for i, indices in enumerate(valid_indices):
-            mask[i, indices] = logits[i, indices]
-
-        return mask
-
-    def forward(self, x: Tensor) -> Dict[str, Tensor]:
-        shared = self.shared_head(x)
-        
-        segment_out = self.segment_head(x)
-
-
-        family_inp = torch.cat([shared, segment_out], dim=1)
-        family_out = self.family_head(family_inp)
-        family_out = self._mask_logits(
-            segment_out, 
-            [self.segments_to_families[str(idx)] for idx in torch.argmax(segment_out, dim=1).tolist()]
-        )
-
-        class_inp = torch.cat([shared, segment_out, family_out], dim=1)
-        class_out = self.class_head(class_inp)
-        class_out = self._mask_logits(
-            segment_out, 
-            [self.families_to_classies[str(idx)] for idx in torch.argmax(family_out, dim=1).tolist()]
-        )
-
-        return {
-            "segment": segment_out,
-            "family": family_out,
-            "class": class_out,
-        }
-
-
-@dataclass
-class OpusTranslationModelConfig:
-    padding: bool
-    model_name: str
-    device: str
-    dtype: str
-    truncation: bool
-    skip_special_tokens: bool
+load_dotenv()
 
 
 class OpusTranslationModel:
 
-    def __init__(self, config: OpusTranslationModelConfig):
-        self.config = config
+    def __init__(self):
+        self.model_name = os.getenv("T_MODEL_NAME")
+        self.device = torch.device(os.getenv("T_DEVICE"))
+        self.truncation = eval(os.getenv("T_TRUNCATION"))
+        self.padding = eval(os.getenv("T_PADDING"))
+        self.skip_special_tokens = eval(os.getenv("T_SKIP_SPECIAL_TOKENS"))
+        dtype = os.getenv("T_DTYPE")
+        if dtype in DTYPE_MAP:
+            self.dtype = DTYPE_MAP[dtype]
+
         self.model = MarianMTModel.from_pretrained(
-            self.config.model_name, 
-            device_map=self.config.device, 
-            torch_dtype=self.config.dtype
+            self.model_name, 
+            device_map=self.device, 
+            torch_dtype=self.dtype
         )
-        self.tokenizer = MarianTokenizer.from_pretrained(self.config.model_name)
+        self.tokenizer = MarianTokenizer.from_pretrained(self.model_name)
         
     def translate(self, text: str) -> str:
         lang, _ = classify(text)
@@ -132,75 +51,42 @@ class OpusTranslationModel:
         
         tokens = self.tokenizer(
             text,
-            padding=self.config.padding,
-            truncation=self.config.truncation,
+            padding=self.padding,
+            truncation=self.truncation,
             return_tensors="pt"
-        ).to(self.config.device)
+        ).to(self.device)
         translated_tokens = self.model.generate(**tokens)
-        translated_text = self.tokenizer.decode(translated_tokens[0], skip_special_tokens=self.config.skip_special_tokens)
+        translated_text = self.tokenizer.decode(translated_tokens[0], skip_special_tokens=self.skip_special_tokens)
 
         return translated_text
 
 
-@dataclass
-class SentenceEmbeddingConfig:
-    device: str
-    dtype: str
-    model_id: str
-    truncate_dim: Optional[int]
-    convert_to_numpy: bool
-    convert_to_tensor: bool
-    show_progress_bar: bool = False
-    use_prompt: bool = False
-    prompt_config: Optional[Dict[str, str]] = None
-    model_kwargs: Optional[Dict[str, Any]] = None
-
-
 class SentenceEmbeddingModel:
-    
-    def __init__(self, config: SentenceEmbeddingConfig):
+
+    def __init__(self):
         super().__init__()
-        self.config = config
-        self.model_id = config.model_id
-        self.device = config.device
-        self.truncate_dim = config.truncate_dim
-        self.show_progrees_bar = config.show_progress_bar
-        if config.dtype in DTYPE_MAP:
-            self.dtype = DTYPE_MAP[config.dtype]
+        self.model_id = os.getenv("E_MODEL_NAME")
+        self.device = torch.device(os.getenv("E_DEVICE"))
+        self.show_progrees_bar = eval(os.getenv("E_SHOW_PROGRESS_BAR"))
+        self.convert_to_numpy = eval(os.getenv("E_CONVERT_TO_NUMPY"))
+        self.convert_to_tensor = eval(os.getenv("E_CONVERT_TO_TENSOR"))
+        dtype = os.getenv("E_DTYPE")
+        if dtype in DTYPE_MAP:
+            self.dtype = DTYPE_MAP[dtype]
         else:
-            raise ValueError(f"This dtype {config.dtype} is not supported.")
-
-        model_kwargs = config.model_kwargs or {}
-
-        if "quantization_config" in model_kwargs:
-            quant_config = model_kwargs["quantization_config"]
-            model_kwargs["quantization_config"] = BitsAndBytesConfig(
-                load_in_4bit=quant_config.get("load_in_4bit", True),
-                bnb_4bit_compute_dtype=getattr(torch, quant_config.get("bnb_4bit_compute_dtype", "float16")),
-                bnb_4bit_quant_type=quant_config.get("bnb_4bit_quant_type", "nf4"),
-                bnb_4bit_use_double_quant=quant_config.get("bnb_4bit_use_double_quant", True)
-            )
-
-        if "torch_dtype" in model_kwargs:
-            model_kwargs["torch_dtype"] = getattr(torch, model_kwargs["torch_dtype"])
+            raise ValueError(f"This dtype {dtype} is not supported.")
 
         self.model = SentenceTransformer(
             self.model_id,
             device=self.device,
-            truncate_dim=self.truncate_dim,
-            model_kwargs=model_kwargs
         )
 
     def get_embeddings(self, texts: List[str], prompt_name: Optional[str] = None) -> Tensor:
-        if self.config.use_prompt and prompt_name and self.config.prompt_config:
-            if prompt_name in self.config.prompt_config:
-                prompt_template = self.config.prompt_config[prompt_name]
-                texts = [prompt_template.format(text=t) for t in texts]
-
         embeddings = self.model.encode(
             texts,
-            convert_to_numpy=self.config.convert_to_numpy,
-            convert_to_tensor=self.config.convert_to_tensor,
+            prompt_name=prompt_name,
+            convert_to_numpy=self.convert_to_numpy,
+            convert_to_tensor=self.convert_to_tensor,
             show_progress_bar=self.show_progrees_bar,
         )
         return embeddings
@@ -214,19 +100,12 @@ class SentenceEmbeddingModel:
         return self.calculate_scores(query_embeddings, document_embeddings)
 
 
-@dataclass
-class EmbeddingClassifierConfig:
-    embed_model_config: SentenceEmbeddingConfig
-    topk: int
-    gpc_csv_path: str
-
-
 class EmbeddingClassifier:
 
-    def __init__(self, config: EmbeddingClassifierConfig):
-        self.embed_model = SentenceEmbeddingModel(config.embed_model_config)
-        self.topk = config.topk
-        self.df_gpc = pd.read_csv(config.gpc_csv_path)
+    def __init__(self):
+        self.embed_model = SentenceEmbeddingModel()
+        self.topk = int(os.getenv("EC_TOP_K"))
+        self.df_gpc = pd.read_csv(os.getenv("GPC_CSV_PATH"))
 
     def classify(self, product_name: Union[str, List[str]], labels: List[str], is_max: bool = True) -> Union[str, List[str]]:
         if len(labels) == 1:
@@ -239,226 +118,80 @@ class EmbeddingClassifier:
 
         return labels[idx]
 
-    def classify_topk(self, product_name: Union[str, List[str]], labels: List[str]) -> Union[List[str], List[List[str]]]:
-        if len(labels) == 1:
-            return labels
-
-        scores = self.embed_model.get_scores(product_name, labels)
-        k = min(self.topk, scores.size(1))
-        _, topk_indices = torch.topk(scores, dim=1, k=k)
-        topk_indices = topk_indices.squeeze(0)
-        if isinstance(product_name, List):
-            return [labels[i][j] for i in topk_indices[0] for j in topk_indices[1]]
-
-        topk_labels = [labels[i] for i in topk_indices]
-
-        return topk_labels
-    
     def get_gpc(
-        self, 
-        product_name: str, 
-        labels: Optional[List[str]] = None, 
-        level: str = "segment", 
-        is_topk: bool = False
-    ) -> List[str]:
-        pred_labels = []
-        if level == "segment":
-            if labels is None:
-                labels = self.df_gpc["SegmentTitle"].drop_duplicates().tolist()
+        self,
+        products_name: Union[str, List[str]],
+        labels: Optional[List[str]] = None,
+    ) -> Tuple[List[str], List[str], List[str]]:
+        pred_segments, pred_families, pred_classes = [], [], []
+        if isinstance(products_name, str):
+            products_name = [products_name]
 
-            seg_label = self.classify(product_name, labels)
-            candidates = self.df_gpc[self.df_gpc["SegmentTitle"] == seg_label]["FamilyTitle"].drop_duplicates().tolist()
-            pred_labels.append(seg_label)
-            pred_labels.extend(self.get_gpc(product_name, candidates, "family"))
+        if labels is None:
+            labels = self.df_gpc["SegmentTitle"].drop_duplicates().tolist()
 
-        elif level == "family":
-            fam_label = self.classify(product_name, labels)
-            candidates = self.df_gpc[self.df_gpc["FamilyTitle"] == fam_label]["ClassTitle"].drop_duplicates().tolist()
-            pred_labels.append(fam_label)
-            pred_labels.extend(self.get_gpc(product_name, candidates, "class"))
+        pred_segments = self.classify(products_name, labels)
+        for prod, seg in tqdm(zip(products_name, pred_segments), total=len(products_name)):
+            fam_candidates = self.df_gpc[self.df_gpc["SegmentTitle"]==seg]["FamilyTitle"].drop_duplicates().tolist()
+            pred_families.append(self.classify(prod, fam_candidates))
 
-        elif level == "class":
-            cls_label = self.classify(product_name, labels)
-            candidates = self.df_gpc[self.df_gpc["ClassTitle"] == cls_label]["BrickTitle"].drop_duplicates().tolist()
-            pred_labels.append(cls_label)
-            # pred_labels.extend(self.get_gpc(product_name, candidates, "brick"))
+        for prod, fam in tqdm(zip(products_name, pred_families), total=len(products_name)):
+            cls_candidates = self.df_gpc[self.df_gpc["FamilyTitle"]==fam]["ClassTitle"].drop_duplicates().tolist()
+            pred_classes.append(self.classify(prod, cls_candidates))
 
-        elif level == "brick":
-            brk_label = self.classify_topk(product_name, labels) if is_topk else self.classify(product_name, labels)
-            pred_labels.extend(brk_label) if is_topk else pred_labels.append(brk_label)
-
-        else:
-            raise ValueError(f"Level `{level}` is not supported.")
-
-        return pred_labels
-    
-    def predict_brick_by_exclusion(
-        self, 
-        product_name: str, 
-        candidate_bricks: List[str],
-        exclusion_column: str = "BrickDefinition_Excludes"
-    ) -> str:
-        
-        candidate_df = self.df_gpc[
-            self.df_gpc["BrickTitle"].isin(candidate_bricks)
-        ].copy()
-       
-        null_exclusions = candidate_df[
-            candidate_df[exclusion_column].isnull() | 
-            (candidate_df[exclusion_column].astype(str).str.strip() == "")
-        ]
-
-        if not null_exclusions.empty:
-            return null_exclusions.iloc[0]["BrickTitle"]
-        
-        exclusion_texts = candidate_df[exclusion_column].tolist()
-
-        least_excluison = self.classify(product_name, exclusion_texts, False)
-        top_brick = candidate_df[candidate_df[exclusion_column]==least_excluison]["BrickTitle"].values.item()
-
-        # inclusion_texts = candidate_df["BrickDefinition_Includes"].tolist()
-        # concatenated_texts = [e + " " + i for e, i in zip(exclusion_texts, inclusion_texts)]
-        # least_excluison = self.classify(product_name, concatenated_texts)
-
-        # candidate_df["concat_text"] = (
-        #     candidate_df[exclusion_column] + " " + candidate_df["BrickDefinition_Includes"]
-        # )
-
-        # top_brick = candidate_df.loc[candidate_df["concat_text"] == least_excluison, "BrickTitle"].iloc[0]
-        
-        return top_brick
+        return pred_segments, pred_families, pred_classes
 
 
-@dataclass
-class BrandEmbeddingClassifierConfig:
-    embed_classifer_config: EmbeddingClassifierConfig
-    brand_json_path: str
+class TfidfBaseModel(ABC):
 
-
-class BrandEmbeddingClassifier(EmbeddingClassifier):
-
-    def __init__(self, config: BrandEmbeddingClassifierConfig):
-        super().__init__(config.embed_classifer_config)
-        with open(config.brand_json_path, "r") as f:
-            self.brand_dataset = json.load(f)
-
-        self.brand_names = list(self.brand_dataset.keys())
-        brand_names_lower = [name.lower() for name in self.brand_names]
-
-        self.token_to_brand = {}
-        for idx, brand_name in enumerate(brand_names_lower):
-            for token in brand_name.split():
-                self.token_to_brand.setdefault(token, []).append(self.brand_names[idx])
-
-    def get_brand_data(self, product_name: str) -> List[Dict[str, Any]]:
-        tokens = product_name.lower().split()
-
-        for token in tokens:
-            if token in self.token_to_brand:
-                brand = self.token_to_brand[token][0]
-                # print(f"The brand is {brand}")
-                return self.brand_dataset[brand]
-
-        return []
-    
-    @override
-    def get_gpc(
-        self, 
-        product_name: str, 
-        labels: Optional[List[str]] = None, 
-        level: str = "segment", 
-        is_topk: bool = False
-    ) -> List[str]:
-        pred_labels = []
-        brand_data = self.get_brand_data(product_name)
-        if not brand_data:
-            return []
-
-        if level == "segment":
-            segments = [entry["Segment"] for entry in brand_data]
-            seg_label = self.classify(product_name, segments)
-            pred_labels.append(seg_label)
-            families = [entry["Family"] for entry in brand_data if entry["Segment"] == seg_label]
-            if families:
-                pred_labels.extend(self.get_gpc(product_name, families, level="family", is_topk=is_topk))
-
-        elif level == "family":
-            fam_label = self.classify(product_name, labels)
-            pred_labels.append(fam_label)
-            classes = []
-            for entry in brand_data:
-                if entry["Family"] == fam_label:
-                    classes.extend(entry["Class"])
-            if classes:
-                pred_labels.extend(self.get_gpc(product_name, classes, level="class", is_topk=is_topk))
-
-        elif level == "class":
-            cls_label = self.classify(product_name, labels)
-            pred_labels.append(cls_label)
-            bricks = []
-            for entry in brand_data:
-                if cls_label in entry["Class"]:
-                    bricks.extend(entry["Brick"])
-            # if bricks:
-                # pred_labels.extend(self.get_gpc(product_name, bricks, level="brick", is_topk=is_topk))
-
-        elif level == "brick":
-            if not labels:
-                return pred_labels
-            if is_topk:
-                brk_labels = self.classify_topk(product_name, labels)
-                pred_labels.extend(brk_labels)
-            else:
-                brk_label = self.classify(product_name, labels)
-                pred_labels.append(brk_label)
-
-        else:
-            raise ValueError(f"Level `{level}` is not supported.")
-
-        return pred_labels
-
-
-@dataclass
-class TfidfClassifierConfig:
-    model_name: str
-    analyzer: str
-    ngram_range: tuple
-    min_df: int
-    max_df: float
-    lowercase: bool
-    sublinear_tf: bool
-    smooth_idf: bool
-    norm: str
-    strip_accents: str
-    stop_words: set
-    C: float
-    class_weight: str
-
-
-class TfidfClassifier:
-
-    def __init__(self, config: Optional[TfidfClassifierConfig]):
-        self.model_name = config.model_name
+    def __init__(self):
+        super().__init__()
         self.vectorizer = TfidfVectorizer(
-            analyzer=config.analyzer,
-            ngram_range=config.ngram_range,
-            min_df=config.min_df,
-            max_df=config.max_df,
-            lowercase=config.lowercase,
-            sublinear_tf=config.sublinear_tf,
-            smooth_idf=config.smooth_idf,
-            norm=config.norm,
-            strip_accents=config.strip_accents,
-            stop_words=config.stop_words,
-            token_pattern=None if config.analyzer in ("char", "char_wb") else r'(?u)\b\w+\b',
+            analyzer=os.getenv("TB_ANALYZER"),
+            ngram_range=ast.literal_eval(os.getenv("TB_NGRAM_RANGE")),
+            min_df=int(os.getenv("TB_MIN_DF")),
+            max_df=float(os.getenv("TB_MAX_DF")),
+            lowercase=eval(os.getenv("TB_LOWERCASE")),
+            sublinear_tf=eval(os.getenv("TB_SUBLINEAR_TF")),
+            smooth_idf=eval(os.getenv("TB_SMOOTH_IDF")),
+            norm=os.getenv("TB_NORM"),
+            strip_accents=os.getenv("TC_STRIP_ACCENTS", None),
+            stop_words=os.getenv("TC_STOP_WORDS", None),
+            token_pattern=None if os.getenv("TB_ANALYZER") in ("char", "char_wb") else r'(?u)\b\w+\b',
         )
+
+    @abstractmethod
+    def fit(self, X_train, y_train) -> None:
+        ...
+
+    @abstractmethod
+    def predict(self, *args, **kwargs) -> Any:
+        ...
+
+    @abstractmethod
+    def save(self) -> None:
+        ...
+
+    @abstractmethod
+    def load(self) -> None:
+        ...
+    
+
+class TfidfClassifier(TfidfBaseModel):
+
+    def __init__(self):
+        super().__init__()
+        self.model_name = os.getenv("TC_MODEL_NAME")
+        df_gpc = pd.read_csv(os.getenv("GPC_CSV_PATH"))
+        self.df_gpc = df_gpc.groupby('ClassTitle')[['SegmentTitle', 'FamilyTitle']].first().reset_index()
         self.svm = LinearSVC(
-            C=config.C,
-            class_weight=config.class_weight
+            C=float(os.getenv("TC_C")),
+            class_weight=os.getenv("TC_CLASS_WEIGHT")
         )
 
         self.clf = None
 
+    @override
     def fit(self, X_train, y_train) -> None:
         self.clf = Pipeline(
             [
@@ -468,9 +201,21 @@ class TfidfClassifier:
         )
         self.clf.fit(X_train, y_train)
 
-    def predict(self, x):
-        return self.clf.predict(x)
+    @override
+    def predict(self, x: Union[str, List[str]]) -> List[str]:
+        if isinstance(x, str):
+            x = [x]
 
+        cls = self.clf.predict(x).tolist()
+        df_preds = pd.DataFrame({"ClassTitle": cls})
+        df_merged = pd.merge(df_preds, self.df_gpc, on="ClassTitle", how="left")
+        seg = df_merged["SegmentTitle"].tolist()
+        fam = df_merged["FamilyTitle"].tolist()
+
+
+        return [seg, fam, cls]
+
+    @override
     def save(self) -> None:
         if self.clf is None:
             raise ValueError("You need to fit the model first.")
@@ -480,6 +225,7 @@ class TfidfClassifier:
         model_path = MODEL_PATH / self.model_name
         joblib.dump(self.clf, model_path)
 
+    @override
     def load(self) -> None:
         if self.clf is not None:
             return
@@ -488,56 +234,52 @@ class TfidfClassifier:
         self.clf = joblib.load(model_path)
 
 
-@dataclass
-class TfidfSimilarityConfig:
-    model_name: str
-    analyzer: str
-    ngram_range: tuple
-    min_df: int
-    max_df: float
-    lowercase: bool
-    sublinear_tf: bool
-    smooth_idf: bool
-    norm: str
-    strip_accents: str
-    stop_words: set
-    topk: int
+class TfidfSimilarityModel(TfidfBaseModel):
 
+    def __init__(self):
+        super().__init__()
+        self.model_name = os.getenv("TS_MODEL_NAME")
+        try:
+            self.df_brands = pd.read_csv(os.getenv("TS_BRANDS_CSV_PATH"))
+            self.df_brands["documents"] = self.df_brands["Sector"] + " " + self.df_brands["Brand"] + " " + self.df_brands["Product"]
+            self.documents = self.df_brands["documents"].tolist()
+        except:
+            self.documents = None
 
-class TfidfSimilarityModel:
+    @override
+    def fit(self, documents: Optional[List[str]] = None) -> None:
+        if documents is not None:
+            self.documents = documents
 
-    def __init__(self, config: Optional[TfidfSimilarityConfig]):
-        self.topk = config.topk
-        self.model_name = config.model_name
-        self.vectorizer = TfidfVectorizer(
-            analyzer=config.analyzer,
-            ngram_range=config.ngram_range,
-            min_df=config.min_df,
-            max_df=config.max_df,
-            lowercase=config.lowercase,
-            sublinear_tf=config.sublinear_tf,
-            smooth_idf=config.smooth_idf,
-            norm=config.norm,
-            strip_accents=config.strip_accents,
-            stop_words=config.stop_words,
-            token_pattern=None if config.analyzer in ("char", "char_wb") else r'(?u)\b\w+\b',
-        )
+        self.vectorizer.fit(self.documents)
 
-    def fit(self, documents) -> None:
-        self.vectorizer.fit(documents)
+    def get_vector(self, text: Union[str, List[str]]) -> np.ndarray:
+        if isinstance(text, str):
+            text = [text]
 
-    def find_similarity(self, query: str, documents: List[str]) -> List[str]:
+        return self.vectorizer.transform(text)
+
+    def get_similarity(self, query_vector: np.ndarray, documents_vectors: np.ndarray) -> np.ndarray:
+        return cosine_similarity(query_vector, documents_vectors)
+
+    @override
+    def predict(self, query: Union[str, List[str]]) -> List[str]:
         if isinstance(query, str):
             query = [query]
 
-        tfidf_1 = self.vectorizer.transform(query)
-        tfidf_2 = self.vectorizer.transform(documents)
+        query_vector = self.get_vector(query)
+        documents_vectors = self.get_vector(self.documents)
 
-        similarities = cosine_similarity(tfidf_1, tfidf_2).flatten()
-        top_indices = np.argsort(similarities)[-self.topk:][::-1]
+        similarities = self.get_similarity(query_vector, documents_vectors)
+        indices = np.argmax(similarities, axis=1)
+        products = self.df_brands.iloc[indices]
+        seg = products["Segment"].tolist()
+        fam = products["Family"].tolist()
+        cls = products["Class"].tolist()
 
-        return top_indices.tolist()
+        return [seg, fam, cls]
 
+    @override
     def save(self) -> None:
         if not os.path.exists(MODEL_PATH):
             os.makedirs(MODEL_PATH, exist_ok=True)
@@ -545,6 +287,7 @@ class TfidfSimilarityModel:
         model_path = MODEL_PATH / self.model_name
         joblib.dump(self.vectorizer, model_path)
 
+    @override
     def load(self) -> None:
         if not os.path.exists(MODEL_PATH / self.model_name):
             raise ValueError("You need to fit the model first.")
@@ -553,97 +296,29 @@ class TfidfSimilarityModel:
         self.vectorizer = joblib.load(model_path)
 
 
-@dataclass
-class EmbeddingSvmConfig:
-    embedding_config: SentenceEmbeddingConfig
-    model_name: str
-    C: float
-    class_weight: str
-
-
-class EmbeddingSvmModel:
-
-    def __init__(self, config: EmbeddingSvmConfig) -> None:
-        self.model_name = config.model_name
-        self.embedding_model = SentenceEmbeddingModel(config.embedding_config)
-        self.svm = LinearSVC(C=config.C, class_weight=config.class_weight)
-        self.clf = None
-
-    def fit(self, X_train, y_train):
-        embeddings = self.embedding_model.get_embeddings(X_train)
-        self.clf = MultiOutputClassifier(self.svm)
-        self.clf.fit(embeddings, y_train)
-
-    def predict(self, x):
-        if self.clf is None:
-            raise ValueError("You need to fit the model first.")
-
-        embeddings = self.embedding_model.get_embeddings(x)
-        if embeddings.ndim == 1:
-            embeddings = embeddings.reshape(1, -1)
-
-        return self.clf.predict(embeddings)
-
-    def save(self) -> None:
-        if not os.path.exists(MODEL_PATH):
-            os.makedirs(MODEL_PATH, exist_ok=True)
-
-        model_path = MODEL_PATH / self.model_name
-        joblib.dump(self.clf, model_path)
-
-    def load(self) -> None:
-        if self.clf is None:
-            raise ValueError("You need to fit the model first.")
-        
-        model_path = MODEL_PATH / self.model_name
-        self.clf = joblib.load(model_path)
-
-@dataclass
-class EnsembleConfig:
-    embedding_classifier_config: EmbeddingClassifierConfig
-    brand_tfidf_similiraity_config: TfidfSimilarityConfig
-    tfidf_classifier_config: TfidfClassifierConfig
-    num_models: int
-
 class EnsembleModel:
 
-    def __init__(self, config: EnsembleConfig):
-        self.brand_tfidf_similiraity = TfidfSimilarityModel(config.brand_tfidf_similiraity_config)
-        self.embed_clf = EmbeddingClassifier(config.embedding_classifier_config)
-        self.tfidf_clf = TfidfClassifier(config.tfidf_classifier_config)
+    def __init__(self):
+        self.brand_tfidf_similiraity = TfidfSimilarityModel()
+        self.embed_clf = EmbeddingClassifier()
+        self.tfidf_clf = TfidfClassifier()
         self.tfidf_clf.load()
         self.brand_tfidf_similiraity.load()
-        self.num_models = config.num_models
-        self.df_brands = pd.read_csv(BRANDS_DATASET_PATH)
-        self.df_brands["documents"] = self.df_brands["Sector"] + " " + self.df_brands["Brand"] + " " + self.df_brands["Product"]
+        self.num_models = int(os.getenv("EM_NUM_MODELS"))
         self.df_gpc = self.embed_clf.df_gpc
 
     def extract_labels(self, cls_label: str) -> Tuple[str, str]:
-        seg, fam, cls = None, None, None
         classes = self.df_gpc["ClassTitle"].unique().tolist()
         if cls_label in classes:
             seg = self.df_gpc[self.df_gpc["ClassTitle"]==cls_label]["SegmentTitle"].tolist()[0]
             fam = self.df_gpc[self.df_gpc["ClassTitle"]==cls_label]["FamilyTitle"].tolist()[0]
-        else:
-            seg = self.df_gpc[self.df_gpc["BrickTitle"]==cls_label]["SegmentTitle"].tolist()[0]
-            fam = self.df_gpc[self.df_gpc["BrickTitle"]==cls_label]["FamilyTitle"].tolist()[0]
-            cls = self.df_gpc[self.df_gpc["BrickTitle"]==cls_label]["ClassTitle"].tolist()[0]
 
-        return seg, fam, cls
+        return seg, fam
 
     def predict(self, product_name: str) -> Dict[str, Any]:
+        brand_tfidf_similiraity_pred = self.brand_tfidf_similiraity.predict(product_name)
+        tfidf_clf_pred = self.tfidf_clf.predict(product_name)
         embed_clf_pred = self.embed_clf.get_gpc(product_name)
-        brand_tfidf_similiraity_indicies = self.brand_tfidf_similiraity.find_similarity(product_name, self.df_brands["documents"].tolist())
-        brand_tfidf_similiraity_pred = self.df_brands.iloc[brand_tfidf_similiraity_indicies[0]]
-        tfidf_clf_pred_class = self.tfidf_clf.predict([product_name])
-
-        if isinstance(tfidf_clf_pred_class, (List, np.ndarray)):
-            tfidf_clf_pred_class = str(tfidf_clf_pred_class[0])
-
-        tfidf_clf_pred_segment, tfidf_clf_pred_family, cls = self.extract_labels(tfidf_clf_pred_class)
-        if cls is not None:
-            tfidf_clf_pred_class = cls
-        tfidf_clf_pred = [tfidf_clf_pred_segment, tfidf_clf_pred_family, tfidf_clf_pred_class]
 
         return {
             "embed_clf": embed_clf_pred,
@@ -653,34 +328,38 @@ class EnsembleModel:
 
     def vote(self, predictions: Dict[str, Any]) -> Dict[str, Any]:
         pred_classes = []
-        pred_classes.append(predictions["embed_clf"][2])
-        pred_classes.append(predictions["brand_tfidf_sim"]["Class"])
-        tfidf_pred = predictions["tfidf_clf"][2]
-        pred_classes.append(tfidf_pred)
-
-        cls_counter = Counter(pred_classes)
-        voted_cls, cls_count = cls_counter.most_common(1)[0]
-
-        if cls_count < 2:
-            voted_cls = predictions["tfidf_clf"][2]
-
-        voted_seg, voted_fam, cls = self.extract_labels(voted_cls)
-        if cls is not None:
-            voted_cls = cls
-
-        return {
-            "voted_segment": voted_seg,
-            "voted_family": voted_fam,
-            "voted_class": voted_cls,
-            "confidence": cls_count / self.num_models,
-            "embed_clf_pred": predictions["embed_clf"],
-            "brand_tfidf_sim_pred": [
-                predictions["brand_tfidf_sim"]["Segment"],
-                predictions["brand_tfidf_sim"]["Family"],
-                predictions["brand_tfidf_sim"]["Class"]
-            ],
-            "tfidf_clf_pred": predictions["tfidf_clf"]
+        results = {
+            "voted_segments": [],
+            "voted_families": [],
+            "voted_classes": [],
+            "confidences": [],
         }
+        pred_classes.append(predictions["embed_clf"][2])
+        pred_classes.append(predictions["brand_tfidf_sim"][2])
+        pred_classes.append(predictions["tfidf_clf"][2])
+
+        for i in range(len(pred_classes[0])):
+            classes = []
+            classes.append(pred_classes[0][i])
+            classes.append(pred_classes[1][i])
+            classes.append(pred_classes[2][i])
+
+            cls_counter = Counter(classes)
+            voted_cls, cls_count = cls_counter.most_common(1)[0]
+            if cls_count < 2:
+                voted_cls = pred_classes[2][i]
+
+            voted_seg, voted_fam = self.extract_labels(voted_cls)
+            results["voted_segments"].extend(voted_seg)
+            results["voted_families"].extend(voted_fam)
+            results["voted_classes"].extend(voted_cls)
+            results["confidences"].extend(cls_count / self.num_models)
+
+        results["embed_clf_preds"] = predictions["embed_clf"]
+        results["brand_tfidf_sim_preds"] = predictions["brand_tfidf_sim"]
+        results["tfidf_clf_preds"] = predictions["tfidf_clf"]
+
+        return results
 
     def run_ensemble(self, invoice_item: str) -> Dict[str, Any]:
         preds = self.predict(invoice_item)
