@@ -1,2 +1,2 @@
 from pipelines.amurd_pipeline import AmurdPipeline
-from pipelines.gpc_pipeline import GpcPipeline
+from pipelines.prodify_pipeline import ProdifyPipeline

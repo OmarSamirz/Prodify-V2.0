@@ -23,17 +23,11 @@ class AmurdPipeline(Pipeline):
         df_train_path: str,
         df_val_path: Optional[str] = None,
         df_test_path: Optional[str] = None,
-        embedding_model_config_path: Optional[str] = None,
-        translation_model_config_path: Optional[str] = None,
-        tfidf_classifier_config_path: Optional[str] = None,
     ) -> None:
         super().__init__(
             df_train_path, 
             df_val_path, 
             df_test_path,
-            embedding_model_config_path,
-            translation_model_config_path,
-            tfidf_classifier_config_path
         )
 
     @override
@@ -132,16 +126,16 @@ class AmurdPipeline(Pipeline):
         super().update_table_columns(target_table, source_table, target_col, source_col, target_condition_col, source_condition_col)
 
     @override
-    def load_embedding_model(self) -> None:
-        super().load_embedding_model()
+    def load_embedding_classifier(self) -> None:
+        super().load_embedding_classifier()
 
     @override
     def load_translation_model(self) -> None:
         super().load_translation_model()
 
     @override
-    def load_tfidf_model(self) -> None:
-        super().load_tfidf_model()
+    def load_tfidf_classifier(self) -> None:
+        super().load_tfidf_classifier()
 
     @override
     def translate_data(self, table_name: str, translated_col: str, new_col_name: str) -> None:
@@ -150,6 +144,10 @@ class AmurdPipeline(Pipeline):
     @override
     def create_embeddings(self, table_name: str, embedding_col: str,new_table_name: str,embeddings_name: str = "embed_") -> None:
         super().create_embeddings(table_name, embedding_col, new_table_name, embeddings_name)
+
+    @override
+    def run_inference(self, products_name: Union[str, List[str]]) -> Dict[str, Any]:
+        return super().run_inference(products_name)
 
     def delete_rows_not_in_source(
         self,
@@ -210,14 +208,14 @@ class AmurdPipeline(Pipeline):
         embedding_table_2: str,
         embeddings_name: str = "embed_",
     ) -> None:
-        if self.embedding_model is None:
+        if self.embedding_classifier is None:
             logger.info("Loading the embedding model")
             self.load_embedding_model()
 
         logger.info(f"Creating a new table `{similarity_table_name}` with columns `{similarity_table_cols_name}` on database `{self.td_db.database}`.")
         self.execute_query(create_table_query(similarity_table_name, similarity_table_cols_name, similarity_table_cols_type))
 
-        embed_dim = self.embedding_model.model.get_sentence_embedding_dimension()
+        embed_dim = self.embedding_classifier.model.get_sentence_embedding_dimension()
         vector_cols = ", ".join([f"{embeddings_name}{i}" for i in range(embed_dim)])
         vector_cols_quoted = ", ".join([f"'{embeddings_name}{i}'" for i in range(embed_dim)])
 

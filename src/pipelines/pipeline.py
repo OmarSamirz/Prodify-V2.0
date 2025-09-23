@@ -5,6 +5,8 @@ from teradataml import *
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, List, Any, Union
 
+from modules.models import TfidfClassifier, OpusTranslationModel, EmbeddingClassifier
+from utils import unicode_clean
 from modules.logger import logger
 from modules.db import TeradataDatabase
 from queries import (
@@ -21,12 +23,6 @@ from queries import (
     renumber_ids_new_table_query,
     update_table_columns_query
 )
-from utils import (
-    load_embedding_model,
-    load_translation_model,
-    load_tfidf_model,
-    unicode_clean,
-)
 
 
 class Pipeline(ABC):
@@ -36,9 +32,6 @@ class Pipeline(ABC):
         df_train_path: str,
         df_val_path: Optional[str] = None,
         df_test_path: Optional[str] = None,
-        embedding_model_config_path: Optional[str] = None,
-        translation_model_config_path: Optional[str] = None,
-        tfidf_classifier_config_path: Optional[str] = None,
     ) -> None:
         super().__init__()
         self.td_db = TeradataDatabase()
@@ -48,12 +41,9 @@ class Pipeline(ABC):
         self.df_val = None if df_val_path is None else self.load_dataframe(df_val_path)
         self.df_test = None if df_test_path is None else self.load_dataframe(df_test_path)
 
-        self.embedding_model = None
+        self.embedding_classifier = None
         self.translation_model = None
         self.tfidf_classifier = None
-        self.embedding_model_config_path = embedding_model_config_path
-        self.translation_model_config_path = translation_model_config_path
-        self.tfidf_classifier_config_path = tfidf_classifier_config_path
 
     def __del__(self) -> None:
         self.td_db.disconnect()
@@ -270,39 +260,33 @@ class Pipeline(ABC):
         )
 
     @abstractmethod
-    def load_embedding_model(self) -> None:
-        if self.embedding_model is not None:
+    def load_embedding_classifier(self) -> None:
+        if self.embedding_classifier is not None:
             logger.info("The embedding model is loaded.")
             return
-        if self.embedding_model_config_path is None:
-            raise ValueError(f"You need to set a value for `embedding_model_config_path` to use this function.")
 
         logger.info("Loading embedding model.")
-        self.embedding_model = load_embedding_model(self.embedding_model_config_path)
+        self.embedding_classifier = EmbeddingClassifier()
         logger.info("Loading embeddings model is done.")
 
     @abstractmethod
     def load_translation_model(self) -> None:
         if self.translation_model is not None:
             logger.info("The translation model is loaded.")
-            return 
-        if self.translation_model_config_path is None:
-            raise ValueError(f"You need to set a value for `translation_model_config_path` to use this function.")
+            return
 
         logger.info("Loading translation model.")
-        self.translation_model = load_translation_model(self.translation_model_config_path)
+        self.translation_model = OpusTranslationModel()
         logger.info("Loading translation model is done.")
 
     @abstractmethod
-    def load_tfidf_model(self) -> None:
+    def load_tfidf_classifier(self) -> None:
         if self.tfidf_classifier is not None:
             logger.info("The tfidf classifier model is loaded.")
             return
-        if self.tfidf_classifier_config_path is None:
-            raise ValueError(f"You need to set a value for `tfidf_classifier_config_path` to use this function.")
         
         logger.info("Loading tfidf classifier model.")
-        self.tfidf_classifier = load_tfidf_model(self.tfidf_classifier_config_path)
+        self.tfidf_classifier = TfidfClassifier()
         logger.info("Loading tfidf classifier model is done.")
 
     @abstractmethod
@@ -318,13 +302,13 @@ class Pipeline(ABC):
 
     @abstractmethod
     def create_embeddings(self, table_name: str, embedding_col: str, new_table_name: str, embeddings_name: str = "embed_") -> None:
-        self.load_embedding_model()
+        self.load_embedding_classifier()
 
         df = self.get_table(table_name)
 
         logger.info(f"Starting to convert column `{embedding_col}` of table `{table_name}` to embeddings.")
         queries = df[embedding_col].tolist()
-        embeddings = self.embedding_model.get_embeddings(queries)
+        embeddings = self.embedding_classifier.get_embeddings(queries)
         embeddings = embeddings.tolist()
         logger.info("Converting to embeddings completed.")
 
@@ -336,6 +320,10 @@ class Pipeline(ABC):
     def process_dataframe(self, dataframe: pd.DataFrame, df_type: str) -> pd.DataFrame:
         ...
 
+    @abstractmethod
+    def run_inference(self, products_name: Union[str, List[str]]) -> Dict[str, Any]:
+        ...
+        
     @abstractmethod
     def run_pipeline(self) -> None:
         ...

@@ -4,9 +4,9 @@ from sklearn.metrics import accuracy_score
 from typing import Optional
 
 from modules.logger import logger
-from modules.models import TfidfBaseModel, TfidfSimilarityModel, TfidfClassifier
+from modules.models import TfidfBaseModel, BrandsClassifier, TfidfClassifier
 
-def train_base_tfidf_models(
+def train_tfidf_models(
     tfidf_model: TfidfBaseModel, 
     train_dataset_path: str,
     test_dataset_path: Optional[str] = None
@@ -18,7 +18,7 @@ def train_base_tfidf_models(
     y_train = df_train["class"].tolist()
 
     logger.info("Training the model")
-    if isinstance(tfidf_model, TfidfSimilarityModel):
+    if isinstance(tfidf_model, BrandsClassifier):
         tfidf_model.fit()
     elif isinstance(tfidf_model, TfidfClassifier):
         tfidf_model.fit(X_train, y_train)

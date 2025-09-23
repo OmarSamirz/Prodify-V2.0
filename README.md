@@ -62,7 +62,7 @@ The ensemble combines predictions from all three models through a voting mechani
 
 1. Create a new Conda environment:
    ```bash
-   conda create -n iteration8 python=3.12
+   conda create -n prodify python=3.12
    ```
 
 2. Install pip and project dependencies:

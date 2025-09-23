@@ -1,0 +1,196 @@
+import pandas as pd
+
+from typing_extensions import override
+from typing import Optional, Dict, List, Any, Union
+
+from modules.logger import logger
+from pipelines.pipeline import Pipeline
+from modules.models import EnsembleModel, BrandsClassifier
+from train_models import train_tfidf_models
+
+class ProdifyPipeline(Pipeline):
+
+    def __init__(
+        self,
+        df_train_path: str,
+        df_val_path: Optional[str] = None,
+        df_test_path: Optional[str] = None,
+    ) -> None:
+        super().__init__(
+            df_train_path,
+            df_val_path,
+            df_test_path,
+        )
+        self.brands_classifier = None
+        self.ensemble_model = None
+
+    @override
+    def load_dataframe(self, csv_path: str) -> pd.DataFrame:
+        return super().load_dataframe(csv_path)
+
+    @override
+    def rename_columns(self, dataframe: pd.DataFrame, renamed_columns: Dict[str, str]) -> pd.DataFrame:
+        return super().rename_columns(dataframe, renamed_columns)
+
+    @override
+    def apply_unicode_cleaning(self, dataframe: pd.DataFrame, col: str) -> pd.DataFrame:
+        return super().apply_unicode_cleaning(dataframe, col)
+    
+    @override
+    def combine_db_table_names(self, table_name: str) -> str:
+        return super().combine_db_table_names(table_name)
+
+    @override
+    def execute_query(self, query: str) -> List[Dict[str, Any]]:
+        return super().execute_query(query)
+
+    @override
+    def drop_column(self, table_name: str, cols: Union[str, List[str]]) -> None:
+        super().drop_column(table_name, cols)
+
+    @override
+    def dropna(self, table_name: str, cols: Union[str, List[str]]) -> None:
+        super().dropna(table_name, cols)
+
+    @override
+    def drop_duplicates(self, table_name: str, cols: Union[str, List[str]], id_name: str = "id") -> None:
+        super().drop_duplicates(table_name, cols, id_name)
+
+    @override
+    def update_id(self, table_name: str, id_name: str, order_by_col: str, selected_cols: Optional[Union[str, List[str]]] = None) -> None:
+        super().update_id(table_name, id_name, order_by_col, selected_cols)
+
+    @override
+    def replicate_table(self, current_table_name: str, new_table_name: str, cols: Union[str, List[str]]) -> None:
+        super().replicate_table(current_table_name, new_table_name, cols)
+
+    @override
+    def drop_table(self, table_name: str) -> None:
+        super().drop_table(table_name)
+
+    @override
+    def create_table_class(
+        self, 
+        new_table_name: str,
+        current_table_name: str,
+        id_col: str, 
+        distinct_col_name: str,
+        selected_cols: Union[str, List[str]]
+    ) -> None:
+        super().create_table_class(new_table_name, current_table_name, id_col, distinct_col_name, selected_cols)
+
+    @override
+    def get_table(self, table_name: str) -> pd.DataFrame:
+        return super().get_table(table_name)
+
+    @override
+    def count_table_rows(self, table_name: str, col: str) -> int:
+        return super().count_table_rows(table_name, col)
+    
+    @override
+    def database_insertion(
+        self, 
+        dataframe: pd.DataFrame, 
+        table_name: str, 
+        if_exists: str = "replace"
+    ) -> None:
+        super().database_insertion(dataframe, table_name, if_exists)
+
+    @override
+    def cleanse_table_column(self, table_name: str, col_name: str) -> None:
+        super().cleanse_table_column(table_name, col_name)
+
+    @override
+    def concatenate_tables(
+        self, 
+        table_name: str, 
+        selected_cols: Union[str, List[str]], 
+    ) -> None:
+        super().concatenate_tables(table_name, selected_cols)
+    
+    @override
+    def create_table_from(self, target_table_name: str, source_table_name: str, target_cols: Union[str, List[str]]) -> None:
+        super().create_table_from(target_table_name, source_table_name, target_cols)
+
+    @override
+    def update_table_columns(
+        self,
+        target_table: str,
+        source_table: str,
+        target_col: str,
+        source_col: str,
+        target_condition_col: Union[str, List[str]],
+        source_condition_col: Union[str, List[str]]
+    ) -> None:
+        super().update_table_columns(target_table, source_table, target_col, source_col, target_condition_col, source_condition_col)
+
+    @override
+    def load_embedding_classifier(self) -> None:
+        super().load_embedding_classifier()
+
+    @override
+    def load_translation_model(self) -> None:
+        super().load_translation_model()
+
+    @override
+    def load_tfidf_classifier(self):
+        return super().load_tfidf_classifier()
+
+    @override
+    def translate_data(self, table_name: str, translated_col: str, new_col_name: str) -> None:
+        super().translate_data(table_name, translated_col, new_col_name)
+
+    @override
+    def process_dataframe(self, dataframe: pd.DataFrame, df_type: str) -> pd.DataFrame:
+        super().process_dataframe(dataframe, df_type)
+
+    @override
+    def create_embeddings(
+        self,
+        table_name: str,
+        embedding_col: str,
+        new_table_name: str,
+        embeddings_name: str = "embed_",
+    ) -> None:
+        super().create_embeddings(table_name, embedding_col, new_table_name, embeddings_name)
+
+    def load_brands_classifier(self) -> None:
+        if self.brands_classifier is not None:
+            logger.info("The brands classifier model is loaded.")
+            return
+
+        logger.info("Loading brands classifier model.")
+        self.brands_classifier = BrandsClassifier()
+        logger.info("Loading brands classifier model is done.")
+
+    def load_ensemble_model(self) -> None:
+        if self.ensemble_model is not None:
+            logger.info("The ensemble model is loaded.")
+            return
+
+        logger.info("Loading ensemble model.")
+        self.load_embedding_classifier()
+        self.load_tfidf_classifier()
+        self.load_brands_classifier()
+        self.ensemble_model = EnsembleModel(self.brands_classifier, self.embedding_classifier, self.tfidf_classifier)
+        logger.info("Loading ensemble model is done.")
+
+    @override
+    def run_inference(self, invoice_items: Union[str, List[str]]) -> Dict[str, Any]:
+        self.load_ensemble_model()
+        preds = self.ensemble_model.run_ensemble(invoice_items)
+
+        return preds
+
+    @override
+    def run_pipeline(self) -> None:
+        logger.info("Starting to train `TF-IDF Classifier`.")
+        self.load_tfidf_classifier()
+        train_tfidf_models(self.tfidf_classifier, self.df_train, self.df_test)
+        logger.info("`TF-IDF Classifier` is done.")
+
+        logger.info("Starting to train `Brands Classifier`.")
+        self.load_brands_classifier()
+        train_tfidf_models(self.brands_classifier, self.df_train, self.df_test)
+        logger.info("`Brands Classifier` is done.")
+

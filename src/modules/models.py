@@ -188,8 +188,9 @@ class TfidfClassifier(TfidfBaseModel):
             C=float(os.getenv("TC_C")),
             class_weight=os.getenv("TC_CLASS_WEIGHT")
         )
-
         self.clf = None
+        if os.path.exists(MODEL_PATH / self.model_name):
+            self.load()
 
     @override
     def fit(self, X_train, y_train) -> None:
@@ -212,7 +213,6 @@ class TfidfClassifier(TfidfBaseModel):
         seg = df_merged["SegmentTitle"].tolist()
         fam = df_merged["FamilyTitle"].tolist()
 
-
         return [seg, fam, cls]
 
     @override
@@ -234,7 +234,7 @@ class TfidfClassifier(TfidfBaseModel):
         self.clf = joblib.load(model_path)
 
 
-class TfidfSimilarityModel(TfidfBaseModel):
+class BrandsClassifier(TfidfBaseModel):
 
     def __init__(self):
         super().__init__()
@@ -245,6 +245,8 @@ class TfidfSimilarityModel(TfidfBaseModel):
             self.documents = self.df_brands["documents"].tolist()
         except:
             self.documents = None
+        if os.path.exists(MODEL_PATH / self.model_name):
+            self.load()
 
     @override
     def fit(self, documents: Optional[List[str]] = None) -> None:
@@ -298,12 +300,15 @@ class TfidfSimilarityModel(TfidfBaseModel):
 
 class EnsembleModel:
 
-    def __init__(self):
-        self.brand_tfidf_similiraity = TfidfSimilarityModel()
-        self.embed_clf = EmbeddingClassifier()
-        self.tfidf_clf = TfidfClassifier()
-        self.tfidf_clf.load()
-        self.brand_tfidf_similiraity.load()
+    def __init__(
+        self,
+        brands_classifier: BrandsClassifier,
+        embedding_classifier: EmbeddingClassifier,
+        tfidf_classifier: TfidfClassifier
+    ) -> None:
+        self.brand_tfidf_similiraity = brands_classifier
+        self.embed_clf = embedding_classifier
+        self.tfidf_clf = tfidf_classifier
         self.num_models = int(os.getenv("EM_NUM_MODELS"))
         self.df_gpc = self.embed_clf.df_gpc
 
@@ -315,10 +320,10 @@ class EnsembleModel:
 
         return seg, fam
 
-    def predict(self, product_name: str) -> Dict[str, Any]:
-        brand_tfidf_similiraity_pred = self.brand_tfidf_similiraity.predict(product_name)
-        tfidf_clf_pred = self.tfidf_clf.predict(product_name)
-        embed_clf_pred = self.embed_clf.get_gpc(product_name)
+    def predict(self, invoice_items: Union[str, List[str]]) -> Dict[str, Any]:
+        brand_tfidf_similiraity_pred = self.brand_tfidf_similiraity.predict(invoice_items)
+        tfidf_clf_pred = self.tfidf_clf.predict(invoice_items)
+        embed_clf_pred = self.embed_clf.get_gpc(invoice_items)
 
         return {
             "embed_clf": embed_clf_pred,
@@ -350,10 +355,10 @@ class EnsembleModel:
                 voted_cls = pred_classes[2][i]
 
             voted_seg, voted_fam = self.extract_labels(voted_cls)
-            results["voted_segments"].extend(voted_seg)
-            results["voted_families"].extend(voted_fam)
-            results["voted_classes"].extend(voted_cls)
-            results["confidences"].extend(cls_count / self.num_models)
+            results["voted_segments"].append(voted_seg)
+            results["voted_families"].append(voted_fam)
+            results["voted_classes"].append(voted_cls)
+            results["confidences"].append(cls_count / self.num_models)
 
         results["embed_clf_preds"] = predictions["embed_clf"]
         results["brand_tfidf_sim_preds"] = predictions["brand_tfidf_sim"]
@@ -361,8 +366,8 @@ class EnsembleModel:
 
         return results
 
-    def run_ensemble(self, invoice_item: str) -> Dict[str, Any]:
-        preds = self.predict(invoice_item)
+    def run_ensemble(self, invoice_items: Union[str, List[str]]) -> Dict[str, Any]:
+        preds = self.predict(invoice_items)
         voted = self.vote(preds)
 
         return voted

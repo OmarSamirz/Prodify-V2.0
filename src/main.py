@@ -6,10 +6,11 @@ from sklearn.preprocessing import LabelEncoder
 
 import re
 
+from pipelines import ProdifyPipeline
 from modules.logger import logger
-from modules.models import EnsembleModel, TfidfClassifier, TfidfSimilarityModel, EmbeddingClassifier
 from utils import get_confidence_level
-from train_models import train_base_tfidf_models
+from train_models import train_tfidf_models
+from modules.models import EnsembleModel, TfidfClassifier, BrandsClassifier, EmbeddingClassifier
 from constants import (
     FULL_DATASET_PATH,
     FULL_TRAIN_DATASET_PATH,
@@ -212,12 +213,19 @@ def exclusion_test():
             f.write("\n")
 
 def train_tfidf():
-    model = TfidfSimilarityModel()
-    train_base_tfidf_models(model, FULL_TRAIN_DATASET_PATH, FULL_TEST_DATASET_PATH)
+    model = BrandsClassifier()
+    train_tfidf_models(model, FULL_TRAIN_DATASET_PATH, FULL_TEST_DATASET_PATH)
+
+def test_pipeline():
+    invoice_items = "Apple MacBook"
+    pipe = ProdifyPipeline(df_train_path=FULL_TRAIN_DATASET_PATH, df_test_path=FULL_TEST_DATASET_PATH)
+    predicitons = pipe.run_inference(invoice_items)
+    logger.info(predicitons)
 
 def main():
+    test_pipeline()
     # embedding_classifier_test()
-    test_ensemble()
+    # test_ensemble()
     # test_tfidf_similarity_model()
 
     # Run embedding model
