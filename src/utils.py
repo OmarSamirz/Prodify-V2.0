@@ -403,3 +403,40 @@ def plot_classification_results(df, level: str):
 
     plt.tight_layout()
     plt.show()
+
+def get_labels(labels, true_labels):
+    correct_labels = []
+    incorrect_labels = []
+    for lbl in labels:
+        if lbl in true_labels:
+            correct_labels.append(lbl)
+        else:
+            incorrect_labels.append(lbl)
+    
+    return {
+        "correct_labels": correct_labels,
+        "incorrect_labels": incorrect_labels
+    }
+
+def get_confidence_level(confidence_rates: List[float]) -> List[str]:
+    confidence_levels = []
+    for rate in confidence_rates:
+        rate *= 100
+        if 0 <= rate <= 50:
+            confidence_levels.append("Low")
+        elif 50 < rate <= 75:
+            confidence_levels.append("Medium")
+        elif 75 < rate <= 100:
+            confidence_levels.append("High")
+    
+    return confidence_levels
+
+def return_top_5(df, level):
+    top5 = (
+        df.groupby(level)
+        .apply(lambda g: (g[level] == g[level]).sum())
+        .sort_values(ascending=False)
+        .head(5)
+        .index
+    )
+    return top5

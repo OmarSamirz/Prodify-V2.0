@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from typing_extensions import override
 from typing import List, Optional, Dict, Any, Union, Tuple
 
-from constants import MODEL_PATH, DTYPE_MAP, DETAILED_BRANDS_DATASET_PATH
+from constants import MODEL_PATH, DTYPE_MAP, BRANDS_DATASET_PATH
 
 @dataclass
 class GpcHierarchicalClassifierConfig:
@@ -614,7 +614,7 @@ class EnsembleModel:
         self.tfidf_clf.load()
         self.brand_tfidf_similiraity.load()
         self.num_models = config.num_models
-        self.df_brands = pd.read_csv(DETAILED_BRANDS_DATASET_PATH)
+        self.df_brands = pd.read_csv(BRANDS_DATASET_PATH)
         self.df_brands["documents"] = self.df_brands["Sector"] + " " + self.df_brands["Brand"] + " " + self.df_brands["Product"]
         self.df_gpc = self.embed_clf.df_gpc
 
@@ -682,7 +682,7 @@ class EnsembleModel:
             "tfidf_clf_pred": predictions["tfidf_clf"]
         }
 
-    def run_pipeline(self, invoice_item: str) -> Dict[str, Any]:
+    def run_ensemble(self, invoice_item: str) -> Dict[str, Any]:
         preds = self.predict(invoice_item)
         voted = self.vote(preds)
 

@@ -6,7 +6,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from tqdm import tqdm
 
-API_KEY = "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"
+API_KEY = "<API-KEY>"
 MODEL_NAME = "deepseek/deepseek-chat-v3.1:free"
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 

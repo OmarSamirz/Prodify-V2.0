@@ -10,7 +10,8 @@ from utils import (
     load_brand_embedding_classifier_model,
     load_ensemble_pipeline,
     load_tfidf_similarity_model,
-    load_tfidf_classifier_model
+    load_tfidf_classifier_model,
+    get_confidence_level
 )
 from constants import (
     FULL_DATASET_PATH,
@@ -22,7 +23,7 @@ from constants import (
     FULL_EMBEDDING_MODEL_OUTPUT_DATASET_PATH,
     FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH,
     ENSEMBLE_CONFIG_PATH,
-    DETAILED_BRANDS_DATASET_PATH,
+    BRANDS_DATASET_PATH,
     TFIDF_SIMILARITY_CONFIG_PATH,
     TFIDF_CLASSIFIER_CONFIG_PATH,
     CLASS_ONLY_CLASSIFIER,
@@ -86,37 +87,57 @@ def clean(text: str) -> str:
     return " ".join(text.strip().split())
 
 def test_ensemble():
-    pipe = load_ensemble_pipeline(ENSEMBLE_CONFIG_PATH)
+    ensemble_model = load_ensemble_pipeline(ENSEMBLE_CONFIG_PATH)
     # pred = pipe.run_pipeline("Nike Air Max Running Shoes")
     # logger.info(f"Level segment: {pred}")
 
     df = pd.read_csv(FULL_TEST_DATASET_PATH)
     df["product_name"] = df["product_name"].astype(str)
 
-    segments = []
-    families = []
-    classes = []
+    voted_segments, voted_families, voted_classes = [], [], []
+    brand_segments, brand_families, brand_classes = [], [], []
+    embed_clf_segments, embed_clf_families, embed_clf_classes = [], [], []
+    tfidf_clf_segments, tfidf_clf_families, tfidf_clf_classes = [], [], []
     confidences = []
     for _, row in tqdm(df.iterrows(), total=len(df)):
-        preds = pipe.run_pipeline(row["product_name"])
-        segments.append(preds["segment"])
-        families.append(preds["family"])
-        classes.append(preds["class"])
+        preds = ensemble_model.run_ensemble(row["product_name"])
+        voted_segments.append(preds["voted_segment"])
+        voted_families.append(preds["voted_family"])
+        voted_classes.append(preds["voted_class"])
         confidences.append(preds["confidence"])
+        brand_segments.append(preds["brand_tfidf_sim_pred"][0])
+        brand_families.append(preds["brand_tfidf_sim_pred"][1])
+        brand_classes.append(preds["brand_tfidf_sim_pred"][2])
+        embed_clf_segments.append(preds["embed_clf_pred"][0])
+        embed_clf_families.append(preds["embed_clf_pred"][1])
+        embed_clf_classes.append(preds["embed_clf_pred"][2])
+        tfidf_clf_segments.append(preds["tfidf_clf_pred"][0])
+        tfidf_clf_families.append(preds["tfidf_clf_pred"][1])
+        tfidf_clf_classes.append(preds["tfidf_clf_pred"][2])
 
-    df["pred_segment"] = segments
-    df["pred_family"] = families
-    df["pred_class"] = classes
-    df["confidence"] = confidences
+    df["pred_segment"] = voted_segments
+    df["pred_family"] = voted_families
+    df["pred_class"] = voted_classes
+    df["brand_segment"] = brand_segments
+    df["brand_family"] = brand_families
+    df["brand_class"] = brand_classes
+    df["clf_segment"] = tfidf_clf_segments
+    df["clf_family"] = tfidf_clf_families
+    df["clf_class"] = tfidf_clf_classes
+    df["embed_segment"] = embed_clf_segments
+    df["embed_family"] = embed_clf_families
+    df["embed_class"] = embed_clf_classes
+    df["confidence_rate"] = confidences
+    df["confidence_level"] = get_confidence_level(confidences)
     df.to_csv(FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH, index=False)
 
     true_segment = df["segment"].tolist()
     true_family = df["pred_family"].tolist()
     true_class = df["pred_class"].tolist()
 
-    logger.info(f"Level segment: {accuracy_score(true_segment, segments)}")
-    logger.info(f"Level family: {accuracy_score(true_family, families)}")
-    logger.info(f"Level class: {accuracy_score(true_class, classes)}")
+    logger.info(f"Level segment: {accuracy_score(true_segment, voted_segments)}")
+    logger.info(f"Level family: {accuracy_score(true_family, voted_families)}")
+    logger.info(f"Level class: {accuracy_score(true_class, voted_classes)}")
 
 def test_classifier():
     model = load_tfidf_classifier_model(TFIDF_CLASSIFIER_CONFIG_PATH)
@@ -155,7 +176,7 @@ def test_classifier():
     logger.info(f"Level class accuracy: {accuracy_score(true_class, y_pred)}")
 
 def test_tfidf_similarity_model():
-    df = pd.read_csv(DETAILED_BRANDS_DATASET_PATH)
+    df = pd.read_csv(BRANDS_DATASET_PATH)
     df["documents"] = df["Sector"] + " " + df["Brand"] + " " + df["Product"]
     documents = df["documents"].tolist()
     df["documents"] = df["documents"].apply(clean)
@@ -171,29 +192,29 @@ def test_tfidf_similarity_model():
     idx = model.find_similarity(product, documents)
     top_row = df.iloc[idx[0]]
     logger.info(f"Prediction: {top_row}")
-    # pred_segments, pred_families, pred_classes = [], [], []
+    pred_segments, pred_families, pred_classes = [], [], []
 
-    # for product in tqdm(X_test, total=len(X_test)):
-    #     indices = model.find_similarity(product, documents)
-    #     top_row = df.iloc[indices[0]]
-    #     pred_segments.append(top_row["Segment"])
-    #     pred_families.append(top_row["Family"])
-    #     pred_classes.append(top_row["Class"])
+    for product in tqdm(X_test, total=len(X_test)):
+        indices = model.find_similarity(product, documents)
+        top_row = df.iloc[indices[0]]
+        pred_segments.append(top_row["Segment"])
+        pred_families.append(top_row["Family"])
+        pred_classes.append(top_row["Class"])
 
-    # true_segments = df_test["segment"].tolist()
-    # true_families = df_test["family"].tolist()
-    # true_classes = df_test["class"].tolist()
+    true_segments = df_test["segment"].tolist()
+    true_families = df_test["family"].tolist()
+    true_classes = df_test["class"].tolist()
 
-    # df_test["pred_segment"] = pred_segments
-    # df_test["pred_family"] = pred_families
-    # df_test["pred_class"] = pred_classes
+    df_test["pred_segment"] = pred_segments
+    df_test["pred_family"] = pred_families
+    df_test["pred_class"] = pred_classes
 
-    # df_test.to_csv(FULL_TFIDF_SIMILARITY_OUTPUT_DATASET_PATH, index=False)
+    df_test.to_csv(FULL_TFIDF_SIMILARITY_OUTPUT_DATASET_PATH, index=False)
 
-    # logger.info(f"BRAND MODEL FROM HERE! {accuracy_score(true_segments, pred_segments)}")
-    # logger.info(f"Level segment accuracy: {accuracy_score(true_segments, pred_segments)}")
-    # logger.info(f"Level family accuracy: {accuracy_score(true_families, pred_families)}")
-    # logger.info(f"Level class accuracy: {accuracy_score(true_classes, pred_classes)}")
+    logger.info(f"BRAND MODEL FROM HERE! {accuracy_score(true_segments, pred_segments)}")
+    logger.info(f"Level segment accuracy: {accuracy_score(true_segments, pred_segments)}")
+    logger.info(f"Level family accuracy: {accuracy_score(true_families, pred_families)}")
+    logger.info(f"Level class accuracy: {accuracy_score(true_classes, pred_classes)}")
 
 def test_brand_embedding_model():
     model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
@@ -235,8 +256,8 @@ def exclusion_test():
             f.write("\n")
 
 def main():
-    #test_ensemble()
-    test_tfidf_similarity_model()
+    test_ensemble()
+    # test_tfidf_similarity_model()
 
     # Run embedding model
     # segments = []
