@@ -2,9 +2,9 @@ import streamlit as st
 
 import os
 
-from modules.models import TfidfSimilarityModel, TfidfClassifier, EmbeddingClassifier, EnsembleModel
-from constants import IMG_PATH 
-
+from constants import IMG_PATH
+from utils import get_confidence_level
+from modules.models import BrandsClassifier, TfidfClassifier, EmbeddingClassifier, EnsembleModel
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Prodify+ - Advanced Invoice Classifier", page_icon="🧾", layout="centered")
@@ -12,10 +12,10 @@ st.set_page_config(page_title="Prodify+ - Advanced Invoice Classifier", page_ico
 @st.cache_resource
 @st.cache_resource
 def get_ensemble_model():
-    tfidf_sim_model = ...
-    tfidf_clf_model = ...
-    embed_clf_model = ...
-    ensemble_model = EnsembleModel(tfidf_sim_model, tfidf_clf_model, embed_clf_model)
+    brands_classifier = BrandsClassifier()
+    embedding_classifier = EmbeddingClassifier()
+    tfidf_classifier =  TfidfClassifier() 
+    ensemble_model = EnsembleModel(brands_classifier, embedding_classifier, tfidf_classifier)
     return ensemble_model
 
 # --- CLASSIFICATION LOGIC ---
@@ -41,7 +41,7 @@ def render_sidebar() -> None:
             <p></p><p style='color: grey; margin-bottom: 20px;'><b>2. Brand Classifier Model:</b> TF-IDF cosine similarity matching against a handpicked brand, product dataset.</p>
             <p></p><p style='color: grey; margin-bottom: 20px;'><b>3. TF-IDF + SVM Classifier:</b> Traditional ML pipeline for direct GPC prediction.</p>
             <p></p>   <p style='color: grey; margin-bottom: 0px; font-size: 20px;'><b>Datasets</b></p>
-            <p style='color: grey; margin-bottom: 20px;'><b>Training/Test Data:</b> 76k products merged from: 1) <a href='https://www.kaggle.com/datasets/mohit2512/jio-mart-product-items/data' target='_blank' style='color: #2c7be5;'>Jio Mart</a> (category/sub-category mapped to GPC levels), 2) <a href='https://github.com/ir-ischool-uos/mwpd' target='_blank' style='color: #2c7be5;'>MWPD</a> (pre-labeled GPC levels), 3) <a href='https://fdc.nal.usda.gov/download-datasets/#bkmk-2' target='_blank' style='color: #2c7be5;'>USDA FoodData</a> (category mapped to four GPC levels). Split: 61k training, 15k test.</p>
+            <p style='color: grey; margin-bottom: 20px;'><b>Training/Test Data:</b> 76k products merged from: <br> 1) <a href='https://www.kaggle.com/datasets/mohit2512/jio-mart-product-items/data' target='_blank' style='color: #2c7be5;'>Jio Mart</a> (category/sub-category mapped to GPC levels). <br> 2) <a href='https://github.com/ir-ischool-uos/mwpd' target='_blank' style='color: #2c7be5;'>MWPD</a> (pre-labeled GPC levels). <br> 3) <a href='https://fdc.nal.usda.gov/download-datasets/#bkmk-2' target='_blank' style='color: #2c7be5;'>USDA FoodData</a> (category mapped to four GPC levels). Split: 61k training, 15k test.</p>
             <p></p><p style='color: grey; margin-bottom: 20px;'><b>Brands Dataset:</b> 87 curated brands with 20 products each, manually mapped to first three GPC levels for similarity matching.</p>
             """,
             unsafe_allow_html=True
@@ -72,7 +72,7 @@ def main():
         "<p style='margin-bottom:0px; font-size:20px;'><b>Enter invoice item:</b></p>",
         unsafe_allow_html=True
     )
-    invoice_item = st.text_input("", key="invoice_item", label_visibility="collapsed")
+    invoice_item = st.text_input("Invoice Item", key="invoice_item", label_visibility="collapsed")
 
     # --- CLASSIFICATION BUTTON ---
     if st.button("Classify"):
@@ -83,27 +83,27 @@ def main():
                 result = classify_product(ensemble_model, invoice_item)
                 
                 # Display main results
-                st.success(f"**Segment:** {result['voted_segment']}")
-                st.success(f"**Family:** {result['voted_family']}")
-                st.success(f"**Class:** {result['voted_class']}")
-                st.info(f"**Confidence:** {result['confidence']}")
+                st.success(f"**Segment:** {result['voted_segments'][0]}")
+                st.success(f"**Family:** {result['voted_families'][0]}")
+                st.success(f"**Class:** {result['voted_classes'][0]}")
+                st.info(f"**Confidence:** {get_confidence_level(result['confidences'])[0]}")
                 
                 # Display individual model predictions in expandable section
                 with st.expander("Individual Model Predictions"):
                     st.write("**Embedding Classifier:**")
-                    st.write(f"- Segment: {result['embed_clf_pred'][0]}")
-                    st.write(f"- Family: {result['embed_clf_pred'][1]}")
-                    st.write(f"- Class: {result['embed_clf_pred'][2]}")
+                    st.write(f"- Segment: {result['embed_clf_preds'][0][0]}")
+                    st.write(f"- Family: {result['embed_clf_preds'][1][0]}")
+                    st.write(f"- Class: {result['embed_clf_preds'][2][0]}")
                     
                     st.write("**Brand Classifier Model:**")
-                    st.write(f"- Segment: {result['brand_tfidf_sim_pred'][0]}")
-                    st.write(f"- Family: {result['brand_tfidf_sim_pred'][1]}")
-                    st.write(f"- Class: {result['brand_tfidf_sim_pred'][2]}")
+                    st.write(f"- Segment: {result['brand_tfidf_sim_preds'][0][0]}")
+                    st.write(f"- Family: {result['brand_tfidf_sim_preds'][1][0]}")
+                    st.write(f"- Class: {result['brand_tfidf_sim_preds'][2][0]}")
                     
                     st.write("**TF-IDF + SVM Classifier:**")
-                    st.write(f"- Segment: {result['tfidf_clf_pred'][0]}")
-                    st.write(f"- Family: {result['tfidf_clf_pred'][1]}")
-                    st.write(f"- Class: {result['tfidf_clf_pred'][2]}")
+                    st.write(f"- Segment: {result['tfidf_clf_preds'][0][0]}")
+                    st.write(f"- Family: {result['tfidf_clf_preds'][1][0]}")
+                    st.write(f"- Class: {result['tfidf_clf_preds'][2][0]}")
                     
             except Exception as e:
                 st.error(f"Error: {e}")

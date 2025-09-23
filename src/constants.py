@@ -26,6 +26,8 @@ MODEL_PERFORMANCE_CLASS_GRAPH_PATH = GRAPHS_DIR / "model_performance_class.jpg"
 
 DATA_PATH = BASE_DIR / "data"
 
+IMG_PATH = BASE_DIR / "img"
+
 SEOUDI_DATA_PATH = DATA_PATH / "seoudi"
 
 SEOUDI_DATA_PATH.mkdir(parents=True, exist_ok=True)
