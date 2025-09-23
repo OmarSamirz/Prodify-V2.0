@@ -8,6 +8,22 @@ RANDOM_STATE = 42
 
 BASE_DIR = Path(__file__).parents[1]
 
+GRAPHS_DIR = BASE_DIR / "graphs"
+
+GRAPHS_DIR.mkdir(parents=True, exist_ok=True)
+
+FULL_CONFIDENCE_DISTRIBUTION_GRAPH_PATH = GRAPHS_DIR / "full_confidence_distribution.jpg"
+
+CORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH = GRAPHS_DIR / "correct_confidence_distribution.jpg"
+
+INCORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH = GRAPHS_DIR / "incorrect_confidence_distribution.jpg"
+
+MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH = GRAPHS_DIR / "model_performance_segment.jpg"
+
+MODEL_PERFORMANCE_FAMILY_GRAPH_PATH = GRAPHS_DIR / "model_performance_family.jpg"
+
+MODEL_PERFORMANCE_CLASS_GRAPH_PATH = GRAPHS_DIR / "model_performance_class.jpg"
+
 DATA_PATH = BASE_DIR / "data"
 
 SEOUDI_DATA_PATH = DATA_PATH / "seoudi"

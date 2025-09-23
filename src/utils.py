@@ -1,42 +1,20 @@
-import torch
-from torch.optim import Adam
-from torch.nn import CrossEntropyLoss
 import unicodedata
-import numpy as np
 import pandas as pd
-from sklearn.metrics import f1_score
-from safetensors.torch import save_file
-from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-from tqdm.auto import tqdm
-
-from modules.models import EmbeddingClassifier, EmbeddingClassifierConfig
+from sklearn.metrics import f1_score
+from sklearn.model_selection import train_test_split
 
 import re
-import json
-from typing import List, Union
+from typing import List
 
-from constants import RANDOM_STATE, MODEL_PATH
-from modules.logger import logger
-from modules.models import (
-    SentenceEmbeddingModel, 
-    SentenceEmbeddingConfig,
-    OpusTranslationModel,
-    OpusTranslationModelConfig,
-    TfidfClassifier, 
-    TfidfClassifierConfig,
-    EmbeddingSvmConfig,
-    EmbeddingSvmModel,
-    EmbeddingClassifier,
-    EmbeddingClassifierConfig,
-    BrandEmbeddingClassifier,
-    BrandEmbeddingClassifierConfig,
-    EnsembleConfig,
-    EnsembleModel,
-    TfidfSimilarityConfig,
-    TfidfSimilarityModel,
-    GpcHierarchicalClassifierConfig,
-    GpcHierarchicalClassifier
+from constants import (
+    RANDOM_STATE,
+    FULL_CONFIDENCE_DISTRIBUTION_GRAPH_PATH,
+    CORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH,
+    INCORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH,
+    MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH,
+    MODEL_PERFORMANCE_FAMILY_GRAPH_PATH,
+    MODEL_PERFORMANCE_CLASS_GRAPH_PATH,
 )
 
 def evaluation_score(y_true: List[str], y_pred: List[str], average: str) -> float:
@@ -87,120 +65,6 @@ def split_dataset(dataset_path: str, train_dataset_path: str, test_dataset_path:
     train_df.to_csv(train_dataset_path, index=False)
     test_df.to_csv(test_dataset_path, index=False)
 
-def load_tfidf_classifier_model(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
-        config_dict["ngram_range"] = tuple(config_dict["ngram_range"])
-    
-    try:
-        config = TfidfClassifierConfig(**config_dict)
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-    
-    model = TfidfClassifier(config)
-
-    return model
-
-def load_embedding_model(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
-    
-    try:
-        config = SentenceEmbeddingConfig(**config_dict)
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-
-    model = SentenceEmbeddingModel(config)
-
-    return model
-
-def load_translation_model(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
-
-    try:
-        config = OpusTranslationModelConfig(**config_dict)
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-    
-    model = OpusTranslationModel(config)
-
-    return model
-
-def load_embedding_classifier_model(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
-
-    try:
-        embedding_config = SentenceEmbeddingConfig(**config_dict["embedding_config"])
-        config = EmbeddingClassifierConfig(embedding_config, **config_dict["classification_config"])
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-    
-    model = EmbeddingClassifier(config)
-
-    return model
-
-def load_brand_embedding_classifier_model(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
-
-    try:
-        embedding_config = SentenceEmbeddingConfig(**config_dict["embedding_config"])
-        embedding_clf_config = EmbeddingClassifierConfig(embedding_config, **config_dict["embedding_classifier_config"])
-        config = BrandEmbeddingClassifierConfig(embedding_clf_config, **config_dict["brand_embedding_classifier_config"])
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-    
-    model = BrandEmbeddingClassifier(config)
-
-    return model
-
-def load_embedding_svm_model(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
-
-    try:
-        embedding_config = SentenceEmbeddingConfig(**config_dict["embedding_config"])
-        config = EmbeddingSvmConfig(embedding_config, **config_dict["classification_config"])
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-
-    model = EmbeddingSvmModel(config)
-
-    return model
-
-def load_ensemble_pipeline(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
-
-    try:
-        embedding_config = SentenceEmbeddingConfig(**config_dict["embedding_classifier"]["embedding_config"])
-        embed_clf_config = EmbeddingClassifierConfig(embedding_config, **config_dict["embedding_classifier"]["classification_config"])
-        brand_tfidf_similiraity_config = TfidfSimilarityConfig(**config_dict["brand_tfidf_similiraity"])
-        tfidf_clf_config = TfidfClassifierConfig(**config_dict["tfidf_classifier"])
-        config = EnsembleConfig(embed_clf_config, brand_tfidf_similiraity_config, tfidf_clf_config, **config_dict["ensemble_config"])
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-
-    model = EnsembleModel(config)
-
-    return model
-
-def load_tfidf_similarity_model(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
-        config_dict["ngram_range"] = tuple(config_dict["ngram_range"])
-
-    try:
-        config = TfidfSimilarityConfig(**config_dict)
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-
-    model = TfidfSimilarityModel(config)
-
-    return model
-
 def unicode_clean(s):
     if not isinstance(s, str):
         return s
@@ -210,125 +74,65 @@ def unicode_clean(s):
 
     return s.strip()
 
-def predict_brick_ensemble(
-        product_name: str, 
-        model,
-         exclusion_column = "BrickDefinition_Excludes"
-    ) -> str:
+def draw_eda(df: pd.DataFrame) -> None:
+    df["is_correct"] = df.apply(lambda x: x["segment"]==x["pred_segment"], axis=1)
+    df_correct = df[df["is_correct"]==True]
+    df_incorrect = df[df["is_correct"]==False]
+    plot_confidence_distribution(df, FULL_CONFIDENCE_DISTRIBUTION_GRAPH_PATH)
+    plot_confidence_distribution(df_correct, CORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH)
+    plot_confidence_distribution(df_incorrect, INCORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH)
 
-        topk_bricks = model.get_gpc(product_name, "brick")
+    plot_classification_results(df, "segment", MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH)
+    plot_classification_results(df, "family", MODEL_PERFORMANCE_FAMILY_GRAPH_PATH)
+    plot_classification_results(df, "class", MODEL_PERFORMANCE_CLASS_GRAPH_PATH)
 
-        return model.predict_brick_by_exclusion(
-            product_name=product_name,
-            candidate_bricks=topk_bricks,
-            exclusion_column=exclusion_column
-        )
+def plot_confidence_distribution(df: pd.DataFrame, img_path: str) -> None:
+    levels = ["segment", "family", "class"]
+    conf_levels = ["Low", "Medium", "High"]
 
-def load_gpc_hierarchical_classifier(config_path: str):
-    with open(config_path, "r") as f:
-        config_dict = json.load(f)
+    ratios = {}
+    for level in levels:
+        counts = df[df[level].notna()]["confidence_level"].value_counts(normalize=True) * 100
+        ratios[level] = counts.reindex(conf_levels, fill_value=0)
 
-    try:
-        config = GpcHierarchicalClassifierConfig(**config_dict)
-    except TypeError as e:
-        raise ValueError(f"Invalid configuration keys: {e}.")
-    
-    model = GpcHierarchicalClassifier(config)
-
-    return model
-
-def gpc_hierarchical_classifier_train(
-    model, 
-    x_train,
-    y_train,
-    x_test,
-    y_test, 
-    epochs: int = 50, 
-    lr: float = 0.01,
-    verbose: bool = True,
-):
-    device = model.device
-    loss_fn = CrossEntropyLoss()
-    optimizer = Adam(model.parameters(), lr=lr)
-
-    # convert once to tensors on the right device
-    x_train = torch.tensor(x_train, dtype=model.dtype, device=device)
-    y_train = torch.tensor(y_train, dtype=torch.long, device=device)
-    x_test = torch.tensor(x_test, dtype=model.dtype, device=device)
-    y_test = torch.tensor(y_test, dtype=torch.long, device=device)
-
-    best_test_acc = 0.0
-    best_state = None
-
-    for epoch in tqdm(range(1, epochs + 1)):
-        model.train()
-        optimizer.zero_grad()
-
-        output = model(x_train)
-
-        segment_loss = loss_fn(output["segment"], y_train[:, 0])
-        family_loss  = loss_fn(output["family"],  y_train[:, 1])
-        class_loss   = loss_fn(output["class"],   y_train[:, 2])
-
-        loss = segment_loss + family_loss + class_loss
-        loss.backward()
-        optimizer.step()
-
-        # evaluate
-        if verbose and epoch % max(1, epochs // 10) == 0:
-            model.eval()
-            with torch.inference_mode():
-                logits = model(x_test)
-                seg_pred   = torch.argmax(logits["segment"], dim=1)
-                fam_pred   = torch.argmax(logits["family"], dim=1)
-                class_pred = torch.argmax(logits["class"], dim=1)
-
-                seg_acc   = (seg_pred   == y_test[:, 0]).float().mean().item()
-                fam_acc   = (fam_pred   == y_test[:, 1]).float().mean().item()
-                cls_acc = (class_pred == y_test[:, 2]).float().mean().item()
-
-                # we can define test_acc as average of available accuracies
-                accs = [seg_acc, fam_acc, cls_acc]
-                test_acc = sum(accs) / len(accs)
-
-            if test_acc > best_test_acc:
-                best_test_acc = test_acc
-                best_state = {
-                    "model": model.state_dict(),
-                    "epoch": epoch,
-                    "test_acc": test_acc
-                }
-
-            print(f"\nEpoch {epoch:03d} | Loss: {loss.item():.4f} | Test Acc: {test_acc:.4f}")
-            print(f"\nSegment Acc: {seg_acc:.4f} | Family Acc: {fam_acc:.4f} | Class Acc: {cls_acc:.4f}")
-
-    print("\nTraining finished. Best test acc:", best_test_acc)
-    return model, best_state
-
-
-def gpc_hierarchical_classifier_inference(model: GpcHierarchicalClassifier, x: Union[List[float], np.ndarray, torch.Tensor]):
-    if not isinstance(x, torch.Tensor):
-        x = torch.tensor(x, dtype=model.dtype, device=model.device)
-
-    with torch.inference_mode():
-        logits = model(x)
-        segment_prob = torch.softmax(logits["segment"], dim=1)
-        family_prob = torch.softmax(logits["family"], dim=1)
-        class_prob = torch.softmax(logits["class"], dim=1)
-
-    return (
-        torch.argmax(segment_prob, dim=1),
-        torch.argmax(family_prob, dim=1),
-        torch.argmax(class_prob, dim=1),
+    ratios_df = pd.DataFrame(ratios).T
+    colors = {"Low": "#d73027", "Medium": "#fc8d59", "High": "#1a9850"}
+    _, ax = plt.subplots(figsize=(10, 6))
+    ratios_df.plot(
+        kind="bar",
+        stacked=True,
+        ax=ax,
+        color=[colors[c] for c in conf_levels],
+        edgecolor="black",
+        linewidth=0.6
     )
 
-def save_model(model: GpcHierarchicalClassifier) -> None:
-    model_path = MODEL_PATH / model.model_name
-    state_dict = model.state_dict()
+    ax.set_ylabel("Percentage (%)", fontsize=12)
+    ax.set_xlabel("Hierarchy Level", fontsize=12)
+    ax.set_title("Confidence Level Distribution by Hierarchy", fontsize=14, weight="bold", pad=15)
 
-    save_file(state_dict, model_path)
+    ax.set_ylim(0, 100)
+    ax.set_xticklabels([lbl.capitalize() for lbl in ratios_df.index], rotation=0, fontsize=11)
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f"{int(y)}%"))
 
-def plot_classification_results(df, level: str):
+    ax.legend(title="Confidence Level", fontsize=10, title_fontsize=11, loc="upper center", bbox_to_anchor=(0.5, -0.08), ncol=3, frameon=False)
+    for container in ax.containers:
+        for bar, label in zip(container, container.datavalues):
+            ax.text(
+                bar.get_x() + bar.get_width() + 0.02,
+                bar.get_y() + bar.get_height() / 2,
+                f"{label:.1f}%",
+                va="center", ha="left",
+                fontsize=9, color="black", weight="bold"
+            )
+
+    for spine in ["top", "right"]:
+        ax.spines[spine].set_visible(False)
+
+    plt.savefig(img_path)
+    plt.close()
+
+def plot_classification_results(df: pd.DataFrame, level: str, img_path: str) -> None:
     df = df.copy()
     col_true = level
     col_pred = f"pred_{level}"
@@ -344,20 +148,19 @@ def plot_classification_results(df, level: str):
     colors = {False: "red", True: "green"}
     ax = counts.plot(
         kind="bar",
-        stacked=False,   # side-by-side instead of stacked
+        stacked=False,
         figsize=(14, 6),
         color=[colors[c] for c in counts.columns]
     )
 
-    
-    ax.set_ylabel("Number of Predictions (log scale)")
+    ax.set_ylabel("Number of Predictions")
     ax.set_title(f"Distribution of Correctly Classified {level.title()}s")
     ax.legend(["Incorrect", "Correct"], title="Prediction")
     ax.set_yscale("log")
 
     if level == "segment":
         plt.xticks(rotation=45, ha="right")
-        for p, label in zip(ax.patches, [*counts.columns] * len(counts)):
+        for p in ax.patches:
             height = p.get_height()
             if height > 0:
                 ax.text(
@@ -367,7 +170,7 @@ def plot_classification_results(df, level: str):
                     ha="center",
                     va="bottom",
                     fontsize=7,
-                    color="green" if label else "red",
+                    color=p.get_facecolor(),
                     weight="bold",
                 )
     else:
@@ -402,7 +205,8 @@ def plot_classification_results(df, level: str):
     ax.set_ylim(ymin, ymax * 1.2)
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(img_path)
+    plt.close()
 
 def get_labels(labels, true_labels):
     correct_labels = []

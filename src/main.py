@@ -1,18 +1,15 @@
 import pandas as pd
 from tqdm.auto import tqdm
+from safetensors.torch import load_file
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
 
 import re
 
 from modules.logger import logger
-from utils import (
-    load_embedding_classifier_model,
-    load_brand_embedding_classifier_model,
-    load_ensemble_pipeline,
-    load_tfidf_similarity_model,
-    load_tfidf_classifier_model,
-    get_confidence_level
-)
+from modules.models import EnsembleModel, TfidfClassifier, TfidfSimilarityModel, EmbeddingClassifier
+from utils import get_confidence_level
+from train_models import train_base_tfidf_models
 from constants import (
     FULL_DATASET_PATH,
     FULL_TRAIN_DATASET_PATH,
@@ -28,23 +25,6 @@ from constants import (
     TFIDF_CLASSIFIER_CONFIG_PATH,
     CLASS_ONLY_CLASSIFIER,
     FULL_TFIDF_SIMILARITY_OUTPUT_DATASET_PATH
-)
-
-import pandas as pd
-from sklearn.preprocessing import LabelEncoder
-from safetensors.torch import save_file, load_file
-
-from utils import (
-    load_gpc_hierarchical_classifier, 
-    gpc_hierarchical_classifier_train,
-    gpc_hierarchical_classifier_inference, 
-    load_embedding_model
-)
-from constants import (
-    GPC_HIERARCHICAL_CLASSIFIER_CONFIG, 
-    FULL_TRAIN_DATASET_PATH, 
-    FULL_TEST_DATASET_PATH, 
-    E5_LARGE_INSTRUCT_CONFIG_PATH
 )
 
 def test_gpc_model():
@@ -64,20 +44,12 @@ def test_gpc_model():
     df_test = df_merged.iloc[df_train_len:, :]
     X_train, y_train = df_train["product_name"].astype(str).tolist(), df_train[["encoded_segment", "encoded_family", "encoded_class"]].values.tolist()
     X_test, y_test = df_test["product_name"].astype(str).tolist(), df_test[["encoded_segment", "encoded_family", "encoded_class"]].values.tolist()
-    
+
     X_train = load_file("src/train_embeddings.safetensors")["input"]
     X_test = load_file("src/test_embeddings.safetensors")["input"]
 
-    gpc_model = load_gpc_hierarchical_classifier(GPC_HIERARCHICAL_CLASSIFIER_CONFIG).to("cuda")
-    model, best_state = gpc_hierarchical_classifier_train(
-        model=gpc_model,
-        x_train=X_train,
-        y_train=y_train,
-        x_test=X_test,
-        y_test=y_test,
-        epochs=500,
-        lr=0.01
-    )
+    gpc_model = ...
+    model, best_state = ...
     logger.info(f"The best epoch is {best_state["epoch"]}")
 
 def clean(text: str) -> str:
@@ -87,60 +59,42 @@ def clean(text: str) -> str:
     return " ".join(text.strip().split())
 
 def test_ensemble():
-    ensemble_model = load_ensemble_pipeline(ENSEMBLE_CONFIG_PATH)
+    ensemble_model = EnsembleModel()
     # pred = pipe.run_pipeline("Nike Air Max Running Shoes")
     # logger.info(f"Level segment: {pred}")
 
     df = pd.read_csv(FULL_TEST_DATASET_PATH)
     df["product_name"] = df["product_name"].astype(str)
+    products = df["product_name"].tolist()
 
-    voted_segments, voted_families, voted_classes = [], [], []
-    brand_segments, brand_families, brand_classes = [], [], []
-    embed_clf_segments, embed_clf_families, embed_clf_classes = [], [], []
-    tfidf_clf_segments, tfidf_clf_families, tfidf_clf_classes = [], [], []
-    confidences = []
-    for _, row in tqdm(df.iterrows(), total=len(df)):
-        preds = ensemble_model.run_ensemble(row["product_name"])
-        voted_segments.append(preds["voted_segment"])
-        voted_families.append(preds["voted_family"])
-        voted_classes.append(preds["voted_class"])
-        confidences.append(preds["confidence"])
-        brand_segments.append(preds["brand_tfidf_sim_pred"][0])
-        brand_families.append(preds["brand_tfidf_sim_pred"][1])
-        brand_classes.append(preds["brand_tfidf_sim_pred"][2])
-        embed_clf_segments.append(preds["embed_clf_pred"][0])
-        embed_clf_families.append(preds["embed_clf_pred"][1])
-        embed_clf_classes.append(preds["embed_clf_pred"][2])
-        tfidf_clf_segments.append(preds["tfidf_clf_pred"][0])
-        tfidf_clf_families.append(preds["tfidf_clf_pred"][1])
-        tfidf_clf_classes.append(preds["tfidf_clf_pred"][2])
+    results = ensemble_model.run_ensemble(products)
 
-    df["pred_segment"] = voted_segments
-    df["pred_family"] = voted_families
-    df["pred_class"] = voted_classes
-    df["brand_segment"] = brand_segments
-    df["brand_family"] = brand_families
-    df["brand_class"] = brand_classes
-    df["clf_segment"] = tfidf_clf_segments
-    df["clf_family"] = tfidf_clf_families
-    df["clf_class"] = tfidf_clf_classes
-    df["embed_segment"] = embed_clf_segments
-    df["embed_family"] = embed_clf_families
-    df["embed_class"] = embed_clf_classes
-    df["confidence_rate"] = confidences
-    df["confidence_level"] = get_confidence_level(confidences)
+    df["pred_segment"] = results["voted_segments"]
+    df["pred_family"] = results["voted_families"]
+    df["pred_class"] = results["voted_classes"]
+    df["brand_segment"] = results["brand_tfidf_sim_preds"][0]
+    df["brand_family"] = results["brand_tfidf_sim_preds"][1]
+    df["brand_class"] = results["brand_tfidf_sim_preds"][2]
+    df["clf_segment"] = results["tfidf_clf_preds"][0]
+    df["clf_family"] = results["tfidf_clf_preds"][1]
+    df["clf_class"] = results["tfidf_clf_preds"][2]
+    df["embed_segment"] = results["embed_clf_preds"][0]
+    df["embed_family"] = results["embed_clf_preds"][1]
+    df["embed_class"] = results["embed_clf_preds"][2]
+    df["confidence_rate"] = results["confidences"]
+    df["confidence_level"] = get_confidence_level(results["confidences"])
     df.to_csv(FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH, index=False)
 
     true_segment = df["segment"].tolist()
     true_family = df["pred_family"].tolist()
     true_class = df["pred_class"].tolist()
 
-    logger.info(f"Level segment: {accuracy_score(true_segment, voted_segments)}")
-    logger.info(f"Level family: {accuracy_score(true_family, voted_families)}")
-    logger.info(f"Level class: {accuracy_score(true_class, voted_classes)}")
+    logger.info(f"Level segment: {accuracy_score(true_segment, results["voted_segments"])}")
+    logger.info(f"Level family: {accuracy_score(true_family, results["voted_families"])}")
+    logger.info(f"Level class: {accuracy_score(true_class, results["voted_classes"])}")
 
 def test_classifier():
-    model = load_tfidf_classifier_model(TFIDF_CLASSIFIER_CONFIG_PATH)
+    model = ...
     df_train = pd.read_csv(FULL_TRAIN_DATASET_PATH)
     df_test = pd.read_csv(FULL_TEST_DATASET_PATH)
     # df["product_name"] = df["product_name"].astype(str)
@@ -185,7 +139,7 @@ def test_tfidf_similarity_model():
     X_test = df_test["product_name"].fillna("").astype(str).apply(clean).tolist()
 
     # df["target_label"] =  df["Segment"] + " " + df["Family"] + " " + df["Class"]
-    model = load_tfidf_similarity_model(TFIDF_SIMILARITY_CONFIG_PATH)
+    model = ...
     model.fit(documents)
     model.save()
     product = "paramol"
@@ -217,13 +171,15 @@ def test_tfidf_similarity_model():
     logger.info(f"Level class accuracy: {accuracy_score(true_classes, pred_classes)}")
 
 def test_brand_embedding_model():
-    model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    model = ...
     brand_data = model.get_brand_data("Harry Potter and The Chamber of Secrets")
     print(brand_data)
 
 def embedding_classifier_test():
-    embed_cls = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
-    gpc_labels = embed_cls.get_gpc("Apple iphone 12 pro max")
+    df = pd.read_csv(FULL_TEST_DATASET_PATH)
+    X_test = df["product_name"].tolist()
+    embed_cls = EmbeddingClassifier()
+    gpc_labels = embed_cls.get_gpc(X_test)
     print(gpc_labels)
 
 def exclusion_test():
@@ -240,8 +196,8 @@ def exclusion_test():
         "Chipsy Salted Potato Chips"
     ]
 
-    brand_model = load_brand_embedding_classifier_model(BRAND_EMBEDDING_CLASSIFIER_CONFIG_PATH)
-    model = load_embedding_classifier_model(EMBEDDING_CLASSIFIER_CONFIG_PATH)
+    brand_model = ...
+    model = ...
     with open("data/testing_mixed.txt", "w") as f:
         for pr in test_products:
             if brand_model.get_brand_data(pr):
@@ -255,7 +211,12 @@ def exclusion_test():
                 f.write("\n")
             f.write("\n")
 
+def train_tfidf():
+    model = TfidfSimilarityModel()
+    train_base_tfidf_models(model, FULL_TRAIN_DATASET_PATH, FULL_TEST_DATASET_PATH)
+
 def main():
+    # embedding_classifier_test()
     test_ensemble()
     # test_tfidf_similarity_model()
 
