@@ -1,2 +1,1 @@
-from pipelines.amurd_pipeline import AmurdPipeline
-from pipelines.prodify_pipeline import ProdifyPipeline
+from src.pipelines.ensemble_pipeline import EnsemblePipeline

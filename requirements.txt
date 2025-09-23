@@ -8,13 +8,10 @@ scikit-learn
 python-dotenv
 sentence-transformers
 huggingface-hub
-chardet
 swifter
 bitsandbytes
 streamlit
-langid
 joblib
-xgboost
 safetensors
 transformers
 huggingface_hub

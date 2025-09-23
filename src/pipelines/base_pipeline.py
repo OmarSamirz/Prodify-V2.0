@@ -9,7 +9,7 @@ from modules.models import TfidfClassifier, OpusTranslationModel, EmbeddingClass
 from utils import unicode_clean
 from modules.logger import logger
 from modules.db import TeradataDatabase
-from queries import (
+from src.db_queries import (
     cleansing_query,
     num_rows_query,
     drop_table_query,

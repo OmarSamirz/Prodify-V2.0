@@ -1,10 +1,7 @@
-import unicodedata
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 
-import re
 from typing import List
 
 from constants import (
@@ -17,46 +14,6 @@ from constants import (
     MODEL_PERFORMANCE_CLASS_GRAPH_PATH,
 )
 
-def evaluation_score(y_true: List[str], y_pred: List[str], average: str) -> float:
-    return f1_score(y_true, y_pred, average=average)
-
-def remove_repeated_words(text):
-    text = text.split()
-    final_text = []
-    for word in text:
-        if word in final_text:
-            continue
-        final_text.append(word)
-
-    return " ".join(final_text)
-
-def remove_numbers(text: str, remove_string: bool = False) -> str:
-    text = text.split()
-    text = [t for t in text if not re.search(r"\d", t)] if remove_string else [re.sub(r"\d+", "", t) for t in text]
-
-    return " ".join(text)
-
-def remove_punctuations(text: str) -> str:
-    text = re.sub(r"[^\w\s]", " ", text)
-
-    return " ".join(text.strip().split())
-
-def clean_(text: str) -> str:
-    text = text.lower()
-    text = re.sub(r"[^\w\s]", " ", text)
-
-    return " ".join(text.strip().split())
-
-def remove_extra_space(text: str) -> str:
-    return re.sub(r"\s+", " ", text).strip()
-
-def clean_text(text) -> str:
-    text = remove_punctuations(text)
-    text = remove_numbers(text)
-    text = remove_extra_space(text)
-
-    return text.lower()
-
 def split_dataset(dataset_path: str, train_dataset_path: str, test_dataset_path: str):
     df = pd.read_csv(dataset_path)
     df.dropna(subset=["class"], inplace=True)
@@ -64,15 +21,6 @@ def split_dataset(dataset_path: str, train_dataset_path: str, test_dataset_path:
 
     train_df.to_csv(train_dataset_path, index=False)
     test_df.to_csv(test_dataset_path, index=False)
-
-def unicode_clean(s):
-    if not isinstance(s, str):
-        return s
-    
-    s = unicodedata.normalize('NFKC', s)
-    s = ''.join(c for c in s if unicodedata.category(c)[0] != 'C')
-
-    return s.strip()
 
 def draw_eda(df: pd.DataFrame) -> None:
     df["is_correct"] = df.apply(lambda x: x["segment"]==x["pred_segment"], axis=1)
@@ -208,20 +156,6 @@ def plot_classification_results(df: pd.DataFrame, level: str, img_path: str) -> 
     plt.savefig(img_path)
     plt.close()
 
-def get_labels(labels, true_labels):
-    correct_labels = []
-    incorrect_labels = []
-    for lbl in labels:
-        if lbl in true_labels:
-            correct_labels.append(lbl)
-        else:
-            incorrect_labels.append(lbl)
-    
-    return {
-        "correct_labels": correct_labels,
-        "incorrect_labels": incorrect_labels
-    }
-
 def get_confidence_level(confidence_rates: List[float]) -> List[str]:
     confidence_levels = []
     for rate in confidence_rates:
@@ -234,13 +168,3 @@ def get_confidence_level(confidence_rates: List[float]) -> List[str]:
             confidence_levels.append("High")
     
     return confidence_levels
-
-def return_top_5(df, level):
-    top5 = (
-        df.groupby(level)
-        .apply(lambda g: (g[level] == g[level]).sum())
-        .sort_values(ascending=False)
-        .head(5)
-        .index
-    )
-    return top5

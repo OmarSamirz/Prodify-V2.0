@@ -5,13 +5,13 @@ from typing_extensions import override
 from typing import Optional, Dict, List, Any, Union
 
 from modules.logger import logger
-from pipelines.pipeline import Pipeline
+from src.pipelines.base_pipeline import Pipeline
 from train_models import train_tfidf_models
 from utils import get_confidence_level, draw_eda
 from modules.models import EnsembleModel, BrandsClassifier
 from constants import FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH
 
-class ProdifyPipeline(Pipeline):
+class EnsemblePipeline(Pipeline):
 
     def __init__(
         self,
