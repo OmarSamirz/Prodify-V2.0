@@ -1,1 +1,1 @@
-from src.pipelines.ensemble_pipeline import EnsemblePipeline
+from pipelines.ensemble_pipeline import EnsemblePipeline

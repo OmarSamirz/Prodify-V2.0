@@ -5,11 +5,11 @@ from teradataml import *
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, List, Any, Union
 
-from modules.models import TfidfClassifier, OpusTranslationModel, EmbeddingClassifier
-from utils import unicode_clean
 from modules.logger import logger
 from modules.db import TeradataDatabase
-from src.db_queries import (
+from models.tfidf_classifier import TfidfClassifier
+from models.sentence_embedding_model import SentenceEmbeddingModel
+from db_queries import (
     cleansing_query,
     num_rows_query,
     drop_table_query,
@@ -41,7 +41,7 @@ class Pipeline(ABC):
         self.df_val = None if df_val_path is None else self.load_dataframe(df_val_path)
         self.df_test = None if df_test_path is None else self.load_dataframe(df_test_path)
 
-        self.embedding_classifier = None
+        self.embedding_model = None
         self.translation_model = None
         self.tfidf_classifier = None
 
@@ -65,13 +65,6 @@ class Pipeline(ABC):
         logger.info(f"Renaming columns:\n{renamed_columns}")
 
         return dataframe.rename(columns=renamed_columns)
-
-    @abstractmethod
-    def apply_unicode_cleaning(self, dataframe: pd.DataFrame, col: str) -> pd.DataFrame:
-        logger.info(f"Applying unicode cleaning on column: `{col}`.")
-        dataframe[col] = dataframe[col].swifter.apply(unicode_clean)
-
-        return dataframe
 
     @abstractmethod
     def combine_db_table_names(self, table_name: str) -> str:
@@ -260,24 +253,14 @@ class Pipeline(ABC):
         )
 
     @abstractmethod
-    def load_embedding_classifier(self) -> None:
-        if self.embedding_classifier is not None:
+    def load_embedding_model(self) -> None:
+        if self.embedding_model is not None:
             logger.info("The embedding model is loaded.")
             return
 
-        logger.info("Loading embedding model.")
-        self.embedding_classifier = EmbeddingClassifier()
+        logger.info("Loading embedding model model.")
+        self.embedding_model = SentenceEmbeddingModel()
         logger.info("Loading embeddings model is done.")
-
-    @abstractmethod
-    def load_translation_model(self) -> None:
-        if self.translation_model is not None:
-            logger.info("The translation model is loaded.")
-            return
-
-        logger.info("Loading translation model.")
-        self.translation_model = OpusTranslationModel()
-        logger.info("Loading translation model is done.")
 
     @abstractmethod
     def load_tfidf_classifier(self) -> None:
@@ -290,19 +273,8 @@ class Pipeline(ABC):
         logger.info("Loading tfidf classifier model is done.")
 
     @abstractmethod
-    def translate_data(self, table_name: str, translated_col: str, new_col_name: str) -> None:
-        self.load_translation_model()
-        df = self.get_table(table_name)
-        logger.info(f"Starting to translate column `{translated_col}` of table `{table_name}`.")
-        df[new_col_name] = df[translated_col].swifter.apply(self.translation_model.translate)
-        df[new_col_name] = df[new_col_name].str.lower()
-        logger.info("Translation Completed.")
-        logger.info(f"Sample from translated data:\n{df.head(3)}")
-        self.database_insertion(df, table_name)
-
-    @abstractmethod
     def create_embeddings(self, table_name: str, embedding_col: str, new_table_name: str, embeddings_name: str = "embed_") -> None:
-        self.load_embedding_classifier()
+        self.load_embedding_model()
 
         df = self.get_table(table_name)
 
@@ -317,13 +289,9 @@ class Pipeline(ABC):
         self.database_insertion(df_expanded, new_table_name)
 
     @abstractmethod
-    def process_dataframe(self, dataframe: pd.DataFrame, df_type: str) -> pd.DataFrame:
-        ...
-
-    @abstractmethod
     def run_inference(self, products_name: Union[str, List[str]]) -> Dict[str, Any]:
         ...
-        
+
     @abstractmethod
     def run_pipeline(self) -> None:
         ...

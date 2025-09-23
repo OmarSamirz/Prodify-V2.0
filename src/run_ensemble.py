@@ -1,5 +1,6 @@
-from pipelines import EnsemblePipeline
 
+
+from pipelines import EnsemblePipeline
 from constants import FULL_TRAIN_DATASET_PATH, FULL_TEST_DATASET_PATH
 
 def run_pipeline():
@@ -7,7 +8,7 @@ def run_pipeline():
     pipe.run_pipeline()
 
 def main():
-    run_pipeline()
+    run_pipeline()    
 
 
 if __name__ == "__main__":

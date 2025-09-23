@@ -4,7 +4,9 @@ from sklearn.metrics import accuracy_score
 from typing import Optional
 
 from modules.logger import logger
-from modules.models import TfidfBaseModel, BrandsClassifier, TfidfClassifier
+from models.base_tfidf_model import TfidfBaseModel
+from models.tfidf_classifier import TfidfClassifier
+from models.brands_classifier import BrandsClassifier
 
 def train_tfidf_models(
     tfidf_model: TfidfBaseModel, 

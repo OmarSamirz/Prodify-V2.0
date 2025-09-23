@@ -8,21 +8,21 @@ RANDOM_STATE = 42
 
 BASE_DIR = Path(__file__).parents[1]
 
-GRAPHS_DIR = BASE_DIR / "graphs"
+ANALYSIS_DIR = BASE_DIR / "analysis"
 
-GRAPHS_DIR.mkdir(parents=True, exist_ok=True)
+ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
 
-FULL_CONFIDENCE_DISTRIBUTION_GRAPH_PATH = GRAPHS_DIR / "full_confidence_distribution.jpg"
+FULL_CONFIDENCE_DISTRIBUTION_GRAPH_PATH = ANALYSIS_DIR / "full_confidence_distribution.jpg"
 
-CORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH = GRAPHS_DIR / "correct_confidence_distribution.jpg"
+CORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH = ANALYSIS_DIR / "correct_confidence_distribution.jpg"
 
-INCORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH = GRAPHS_DIR / "incorrect_confidence_distribution.jpg"
+INCORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH = ANALYSIS_DIR / "incorrect_confidence_distribution.jpg"
 
-MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH = GRAPHS_DIR / "model_performance_segment.jpg"
+MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH = ANALYSIS_DIR / "model_performance_segment.jpg"
 
-MODEL_PERFORMANCE_FAMILY_GRAPH_PATH = GRAPHS_DIR / "model_performance_family.jpg"
+MODEL_PERFORMANCE_FAMILY_GRAPH_PATH = ANALYSIS_DIR / "model_performance_family.jpg"
 
-MODEL_PERFORMANCE_CLASS_GRAPH_PATH = GRAPHS_DIR / "model_performance_class.jpg"
+MODEL_PERFORMANCE_CLASS_GRAPH_PATH = ANALYSIS_DIR / "model_performance_class.jpg"
 
 DATA_PATH = BASE_DIR / "data"
 
@@ -34,9 +34,11 @@ IMG_PATH = BASE_DIR / "img"
 
 FULL_DATASET_PATH = DATA_PATH / "full_dataset.csv"
 
-FULL_TEST_DATASET_PATH = ORIGINAL_DATASETS_PATH / "full_test_dataset.csv"
+FULL_TRAIN_DATASET_PATH = DATA_PATH / "full_train_dataset.csv"
 
-FULL_TRAIN_DATASET_PATH = ORIGINAL_DATASETS_PATH / "full_train_dataset.csv"
+BRANDS_DATASET_PATH = DATA_PATH / "brands_dataset.csv"
+
+FULL_TEST_DATASET_PATH = DATA_PATH / "full_test_dataset.csv"
 
 MWPD_FULL_DATASET_PATH = ORIGINAL_DATASETS_PATH / "mwpd_full_dataset.csv"
 
@@ -51,8 +53,6 @@ FULL_TFIDF_SIMILARITY_OUTPUT_DATASET_PATH = MODEL_OUTPUTS_DATA_PATH / "full_tfid
 FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH = MODEL_OUTPUTS_DATA_PATH / "full_ensemble_model_output_dataset.csv"
 
 CLASS_ONLY_CLASSIFIER = DATA_PATH / "full_tfidf_svm_output_dataset.csv"
-
-BRANDS_DATASET_PATH = DATA_PATH / "brands_dataset.csv"
 
 GPC_PATH = DATA_PATH / "gpc.csv"
 

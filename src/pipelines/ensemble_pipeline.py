@@ -5,11 +5,14 @@ from typing_extensions import override
 from typing import Optional, Dict, List, Any, Union
 
 from modules.logger import logger
-from src.pipelines.base_pipeline import Pipeline
+from pipelines.base_pipeline import Pipeline
 from train_models import train_tfidf_models
 from utils import get_confidence_level, draw_eda
-from modules.models import EnsembleModel, BrandsClassifier
 from constants import FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH
+from models.ensemble_model import EnsembleModel
+from models.brands_classifier import BrandsClassifier
+from models.embedding_classifier import EmbeddingClassifier
+
 
 class EnsemblePipeline(Pipeline):
 
@@ -24,6 +27,7 @@ class EnsemblePipeline(Pipeline):
             df_val_path,
             df_test_path,
         )
+        self.embedding_classifier = None
         self.brands_classifier = None
         self.ensemble_model = None
 
@@ -34,10 +38,6 @@ class EnsemblePipeline(Pipeline):
     @override
     def rename_columns(self, dataframe: pd.DataFrame, renamed_columns: Dict[str, str]) -> pd.DataFrame:
         return super().rename_columns(dataframe, renamed_columns)
-
-    @override
-    def apply_unicode_cleaning(self, dataframe: pd.DataFrame, col: str) -> pd.DataFrame:
-        return super().apply_unicode_cleaning(dataframe, col)
     
     @override
     def combine_db_table_names(self, table_name: str) -> str:
@@ -128,20 +128,12 @@ class EnsemblePipeline(Pipeline):
         super().update_table_columns(target_table, source_table, target_col, source_col, target_condition_col, source_condition_col)
 
     @override
-    def load_embedding_classifier(self) -> None:
-        super().load_embedding_classifier()
-
-    @override
-    def load_translation_model(self) -> None:
-        super().load_translation_model()
+    def load_embedding_model(self) -> None:
+        super().load_embedding_model()
 
     @override
     def load_tfidf_classifier(self):
         return super().load_tfidf_classifier()
-
-    @override
-    def translate_data(self, table_name: str, translated_col: str, new_col_name: str) -> None:
-        super().translate_data(table_name, translated_col, new_col_name)
 
     @override
     def process_dataframe(self, dataframe: pd.DataFrame, df_type: str) -> pd.DataFrame:
@@ -165,6 +157,16 @@ class EnsemblePipeline(Pipeline):
         logger.info("Loading brands classifier model.")
         self.brands_classifier = BrandsClassifier()
         logger.info("Loading brands classifier model is done.")
+
+    def load_embedding_classifier(self) -> None:
+        if self.embedding_classifier is not None:
+            logger.info("The embedding classifier model is loaded.")
+            return
+        
+        logger.info("Loading embedding classifier model.")
+        self.load_embedding_model()
+        self.embedding_classifier = EmbeddingClassifier(self.embedding_model)
+        logger.info("Loading embedding classifier model is done.")
 
     def load_ensemble_model(self) -> None:
         if self.ensemble_model is not None:
