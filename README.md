@@ -3,7 +3,7 @@ AI-Powered Invoice Product Classification System
 
 ## Overview
 
-Prodify+ is a machine learning system for classifying invoice products into the first three Global Product Classification (GPC) levels: Segment, Family, and Class. The system leverages an ensemble approach combining three distinct AI models to achieve high accuracy in product categorization for invoice processing and business intelligence applications.
+Prodify+ is an AI learning system for classifying invoice products into the first three Global Product Classification (GPC) levels: Segment, Family, and Class. The system leverages an ensemble approach combining three distinct AI models to achieve high accuracy in product categorization for invoice processing and business intelligence applications.
 
 ### Key Features
 
@@ -28,24 +28,36 @@ Prodify+ is a machine learning system for classifying invoice products into the 
 
 ## Architecture
 
-*See architecture_diagram.png for visual system overview*
+![Architecture Diagram](img/architecture_diagram.png)
 
-Our ensemble model consists of three complementary components:
+The Prodify system consists of two main pipelines that utilizies three components:
 
-### 1. Brand Similarity Model
+### Model Components
+
+#### 1. Brand Similarity Model
 - Calculates TF-IDF vectors for invoice products against a curated brands dataset (87 brands with top 20 products each)
 - Uses cosine similarity to find the most similar brand-product concatenation
 - Returns GPC classification based on the matched brand-product pair
 
-### 2. TF-IDF Classifier Model  
+#### 2. TF-IDF Classifier Model  
 - Traditional machine learning pipeline combining TF-IDF vectorization with SVM classification
 - Trained on a 50K + dataset
 
-### 3. Embedding-Based Model
+#### 3. Embedding-Based Model
 - Utilizes E5 Large Instruct model for semantic understanding
 - Hierarchical classification approach: predicts segment first, then family, then class
 
-The ensemble combines predictions from all three models through a voting mechanism to produce the final classification with confidence scores.
+### Pipeline Architecture
+
+**Training Pipeline**: Processes training data to build and train the tf-idf models, saving the trained components as serialized files (`tfidf_similarity.joblib`, `tfidf_svm.joblib`) in the `models/` directory.
+
+**Inference Pipeline**: Loads the pre-trained models from the `models/` directory and combines predictions from all three components through a voting mechanism to produce final classifications with confidence scores.
+
+### Pre-trained Model Files
+
+- **Pre-trained Models**: [Google Drive - Models](https://drive.google.com/models-placeholder)
+  - `tfidf_similarity.joblib` - Pre-trained TF-IDF vectorizer model for brand similarity matching and cosine similarity calculations
+  - `tfidf_svm.joblib` - Pre-trained TF-IDF + SVM classification pipeline for direct GPC prediction
 
 ## Important Files
 
@@ -98,16 +110,10 @@ The ensemble combines predictions from all three models through a voting mechani
    print(f"CUDA device name: {torch.cuda.get_device_name(0)}")
    ```
 
-### Data and Model Resources
+### How to Test
 
-- **Datasets**: [Google Drive - Datasets](https://drive.google.com/drive/folders/1an2TsYrpILJJMotiL6rkDIN5sIAPenmT)
-  - `gpc.csv` - Complete GPC hierarchy definitions
-  - `brands_dataset.csv` - Curated brands and products dataset (87 brands, 20 products each)
-  - `full_train_dataset.csv` - Training dataset with 50,000 invoice products and their GPC classifications (Segment, Family, Class).
-  - `full_test_dataset.csv` - Test dataset with 15,000 invoice products and their GPC classifications.
-- **Pre-trained Models**: [Google Drive - Models](https://drive.google.com/models-placeholder)
-  - `tfidf_similarity.joblib` - Pre-trained TF-IDF vectorizer model for brand similarity matching and cosine similarity calculations.
-  - `tfidf_svm.joblib` - Pre-trained TF-IDF + SVM classification pipeline for direct prediction.
+*Testing files and instructions will be added in future releases.*
+
 ## Database Setup
 
 1. **Create a Teradata account** on the Clearscape Analytics platform: https://clearscape.teradata.com/
@@ -147,9 +153,16 @@ The web interface allows you to:
 2. View real-time classification results
 3. Explore confidence scores and model predictions
 
-## Performance Metrics
+## Performance and Dataset
 
-The Prodify ensemble model achieves the following accuracy rates on test data:
+### Datasets Overview (/data directory)
+- `gpc.csv` - Complete GPC hierarchy definitions
+- `brands_dataset.csv` - Curated brands and products dataset (87 brands, 20 products each)
+- `full_train_dataset.csv (61k rows)` - Training dataset with invoice products and their GPC classifications (Segment, Family, Class)
+- `full_test_dataset.csv (15k rows)` - Test dataset with invoice products and their GPC classifications
+
+### Model Performance
+The ensemble model achieves the following accuracy rates on the test dataset:
 
 | GPC Level | Accuracy |
 |-----------|----------|
@@ -157,9 +170,9 @@ The Prodify ensemble model achieves the following accuracy rates on test data:
 | Family    | 94.0%    |
 | Class     | 93.2%    |
 
-## How to Test
+## Analysis
 
-*Testing framework and instructions will be added in future releases.*
+For detailed performance analysis, including visualizations and model behavior explanations, see [analysis.md](./analysis/analysis.md) which contains comprehensive graphs and insights into the ensemble model's performance.
 
 ## Planned Improvements
 
@@ -168,7 +181,7 @@ The development roadmap includes several enhancements to further improve classif
 ### Enhanced Feature Engineering
 - **Extended Classification**: Predicting until the brick level for complete GPC coverage
 - **Hierarchical Descriptions**: Concatenating descriptions of lower levels to better describe higher-level categories
-- **Brick Definition Utilization**: Incorporating brick definition exclusions for more precise classification
+- **Arabic Products Support**: Expanding model capabilities to handle Arabic product names and descriptions
 
 ### Model Architecture Improvements  
 - **Cascading Models**: Implementing a model architecture where subsequent models address weaknesses of previous ones
@@ -185,4 +198,4 @@ Please ensure all code follows the established patterns in the codebase and incl
 
 ## License
 
-*License information will be provided in future releases.*
+This project was developed by the Teradata Community

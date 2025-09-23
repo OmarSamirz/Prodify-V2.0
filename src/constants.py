@@ -8,7 +8,7 @@ RANDOM_STATE = 42
 
 BASE_DIR = Path(__file__).parents[1]
 
-GRAPHS_DIR = BASE_DIR / "graphs"
+GRAPHS_DIR = BASE_DIR / "analysis"
 
 GRAPHS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -23,6 +23,10 @@ MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH = GRAPHS_DIR / "model_performance_segment.j
 MODEL_PERFORMANCE_FAMILY_GRAPH_PATH = GRAPHS_DIR / "model_performance_family.jpg"
 
 MODEL_PERFORMANCE_CLASS_GRAPH_PATH = GRAPHS_DIR / "model_performance_class.jpg"
+
+MODEL_PERFORMANCE_SEGMENT_BY_FAMILIES_BASE_PATH = GRAPHS_DIR / "model_performance_segment_by_family.jpg"
+
+MODEL_PERFORMANCE_FAMILY_BY_CLASSES_BASE_PATH = GRAPHS_DIR / "model_performance_family_by_class.jpg"
 
 DATA_PATH = BASE_DIR / "data"
 
