@@ -5,8 +5,8 @@ from typing_extensions import override
 from typing import Optional, Dict, List, Any, Union
 
 from modules.logger import logger
+from utils import get_confidence_level
 from pipelines.base_pipeline import Pipeline
-from utils import get_confidence_level, draw_eda
 from model_utils import train_tfidf_model, test_tfidf_model
 from constants import FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH
 from models import EnsembleModel, BrandsClassifier, EmbeddingClassifier
@@ -212,16 +212,7 @@ class EnsemblePipeline(Pipeline):
 
         logger.info(f"Level segment: {accuracy_score(true_segment, results["voted_segments"])}")
         logger.info(f"Level family: {accuracy_score(true_family, results["voted_families"])}")
-        logger.info(f"Level class: {accuracy_score(true_class, results["voted_classes"])}")
-
-    def draw_analysis(self) -> None:
-        if self.df_test is None:
-            logger.info("You need to give the path of the test dataset.")
-            return
-
-        logger.info("Drawing and saving the eda graphs.")
-        draw_eda(self.df_test)
-        logger.info("Saving the eda graphs is done.")    
+        logger.info(f"Level class: {accuracy_score(true_class, results["voted_classes"])}")  
 
     @override
     def run_inference(self, invoice_items: Union[str, List[str]]) -> Dict[str, Any]:
@@ -249,4 +240,3 @@ class EnsemblePipeline(Pipeline):
             test_tfidf_model(self.brands_classifier, self.df_test)
 
         self.test_pipeline()
-        self.draw_analysis()

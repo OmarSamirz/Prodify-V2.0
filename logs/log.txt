@@ -1,213 +1,31 @@
-<<<<<<< HEAD
-[2025-09-24 11:10:05] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
-[2025-09-24 11:10:15] - __init__:wrapper - DEBUG - matplotlib data path: c:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\matplotlib\mpl-data
-[2025-09-24 11:10:15] - __init__:wrapper - DEBUG - CONFIGDIR=C:\Users\os255022\.matplotlib
-[2025-09-24 11:10:15] - __init__:<module> - DEBUG - interactive is False
-[2025-09-24 11:10:15] - __init__:<module> - DEBUG - platform is win32
-[2025-09-24 11:10:15] - __init__:wrapper - DEBUG - CACHEDIR=C:\Users\os255022\.matplotlib
-[2025-09-24 11:10:15] - font_manager:_load_fontmanager - DEBUG - Using fontManager instance from C:\Users\os255022\.matplotlib\fontlist-v390.json
-[2025-09-24 11:10:44] - logger:_log - INFO - TeradataDatabase instance initialized
-[2025-09-24 11:10:44] - logger:_log - INFO - Operation 'Database connection' started - Details: {'host': 'iteration7-gwyyqrtdecxxq4xk.env.clearscape.teradata.com', 'database': 'demo_user'}
-[2025-09-24 11:10:51] - logger:_log - INFO - Operation 'Database connection' completed
-[2025-09-24 11:10:51] - logger:_log - INFO - Loading a CSV file of path `c:\internship\Prodify-V2.0\data\full_train_dataset.csv`.
-[2025-09-24 11:10:51] - logger:_log - INFO - Loading a CSV file of path `c:\internship\Prodify-V2.0\data\full_test_dataset.csv`.
-[2025-09-24 11:10:51] - logger:_log - INFO - Starting to train `TF-IDF Classifier`.
-[2025-09-24 11:10:51] - logger:_log - INFO - Loading tfidf classifier model.
-[2025-09-24 11:10:52] - logger:_log - INFO - Loading tfidf classifier model is done.
-[2025-09-24 11:10:52] - logger:_log - INFO - Training the model
-[2025-09-24 11:11:57] - warnings:_showwarnmsg - WARNING - c:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\svm\_base.py:1250: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.
-  warnings.warn(
-
-[2025-09-24 11:11:58] - logger:_log - INFO - `TF-IDF Classifier` training is done.
-[2025-09-24 11:11:58] - logger:_log - INFO - `TF-IDF Classifier` accuracy on testing data.
-[2025-09-24 11:11:58] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
-[2025-09-24 11:11:59] - logger:_log - INFO - Segment: 0.967851664109918
-[2025-09-24 11:11:59] - logger:_log - INFO - Family: 0.9505769359034216
-[2025-09-24 11:11:59] - logger:_log - INFO - Class: 0.9429733875808711
-[2025-09-24 11:11:59] - logger:_log - INFO - Starting to train `Brands Classifier`.
-[2025-09-24 11:11:59] - logger:_log - INFO - Loading brands classifier model.
-[2025-09-24 11:11:59] - logger:_log - INFO - Loading brands classifier model is done.
-[2025-09-24 11:11:59] - logger:_log - INFO - Training the model
-[2025-09-24 11:11:59] - logger:_log - INFO - `Brands Classifier` training is done.
-[2025-09-24 11:11:59] - logger:_log - INFO - `Brands Classifier` accuracy on testing data.
-[2025-09-24 11:12:00] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
-[2025-09-24 11:12:00] - logger:_log - INFO - Segment: 0.41379310344827586
-[2025-09-24 11:12:00] - logger:_log - INFO - Family: 0.1950243446941906
-[2025-09-24 11:12:00] - logger:_log - INFO - Class: 0.1480024011205229
-[2025-09-24 11:12:01] - pyplot:switch_backend - DEBUG - Loaded backend tkagg version 8.6.
-[2025-09-24 11:12:01] - logger:write - INFO - Backend tkagg is interactive backend. Turning interactive mode on.
-[2025-09-24 11:12:03] - logger:_log - INFO - Start to test the whole pipeline on the test dataset
-[2025-09-24 11:12:03] - logger:_log - INFO - Loading ensemble model.
-[2025-09-24 11:12:03] - logger:_log - INFO - Loading embedding classifier model.
-[2025-09-24 11:12:03] - logger:_log - INFO - Loading embedding model model.
-[2025-09-24 11:12:03] - SentenceTransformer:__init__ - INFO - Load pretrained SentenceTransformer: intfloat/multilingual-e5-large-instruct
-[2025-09-24 11:12:03] - connectionpool:_new_conn - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
-[2025-09-24 11:12:05] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/modules.json HTTP/1.1" 307 0
-[2025-09-24 11:12:05] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/modules.json HTTP/1.1" 200 0
-[2025-09-24 11:12:05] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
-[2025-09-24 11:12:06] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/config_sentence_transformers.json HTTP/1.1" 200 0
-[2025-09-24 11:12:06] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
-[2025-09-24 11:12:07] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/config_sentence_transformers.json HTTP/1.1" 200 0
-[2025-09-24 11:12:07] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/README.md HTTP/1.1" 307 0
-[2025-09-24 11:12:08] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/README.md HTTP/1.1" 200 0
-[2025-09-24 11:12:08] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/modules.json HTTP/1.1" 307 0
-[2025-09-24 11:12:08] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/modules.json HTTP/1.1" 200 0
-[2025-09-24 11:12:09] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_bert_config.json HTTP/1.1" 404 0
-[2025-09-24 11:12:10] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_roberta_config.json HTTP/1.1" 404 0
-[2025-09-24 11:12:10] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_distilbert_config.json HTTP/1.1" 404 0
-[2025-09-24 11:12:11] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_camembert_config.json HTTP/1.1" 404 0
-[2025-09-24 11:12:11] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_albert_config.json HTTP/1.1" 404 0
-[2025-09-24 11:12:12] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_xlm-roberta_config.json HTTP/1.1" 307 0
-[2025-09-24 11:12:12] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/sentence_xlm-roberta_config.json HTTP/1.1" 200 0
-[2025-09-24 11:12:13] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/adapter_config.json HTTP/1.1" 404 0
-[2025-09-24 11:12:13] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/config.json HTTP/1.1" 307 0
-[2025-09-24 11:12:13] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/config.json HTTP/1.1" 200 0
-[2025-09-24 11:12:15] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
-[2025-09-24 11:12:15] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/tokenizer_config.json HTTP/1.1" 200 0
-[2025-09-24 11:12:16] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "GET /api/models/intfloat/multilingual-e5-large-instruct/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
-[2025-09-24 11:12:17] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/1_Pooling/config.json HTTP/1.1" 307 0
-[2025-09-24 11:12:17] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/1_Pooling%2Fconfig.json HTTP/1.1" 200 0
-[2025-09-24 11:12:18] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "GET /api/models/intfloat/multilingual-e5-large-instruct HTTP/1.1" 200 287680
-[2025-09-24 11:12:21] - logger:_log - INFO - Loading embeddings model is done.
-[2025-09-24 11:12:21] - logger:_log - INFO - Loading embedding classifier model is done.
-[2025-09-24 11:12:21] - logger:_log - INFO - The tfidf classifier model is loaded.
-[2025-09-24 11:12:21] - logger:_log - INFO - The brands classifier model is loaded.
-[2025-09-24 11:12:21] - logger:_log - INFO - Loading ensemble model is done.
-[2025-09-24 11:12:22] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
-[2025-09-24 11:12:22] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
-[2025-09-24 11:12:24] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
-[2025-09-24 11:13:04] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
-[2025-09-24 11:13:04] - logger:flush - ERROR -   0%|                                                                                                          | 0/14993 [00:00<?, ?it/s]
-[2025-09-24 11:13:05] - logger:flush - ERROR -   0%|                                                                                                  | 2/14993 [00:00<20:55, 11.94it/s]
-[2025-09-24 11:13:05] - logger:flush - ERROR -   0%|                                                                                                  | 7/14993 [00:00<10:42, 23.32it/s]
-[2025-09-24 11:13:05] - logger:flush - ERROR -   0%|                                                                                                 | 10/14993 [00:00<13:46, 18.14it/s]
-[2025-09-24 11:13:05] - logger:flush - ERROR -   0%|                                                                                                 | 12/14993 [00:00<14:33, 17.16it/s]
-[2025-09-24 11:13:05] - logger:flush - ERROR -   0%|                                                                                                 | 14/14993 [00:00<14:28, 17.24it/s]
-[2025-09-24 11:13:05] - logger:flush - ERROR -   0%|1                                                                                                | 16/14993 [00:00<15:39, 15.95it/s]
-[2025-09-24 11:13:05] - logger:flush - ERROR -   0%|1                                                                                                | 20/14993 [00:01<12:35, 19.82it/s]
-[2025-09-24 11:13:06] - logger:flush - ERROR -   0%|1                                                                                                | 24/14993 [00:01<11:15, 22.16it/s]
-[2025-09-24 11:13:06] - logger:flush - ERROR -   0%|1                                                                                                | 27/14993 [00:01<13:17, 18.76it/s]
-[2025-09-24 11:13:06] - logger:flush - ERROR -   0%|1                                                                                                | 29/14993 [00:01<14:15, 17.48it/s]
-[2025-09-24 11:13:06] - logger:flush - ERROR -   0%|2                                                                                                | 31/14993 [00:01<14:57, 16.67it/s]
-[2025-09-24 11:13:06] - logger:flush - ERROR -   0%|2                                                                                                | 34/14993 [00:01<14:02, 17.75it/s]
-[2025-09-24 11:13:06] - logger:flush - ERROR -   0%|2                                                                                                | 37/14993 [00:02<13:37, 18.30it/s]
-[2025-09-24 11:13:07] - logger:flush - ERROR -   0%|2                                                                                                | 39/14993 [00:02<14:46, 16.87it/s]
-[2025-09-24 11:13:07] - logger:flush - ERROR -   0%|2                                                                                                | 42/14993 [00:02<13:53, 17.94it/s]
-[2025-09-24 11:13:07] - logger:flush - ERROR -   0%|2                                                                                                | 44/14993 [00:02<14:38, 17.01it/s]
-[2025-09-24 11:13:07] - logger:flush - ERROR -   0%|3                                                                                                | 50/14993 [00:02<10:12, 24.41it/s]
-[2025-09-24 11:13:07] - logger:flush - ERROR -   0%|3                                                                                                | 53/14993 [00:02<10:47, 23.06it/s]
-[2025-09-24 11:13:07] - logger:flush - ERROR -   0%|3                                                                                                | 56/14993 [00:02<11:05, 22.46it/s]
-[2025-09-24 11:13:07] - logger:flush - ERROR -   0%|3                                                                                                | 60/14993 [00:03<10:25, 23.88it/s]
-[2025-09-24 11:13:08] - logger:flush - ERROR -   0%|4                                                                                                | 64/14993 [00:03<09:51, 25.24it/s]
-[2025-09-24 11:13:08] - logger:flush - ERROR -   0%|4                                                                                                | 69/14993 [00:03<08:53, 27.98it/s]
-[2025-09-24 11:13:08] - logger:flush - ERROR -   0%|4                                                                                                | 72/14993 [00:03<11:15, 22.09it/s]
-[2025-09-24 11:13:08] - logger:flush - ERROR -   1%|4                                                                                                | 76/14993 [00:03<10:32, 23.57it/s]
-[2025-09-24 11:13:08] - logger:flush - ERROR -   1%|5                                                                                                | 79/14993 [00:03<11:15, 22.09it/s]
-[2025-09-24 11:13:08] - logger:flush - ERROR -   1%|5                                                                                                | 82/14993 [00:03<11:16, 22.05it/s]
-[2025-09-24 11:13:09] - logger:flush - ERROR -   1%|5                                                                                                | 85/14993 [00:04<13:08, 18.91it/s]
-[2025-09-24 11:13:09] - logger:flush - ERROR -   1%|5                                                                                                | 88/14993 [00:04<14:19, 17.35it/s]
-[2025-09-24 11:13:09] - logger:flush - ERROR -   1%|5                                                                                                | 91/14993 [00:04<13:33, 18.31it/s]
-[2025-09-24 11:13:09] - logger:flush - ERROR -   1%|6                                                                                                | 95/14993 [00:04<12:22, 20.06it/s]
-[2025-09-24 11:13:09] - logger:flush - ERROR -   1%|6                                                                                                | 98/14993 [00:04<12:50, 19.33it/s]
-[2025-09-24 11:13:09] - logger:flush - ERROR -   1%|6                                                                                               | 102/14993 [00:05<12:04, 20.56it/s]
-[2025-09-24 11:13:10] - logger:flush - ERROR -   1%|6                                                                                               | 105/14993 [00:05<12:15, 20.24it/s]
-[2025-09-24 11:13:10] - logger:flush - ERROR -   1%|6                                                                                               | 108/14993 [00:05<12:22, 20.05it/s]
-[2025-09-24 11:13:10] - logger:flush - ERROR -   1%|7                                                                                               | 111/14993 [00:05<12:38, 19.62it/s]
-[2025-09-24 11:13:10] - logger:flush - ERROR -   1%|7                                                                                               | 116/14993 [00:05<10:41, 23.18it/s]
-[2025-09-24 11:13:10] - logger:flush - ERROR -   1%|7                                                                                               | 120/14993 [00:05<10:27, 23.70it/s]
-[2025-09-24 11:13:10] - logger:flush - ERROR -   1%|7                                                                                               | 123/14993 [00:06<12:52, 19.25it/s]
-[2025-09-24 11:13:11] - logger:flush - ERROR -   1%|8                                                                                               | 127/14993 [00:06<11:51, 20.90it/s]
-[2025-09-24 11:13:11] - logger:flush - ERROR -   1%|8                                                                                               | 130/14993 [00:06<14:00, 17.69it/s]
-[2025-09-24 11:13:11] - logger:flush - ERROR -   1%|8                                                                                               | 132/14993 [00:06<14:54, 16.61it/s]
-[2025-09-24 11:13:11] - logger:flush - ERROR -   1%|8                                                                                               | 134/14993 [00:06<16:23, 15.11it/s]
-[2025-09-24 11:13:11] - logger:flush - ERROR -   1%|8                                                                                               | 136/14993 [00:06<16:59, 14.57it/s]
-[2025-09-24 11:13:11] - logger:flush - ERROR -   1%|8                                                                                               | 140/14993 [00:07<14:13, 17.41it/s]
-[2025-09-24 11:13:12] - logger:flush - ERROR -   1%|9                                                                                               | 145/14993 [00:07<11:29, 21.55it/s]
-[2025-09-24 11:13:12] - logger:flush - ERROR -   1%|9                                                                                               | 149/14993 [00:07<12:34, 19.66it/s]
-[2025-09-24 11:13:12] - logger:flush - ERROR -   1%|9                                                                                               | 152/14993 [00:07<14:01, 17.64it/s]
-[2025-09-24 11:13:12] - logger:flush - ERROR -   1%|9                                                                                               | 154/14993 [00:07<15:18, 16.15it/s]
-[2025-09-24 11:13:12] - logger:flush - ERROR -   1%|#                                                                                               | 157/14993 [00:08<14:33, 16.98it/s]
-[2025-09-24 11:13:13] - logger:flush - ERROR -   1%|#                                                                                               | 163/14993 [00:08<11:43, 21.08it/s]
-[2025-09-24 11:13:13] - logger:flush - ERROR -   1%|#                                                                                               | 166/14993 [00:08<13:44, 17.99it/s]
-[2025-09-24 11:13:13] - logger:flush - ERROR -   1%|#                                                                                               | 169/14993 [00:08<13:41, 18.05it/s]
-[2025-09-24 11:13:13] - logger:flush - ERROR -   1%|#1                                                                                              | 172/14993 [00:08<13:06, 18.85it/s]
-[2025-09-24 11:13:13] - logger:flush - ERROR -   1%|#1                                                                                              | 174/14993 [00:08<14:27, 17.08it/s]
-[2025-09-24 11:13:13] - logger:flush - ERROR -   1%|#1                                                                                              | 176/14993 [00:09<15:40, 15.75it/s]
-[2025-09-24 11:13:14] - logger:flush - ERROR -   1%|#1                                                                                              | 179/14993 [00:09<14:21, 17.19it/s]
-[2025-09-24 11:13:14] - logger:flush - ERROR -   1%|#1                                                                                              | 181/14993 [00:09<15:54, 15.51it/s]
-[2025-09-24 11:13:14] - logger:flush - ERROR -   1%|#1                                                                                              | 183/14993 [00:09<16:33, 14.91it/s]
-[2025-09-24 11:13:14] - logger:flush - ERROR -   1%|#1                                                                                              | 185/14993 [00:09<16:58, 14.54it/s]
-[2025-09-24 11:13:14] - logger:flush - ERROR -   1%|#2                                                                                              | 188/14993 [00:09<15:25, 16.00it/s]
-[2025-09-24 11:13:14] - logger:flush - ERROR -   1%|#2                                                                                              | 190/14993 [00:10<16:24, 15.04it/s]
-[2025-09-24 11:13:15] - logger:flush - ERROR -   1%|#2                                                                                              | 192/14993 [00:10<18:09, 13.59it/s]
-[2025-09-24 11:13:15] - logger:flush - ERROR -   1%|#2                                                                                              | 196/14993 [00:10<14:35, 16.90it/s]
-[2025-09-24 11:13:15] - logger:flush - ERROR -   1%|#2                                                                                              | 198/14993 [00:10<15:29, 15.91it/s]
-[2025-09-24 11:13:15] - logger:flush - ERROR -   1%|#2                                                                                              | 200/14993 [00:10<16:16, 15.15it/s]
-[2025-09-24 11:13:15] - logger:flush - ERROR -   1%|#2                                                                                              | 202/14993 [00:10<17:21, 14.20it/s]
-[2025-09-24 11:13:15] - logger:flush - ERROR -   1%|#3                                                                                              | 206/14993 [00:11<13:54, 17.72it/s]
-[2025-09-24 11:13:16] - logger:flush - ERROR -   1%|#3                                                                                              | 208/14993 [00:11<14:39, 16.80it/s]
-[2025-09-24 11:13:16] - logger:flush - ERROR -   1%|#3                                                                                              | 212/14993 [00:11<12:53, 19.11it/s]
-[2025-09-24 11:13:16] - logger:flush - ERROR -   1%|#3                                                                                              | 217/14993 [00:11<10:27, 23.54it/s]
-[2025-09-24 11:13:16] - logger:flush - ERROR -   1%|#4                                                                                              | 220/14993 [00:11<12:15, 20.09it/s]
-[2025-09-24 11:13:16] - logger:flush - ERROR -   1%|#4                                                                                              | 223/14993 [00:11<12:23, 19.86it/s]
-[2025-09-24 11:13:16] - logger:flush - ERROR -   2%|#4                                                                                              | 226/14993 [00:12<14:07, 17.43it/s]
-[2025-09-24 11:13:17] - logger:flush - ERROR -   2%|#4                                                                                              | 228/14993 [00:12<15:23, 15.99it/s]
-[2025-09-24 11:13:17] - logger:flush - ERROR -   2%|#4                                                                                              | 230/14993 [00:12<16:15, 15.13it/s]
-[2025-09-24 11:13:17] - logger:flush - ERROR -   2%|#4                                                                                              | 232/14993 [00:12<17:01, 14.46it/s]
-[2025-09-24 11:13:17] - logger:flush - ERROR -   2%|#5                                                                                              | 235/14993 [00:12<15:00, 16.39it/s]
-[2025-09-24 11:13:17] - logger:flush - ERROR -   2%|#5                                                                                              | 237/14993 [00:12<18:01, 13.64it/s]
-[2025-09-24 11:13:17] - logger:flush - ERROR -   2%|#5                                                                                              | 241/14993 [00:13<14:38, 16.79it/s]
-[2025-09-24 11:13:18] - logger:flush - ERROR -   2%|#5                                                                                              | 245/14993 [00:13<12:57, 18.97it/s]
-[2025-09-24 11:13:18] - logger:flush - ERROR -   2%|#5                                                                                              | 249/14993 [00:13<11:27, 21.44it/s]
-[2025-09-24 11:13:18] - logger:flush - ERROR -   2%|#6                                                                                              | 252/14993 [00:13<12:06, 20.28it/s]
-[2025-09-24 11:13:18] - logger:flush - ERROR -   2%|#6                                                                                              | 255/14993 [00:13<11:53, 20.66it/s]
-[2025-09-24 11:13:18] - logger:flush - ERROR -   2%|#6                                                                                              | 258/14993 [00:13<13:59, 17.55it/s]
-[2025-09-24 11:13:18] - logger:flush - ERROR -   2%|#6                                                                                              | 260/14993 [00:14<14:55, 16.45it/s]
-[2025-09-24 11:13:19] - logger:flush - ERROR -   2%|#6                                                                                              | 264/14993 [00:14<12:29, 19.66it/s]
-[2025-09-24 11:13:19] - logger:flush - ERROR -   2%|#7                                                                                              | 267/14993 [00:14<14:49, 16.55it/s]
-[2025-09-24 11:13:19] - logger:flush - ERROR -   2%|#7                                                                                              | 271/14993 [00:14<13:13, 18.55it/s]
-[2025-09-24 11:13:19] - logger:flush - ERROR -   2%|#7                                                                                              | 273/14993 [00:14<14:21, 17.09it/s]
-[2025-09-24 11:13:19] - logger:flush - ERROR -   2%|#7                                                                                              | 275/14993 [00:15<18:20, 13.37it/s]
-[2025-09-24 11:13:20] - logger:flush - ERROR -   2%|#7                                                                                              | 277/14993 [00:15<18:10, 13.49it/s]
-[2025-09-24 11:13:20] - logger:flush - ERROR -   2%|#7                                                                                              | 279/14993 [00:15<18:16, 13.42it/s]
-[2025-09-24 11:13:20] - logger:flush - ERROR -   2%|#7                                                                                              | 281/14993 [00:15<19:17, 12.71it/s]
-[2025-09-24 11:13:20] - logger:flush - ERROR -   2%|#8                                                                                              | 283/14993 [00:15<19:15, 12.73it/s]
-[2025-09-24 11:13:20] - logger:flush - ERROR -   2%|#8                                                                                              | 287/14993 [00:15<15:48, 15.50it/s]
-[2025-09-24 11:13:20] - logger:flush - ERROR -   2%|#8                                                                                              | 289/14993 [00:16<17:00, 14.41it/s]
-[2025-09-24 11:13:21] - logger:flush - ERROR -   2%|#8                                                                                              | 291/14993 [00:16<17:45, 13.79it/s]
-[2025-09-24 11:13:21] - logger:flush - ERROR -   2%|#8                                                                                              | 294/14993 [00:16<15:59, 15.31it/s]
-[2025-09-24 11:13:21] - logger:flush - ERROR -   2%|#9                                                                                              | 297/14993 [00:16<15:14, 16.07it/s]
-[2025-09-24 11:13:21] - logger:flush - ERROR -   2%|#9                                                                                              | 299/14993 [00:16<15:53, 15.40it/s]
-[2025-09-24 11:13:21] - logger:flush - ERROR -   2%|#9                                                                                              | 302/14993 [00:16<14:47, 16.55it/s]
-[2025-09-24 11:13:21] - logger:flush - ERROR -   2%|#9                                                                                              | 304/14993 [00:16<15:23, 15.91it/s]
-[2025-09-24 11:13:21] - logger:flush - ERROR -   2%|#9                                                                                              | 306/14993 [00:17<16:19, 14.99it/s]
-[2025-09-24 11:13:22] - logger:flush - ERROR -   2%|#9                                                                                              | 310/14993 [00:17<13:23, 18.27it/s]
-[2025-09-24 11:13:22] - logger:flush - ERROR -   2%|##                                                                                              | 313/14993 [00:17<13:17, 18.40it/s]
-[2025-09-24 11:13:22] - logger:flush - ERROR -   2%|##                                                                                              | 315/14993 [00:17<15:02, 16.27it/s]
-[2025-09-24 11:13:22] - logger:flush - ERROR -   2%|##                                                                                              | 318/14993 [00:17<14:05, 17.35it/s]
-[2025-09-24 11:13:22] - logger:flush - ERROR -   2%|##                                                                                              | 320/14993 [00:17<15:19, 15.96it/s]
-[2025-09-24 11:13:22] - logger:flush - ERROR -   2%|##                                                                                              | 322/14993 [00:18<16:35, 14.73it/s]
-[2025-09-24 11:13:23] - logger:flush - ERROR -   2%|##                                                                                              | 325/14993 [00:18<15:25, 15.85it/s]
-[2025-09-24 11:13:23] - logger:flush - ERROR -   2%|##1                                                                                             | 330/14993 [00:18<12:59, 18.81it/s]
-[2025-09-24 11:13:23] - logger:flush - ERROR -   2%|##1                                                                                             | 333/14993 [00:18<13:23, 18.24it/s]
-=======
-[2025-09-24 09:25:37] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\logs\log.txt
-[2025-09-24 09:25:40] - __init__:wrapper - DEBUG - matplotlib data path: C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\matplotlib\mpl-data
-[2025-09-24 09:25:40] - __init__:wrapper - DEBUG - CONFIGDIR=C:\Users\ss255385\.matplotlib
-[2025-09-24 09:25:40] - __init__:<module> - DEBUG - interactive is False
-[2025-09-24 09:25:40] - __init__:<module> - DEBUG - platform is win32
-[2025-09-24 09:25:40] - __init__:wrapper - DEBUG - CACHEDIR=C:\Users\ss255385\.matplotlib
-[2025-09-24 09:25:40] - font_manager:_load_fontmanager - DEBUG - Using fontManager instance from C:\Users\ss255385\.matplotlib\fontlist-v390.json
-[2025-09-24 09:26:40] - logger:write - ERROR - Traceback (most recent call last):
-[2025-09-24 09:26:40] - logger:write - ERROR -   File "c:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\src\run_pipeline.py", line 1, in <module>
-    from pipelines import EnsemblePipeline
-[2025-09-24 09:26:40] - logger:write - ERROR -   File "c:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\src\pipelines\__init__.py", line 1, in <module>
-    from pipelines.ensemble_pipeline import EnsemblePipeline
-[2025-09-24 09:26:40] - logger:write - ERROR -   File "c:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\src\pipelines\ensemble_pipeline.py", line 8, in <module>
-    from pipelines.base_pipeline import Pipeline
-[2025-09-24 09:26:40] - logger:write - ERROR -   File "c:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\src\pipelines\base_pipeline.py", line 12, in <module>
-    from src.db_queries import (
-    ...<12 lines>...
-    )
-[2025-09-24 09:26:40] - logger:write - ERROR - ModuleNotFoundError: No module named 'src'
->>>>>>> origin/sajed-dev
+[2025-09-24 11:21:04] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
+[2025-09-24 11:21:11] - __init__:wrapper - DEBUG - matplotlib data path: C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\matplotlib\mpl-data
+[2025-09-24 11:21:11] - __init__:wrapper - DEBUG - CONFIGDIR=C:\Users\os255022\.matplotlib
+[2025-09-24 11:21:11] - __init__:<module> - DEBUG - interactive is False
+[2025-09-24 11:21:11] - __init__:<module> - DEBUG - platform is win32
+[2025-09-24 11:21:11] - __init__:wrapper - DEBUG - CACHEDIR=C:\Users\os255022\.matplotlib
+[2025-09-24 11:21:11] - font_manager:_load_fontmanager - DEBUG - Using fontManager instance from C:\Users\os255022\.matplotlib\fontlist-v390.json
+[2025-09-24 11:21:30] - logger:_log - INFO - TeradataDatabase instance initialized
+[2025-09-24 11:21:30] - logger:_log - INFO - Operation 'Database connection' started - Details: {'host': 'iteration7-gwyyqrtdecxxq4xk.env.clearscape.teradata.com', 'database': 'demo_user'}
+[2025-09-24 11:21:38] - logger:_log - INFO - Operation 'Database connection' completed
+[2025-09-24 11:21:38] - logger:_log - INFO - Loading a CSV file of path `c:\internship\Prodify-V2.0\data\full_train_dataset.csv`.
+[2025-09-24 11:21:38] - logger:_log - INFO - Loading a CSV file of path `c:\internship\Prodify-V2.0\data\full_test_dataset.csv`.
+[2025-09-24 11:21:38] - logger:_log - INFO - Starting to train `TF-IDF Classifier`.
+[2025-09-24 11:21:38] - logger:_log - INFO - Loading tfidf classifier model.
+[2025-09-24 11:21:38] - logger:_log - INFO - Loading tfidf classifier model is done.
+[2025-09-24 11:21:38] - logger:_log - INFO - Training the model
+[2025-09-24 11:22:49] - logger:write - ERROR - Traceback (most recent call last):
+[2025-09-24 11:22:49] - logger:write - ERROR -   File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 13, in <module>
+[2025-09-24 11:22:49] - logger:write - ERROR - main()  File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 9, in main
+[2025-09-24 11:22:49] - logger:write - ERROR - run_pipeline()  File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 6, in run_pipeline
+[2025-09-24 11:22:49] - logger:write - ERROR - pipe.run_pipeline()  File "c:\internship\Prodify-V2.0\src\pipelines\ensemble_pipeline.py", line 228, in run_pipeline
+[2025-09-24 11:22:49] - logger:write - ERROR - train_tfidf_model(self.tfidf_classifier, self.df_train)  File "c:\internship\Prodify-V2.0\src\model_utils.py", line 21, in train_tfidf_model
+[2025-09-24 11:22:49] - logger:write - ERROR - tfidf_model.fit(X_train, y_train)  File "c:\internship\Prodify-V2.0\src\models\tfidf_classifier.py", line 41, in fit
+[2025-09-24 11:22:49] - logger:write - ERROR - self.clf.fit(X_train, y_train)  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\base.py", line 1365, in wrapper
+[2025-09-24 11:22:49] - logger:write - ERROR - return fit_method(estimator, *args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\pipeline.py", line 663, in fit
+[2025-09-24 11:22:49] - logger:write - ERROR - self._final_estimator.fit(Xt, y, **last_step_params["fit"])  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\base.py", line 1365, in wrapper
+[2025-09-24 11:22:49] - logger:write - ERROR - return fit_method(estimator, *args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\svm\_classes.py", line 321, in fit
+[2025-09-24 11:22:49] - logger:write - ERROR - self.coef_, self.intercept_, n_iter_ = _fit_liblinear(^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\svm\_base.py", line 1230, in _fit_liblinear
+[2025-09-24 11:22:49] - logger:flush - ERROR - raw_coef_, n_iter_ = liblinear.train_wrap(^^^^^^^^^^^^^^^^^^^^^KeyboardInterrupt
+[2025-09-24 11:22:49] - logger:_log - INFO - Operation 'Database disconnection' started
+[2025-09-24 11:22:50] - logger:_log - INFO - Operation 'Database disconection' completed
