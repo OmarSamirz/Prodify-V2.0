@@ -24,10 +24,6 @@ MODEL_PERFORMANCE_FAMILY_GRAPH_PATH = GRAPHS_DIR / "model_performance_family.jpg
 
 MODEL_PERFORMANCE_CLASS_GRAPH_PATH = GRAPHS_DIR / "model_performance_class.jpg"
 
-MODEL_PERFORMANCE_SEGMENT_BY_FAMILIES_BASE_PATH = GRAPHS_DIR / "model_performance_segment_by_family.jpg"
-
-MODEL_PERFORMANCE_FAMILY_BY_CLASSES_BASE_PATH = GRAPHS_DIR / "model_performance_family_by_class.jpg"
-
 DATA_PATH = BASE_DIR / "data"
 
 MODEL_OUTPUTS_DATA_PATH = DATA_PATH / "outputs"

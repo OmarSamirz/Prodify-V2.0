@@ -1,3 +1,4 @@
+import unicodedata
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
@@ -13,6 +14,15 @@ def split_dataset(dataset_path: str, train_dataset_path: str, test_dataset_path:
 
     train_df.to_csv(train_dataset_path, index=False)
     test_df.to_csv(test_dataset_path, index=False)
+
+def unicode_clean(s):
+    if not isinstance(s, str):
+        return s
+    
+    s = unicodedata.normalize('NFKC', s)
+    s = ''.join(c for c in s if unicodedata.category(c)[0] != 'C')
+
+    return s.strip()
 
 def get_confidence_level(confidence_rates: List[float]) -> List[str]:
     confidence_levels = []

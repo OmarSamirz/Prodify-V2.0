@@ -13,9 +13,8 @@ from src.constants import (
     MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH,
     MODEL_PERFORMANCE_FAMILY_GRAPH_PATH,
     MODEL_PERFORMANCE_CLASS_GRAPH_PATH,
-    MODEL_PERFORMANCE_SEGMENT_BY_FAMILIES_BASE_PATH,
-    MODEL_PERFORMANCE_FAMILY_BY_CLASSES_BASE_PATH,
-    FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH
+    FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH,
+    GRAPHS_DIR
 )
 
 
@@ -34,8 +33,8 @@ def draw_eda(df: pd.DataFrame) -> None:
     plot_classification_results(df, "family", MODEL_PERFORMANCE_FAMILY_GRAPH_PATH, "percentage")
     plot_classification_results(df, "class", MODEL_PERFORMANCE_CLASS_GRAPH_PATH, "percentage")
 
-    plot_classification_by_sublevel(df, "segment", "family", MODEL_PERFORMANCE_SEGMENT_BY_FAMILIES_BASE_PATH)
-    plot_classification_by_sublevel(df, "family", "class", MODEL_PERFORMANCE_FAMILY_BY_CLASSES_BASE_PATH)
+    plot_classification_by_sublevel(df, "segment", "family", GRAPHS_DIR)
+    plot_classification_by_sublevel(df, "family", "class", GRAPHS_DIR)
 
 def plot_confidence_distribution(df: pd.DataFrame, img_path: str) -> None:
     levels = ["segment", "family", "class"]
@@ -134,11 +133,11 @@ def plot_classification_results(df: pd.DataFrame, level: str, img_path: str, mod
 
     if mode == "percentage":
         ax.set_ylabel("Percentage (%)")
-        ax.set_title(f"Percentage Distribution of Correctly vs Incorrectly Classified {level.title()}s")
+        ax.set_title(f"Percentage Distribution of Correctly vs Incorrectly Classified {level.title()}")
         ax.set_ylim(-105, 105)
     else:
         ax.set_ylabel("Number of Predictions")
-        ax.set_title(f"Distribution of Correctly vs Incorrectly Classified {level.title()}s")
+        ax.set_title(f"Distribution of Correctly vs Incorrectly Classified {level.title()}")
         ax.set_yscale("symlog")
 
     ax.set_xticks(x_pos)
@@ -146,18 +145,19 @@ def plot_classification_results(df: pd.DataFrame, level: str, img_path: str, mod
         ax.set_xticklabels(res_df.index, rotation=45, ha="right")
         for i, (c, ic) in enumerate(zip(res_df["correct"], res_df["incorrect"])):
             if c > 0:
-                text = f"{c:.1f}%" if mode == "percentage" else f"{int(c)}"
+                text = f"{c:.0f}%" if mode == "percentage" else f"{int(c)}"
                 ax.text(i, c + (2 if mode == "percentage" else c * 0.1), text,
-                        ha="center", va="bottom", fontsize=7, color="green", weight="bold")
+                        ha="center", va="bottom", fontsize=6, color="green", weight="bold")
             if ic > 0:
-                text = f"{ic:.1f}%" if mode == "percentage" else f"{int(ic)}"
+                text = f"{ic:.0f}%" if mode == "percentage" else f"{int(ic)}"
                 ax.text(i, -(ic + (2 if mode == "percentage" else ic * 0.1)), text,
-                        ha="center", va="top", fontsize=7, color="red", weight="bold")
+                        ha="center", va="top", fontsize=6, color="red", weight="bold")
     else:
         ax.set_xticklabels([])
         ax.set_xlabel("")
 
     ax.axhline(y=0, color="black", linestyle="-", linewidth=0.5)
+    ax.spines['top'].set_visible(False)
 
     metric = res_df["correct"]
     top5 = metric.sort_values(ascending=False).head(5)
@@ -179,65 +179,82 @@ def plot_classification_by_sublevel(df: pd.DataFrame, upper_level: str, sub_leve
     col_true = upper_level
     col_pred = f"pred_{upper_level}"
     df["correct"] = df[col_true] == df[col_pred]
-    sub_levels = df[sub_level].dropna().unique()
-    for sub_idx, sub_label in enumerate(sub_levels):
-        sub_df = df[df[sub_level] == sub_label].copy()
-        if len(sub_df) == 0:
+
+    upper_levels = df[upper_level].dropna().unique()
+    save_dir = os.path.join(base_path, f"model_performance_by_each_{upper_level}")
+    os.makedirs(save_dir, exist_ok=True)
+
+    for upper_idx, upper_label in enumerate(upper_levels):
+        upper_df = df[df[upper_level] == upper_label].copy()
+        if len(upper_df) == 0:
             continue
+
         counts = (
-            sub_df.groupby([col_true, "correct"])
+            upper_df.groupby([sub_level, "correct"])
             .size()
             .unstack(fill_value=0)
         )
         if len(counts) == 0:
             continue
+
         total_counts = counts.sum(axis=1).sort_values(ascending=False)
         counts = counts.reindex(total_counts.index)
+
         fig, ax = plt.subplots(figsize=(12, 6))
         correct_counts = counts.get(True, pd.Series(0, index=counts.index))
         incorrect_counts = counts.get(False, pd.Series(0, index=counts.index))
+
         x_pos = np.arange(len(counts.index))
-        ax.bar(x_pos, correct_counts, color='green', alpha=0.7, label='Correct')
-        ax.bar(x_pos, incorrect_counts, color='red', alpha=0.7, label='Incorrect')
+        
+        ax.bar(x_pos, correct_counts, color="green", alpha=0.7, label="Correct", width=0.6)
+        ax.bar(x_pos, -incorrect_counts, color="red", alpha=0.7, label="Incorrect", width=0.6)
+
         ax.set_ylabel("Number of Predictions")
-        ax.set_xlabel(upper_level.title())
-        ax.set_title(f"Classification Results for {sub_level.title()}: {sub_label}")
+        ax.set_xlabel(sub_level.title())
+        ax.set_title(f"Classification Results for {upper_level.title()}: {upper_label}\n"
+                     f"Performance across all {sub_level}")
         ax.legend(title="Prediction")
-        ax.set_yscale("log")
+        ax.set_yscale("symlog")
         ax.set_xticks(x_pos)
         ax.set_xticklabels(counts.index, rotation=45, ha="right")
+        
+        ax.axhline(y=0, color='black', linewidth=0.8, alpha=0.3)
+        ax.spines['top'].set_visible(False)
+
         for i, (correct, incorrect) in enumerate(zip(correct_counts, incorrect_counts)):
             if correct > 0:
-                ax.text(i, correct * 1.1, f"{int(correct)}", ha="center", va="bottom", fontsize=8, color="green", weight="bold")
+                ax.text(i, correct + correct * 0.05, f"{int(correct)}", ha="center", va="bottom",
+                        fontsize=8, color="black", weight="bold") 
             if incorrect > 0:
-                ax.text(i, incorrect * 1.1, f"{int(incorrect)}", ha="center", va="bottom", fontsize=8, color="red", weight="bold")
+                ax.text(i, -incorrect - incorrect * 0.05, f"{int(incorrect)}", ha="center", va="top",
+                        fontsize=8, color="black", weight="bold") 
+
         total_correct = correct_counts.sum()
         total_incorrect = incorrect_counts.sum()
         total_predictions = total_correct + total_incorrect
         accuracy = (total_correct / total_predictions * 100) if total_predictions > 0 else 0
-        textstr = f"Sub-level: {sub_label}\n"
-        textstr += f"Total Predictions: {total_predictions}\n"
-        textstr += f"Correct: {total_correct}\n"
-        textstr += f"Incorrect: {total_incorrect}\n"
-        textstr += f"Accuracy: {accuracy:.1f}%"
-        props = dict(boxstyle="round", facecolor="white", alpha=0.8)
-        ax.text(
-            1.05,
-            0.5,
-            textstr,
-            transform=ax.transAxes,
-            fontsize=10,
-            verticalalignment="center",
-            bbox=props,
-            color="black"
+
+        textstr = (
+            f"{upper_level}: {upper_label}\n"
+            f"Number of {sub_level}s: {len(counts)}\n"
+            f"Total Predictions: {total_predictions}\n"
+            f"Correct: {total_correct}\n"
+            f"Incorrect: {total_incorrect}\n"
+            f"Overall Accuracy: {accuracy:.1f}%"
         )
+        props = dict(boxstyle="round", facecolor="white", alpha=0.8)
+        ax.text(1.05, 0.5, textstr, transform=ax.transAxes,
+                fontsize=10, verticalalignment="center",
+                bbox=props, color="black")
+
         plt.tight_layout()
-        safe_sub_label = str(sub_label).replace('/', '_').replace('\\', '_').replace(' ', '_')
-        img_path = f"{base_path}_{sub_level}_{safe_sub_label}_{sub_idx}.png"
-        os.makedirs(os.path.dirname(img_path), exist_ok=True)
-        plt.savefig(img_path, bbox_inches='tight')
+
+        safe_upper_label = str(upper_label).replace("/", "_").replace("\\", "_").replace(" ", "_")
+        img_path = os.path.join(save_dir, f"{safe_upper_label}.png")
+        plt.savefig(img_path, bbox_inches="tight")
         plt.close()
-        print(f"Saved plot for {sub_level} '{sub_label}' to {img_path}")
+
+        print(f"Saved plot for {upper_level} '{upper_label}' showing performance across all {sub_level}s to {img_path}")
 
 def main():
 

@@ -87,26 +87,31 @@ These graphs provide insights into model performance at each hierarchy level (Se
 ## 3. Sublevel Classification Analysis
 
 ### Purpose
-These graphs provide detailed analysis by breaking down performance within specific sublevels of the hierarchy, allowing identification of performance patterns within subcategories.
+These graphs provide detailed analysis by breaking down performance **within specific sublevels of each upper-level category** (e.g., Families inside a Segment, or Classes inside a Family). This allows identification of performance patterns nested within parent categories.
 
 ### Generated Files
-- `model_performance_segment_by_family_[family_name]_[index].png` - Families performance within each segemnt
-- `model_performance_family_by_class_[class_name]_[index].png` - Classes performance within each Family
+- `model_performance_by_each_segment/`  
+  Contains one image per Segment 
+  - `[family_name]_[index].png`
+
+- `model_performance_by_each_family/`  
+  Contains one image per Family   
+  - `[class_name]_[index].png`
 
 ### Graph Description
-- **Type**: Standard bar chart (correct and incorrect side-by-side)
-- **X-axis**: Labels within the upper hierarchy level
-- **Y-axis**: Number of predictions (log scale)
-- **Color Coding**:
-  - 🟢 Green: Correct predictions
-  - 🔴 Red: Incorrect predictions
-- **Statistics Box**: Shows sublevel-specific metrics including total predictions, correct/incorrect counts, and accuracy percentage
+- **Type**: Two-way bar chart (correct above x-axis, incorrect below)  
+- **X-axis**: Sublevel labels within the given upper level (e.g., Families inside a Segment)  
+- **Y-axis**: Number of predictions (symmetric log scale, `symlog`)  
+- **Color Coding**:  
+  - 🟢 Green: Correct predictions  
+  - 🔴 Red: Incorrect predictions  
+- **Statistics Box**: Shows parent-level totals, including total predictions, correct/incorrect counts, and accuracy percentage.
 
 ### Interpretation
-- **Individual sublevel performance**: Identifies which families/classes are easier or harder for the model
-- **Within-sublevel patterns**: Shows if certain families within a segment are consistently problematic
-- **Comparative analysis**: Enables comparison of model performance across different subcategories
-- **Targeted improvement**: Helps identify specific areas where model training could be focused
+- **Parent-level breakdown**: For each Segment, see how its Families performed individually; for each Family, see how its Classes performed.  
+- **Performance hotspots**: Identify which sublevels are most problematic inside their parent categories.  
+- **Comparative analysis**: Compare sublevel behavior across different parent groups.  
+- **Targeted improvement**: Pinpoint where the model struggles most, enabling focused retraining or data augmentation.  
 
 ---
 
@@ -129,21 +134,26 @@ These graphs provide detailed analysis by breaking down performance within speci
 ## File Organization
 
 ```
+## File Organization
+
 analysis/
-├── analysis.py                         
-├── analysis.md                          
-├── full_confidence_distribution.png     
-├── correct_confidence_distribution.png  
-├── incorrect_confidence_distribution.png 
-├── model_performance_segment_absolute_value.png       
-├── model_performance_family_absolute_value.png        
-├── model_performance_class_absolute_value.png      
-├── model_performance_segment_percentage.png  
-├── model_performance_family_percentage.png    
-├── model_performance_class_percentage.png  
-└── sublevels/
-    ├── model_performance_segment_by_family_[name]_[idx].png
-    └── model_performance_family_by_class_[name]_[idx].png
+├── analysis.py
+├── analysis.md
+├── full_confidence_distribution.png
+├── correct_confidence_distribution.png
+├── incorrect_confidence_distribution.png
+├── model_performance_segment_absolute_value.png
+├── model_performance_family_absolute_value.png
+├── model_performance_class_absolute_value.png
+├── model_performance_segment_percentage.png
+├── model_performance_family_percentage.png
+├── model_performance_class_percentage.png
+├── model_performance_by_each_segment/
+│   ├── [segment_name]_by_family.png
+│   └── ...
+└── model_performance_by_each_family/
+    ├── [family_name]_by_class.png
+    └── ...
 ```
 
 ## Technical Notes
