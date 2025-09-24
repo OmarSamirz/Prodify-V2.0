@@ -1,31 +1,267 @@
-[2025-09-24 11:21:04] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
-[2025-09-24 11:21:11] - __init__:wrapper - DEBUG - matplotlib data path: C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\matplotlib\mpl-data
-[2025-09-24 11:21:11] - __init__:wrapper - DEBUG - CONFIGDIR=C:\Users\os255022\.matplotlib
-[2025-09-24 11:21:11] - __init__:<module> - DEBUG - interactive is False
-[2025-09-24 11:21:11] - __init__:<module> - DEBUG - platform is win32
-[2025-09-24 11:21:11] - __init__:wrapper - DEBUG - CACHEDIR=C:\Users\os255022\.matplotlib
-[2025-09-24 11:21:11] - font_manager:_load_fontmanager - DEBUG - Using fontManager instance from C:\Users\os255022\.matplotlib\fontlist-v390.json
-[2025-09-24 11:21:30] - logger:_log - INFO - TeradataDatabase instance initialized
-[2025-09-24 11:21:30] - logger:_log - INFO - Operation 'Database connection' started - Details: {'host': 'iteration7-gwyyqrtdecxxq4xk.env.clearscape.teradata.com', 'database': 'demo_user'}
-[2025-09-24 11:21:38] - logger:_log - INFO - Operation 'Database connection' completed
-[2025-09-24 11:21:38] - logger:_log - INFO - Loading a CSV file of path `c:\internship\Prodify-V2.0\data\full_train_dataset.csv`.
-[2025-09-24 11:21:38] - logger:_log - INFO - Loading a CSV file of path `c:\internship\Prodify-V2.0\data\full_test_dataset.csv`.
-[2025-09-24 11:21:38] - logger:_log - INFO - Starting to train `TF-IDF Classifier`.
-[2025-09-24 11:21:38] - logger:_log - INFO - Loading tfidf classifier model.
-[2025-09-24 11:21:38] - logger:_log - INFO - Loading tfidf classifier model is done.
-[2025-09-24 11:21:38] - logger:_log - INFO - Training the model
-[2025-09-24 11:22:49] - logger:write - ERROR - Traceback (most recent call last):
-[2025-09-24 11:22:49] - logger:write - ERROR -   File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 13, in <module>
-[2025-09-24 11:22:49] - logger:write - ERROR - main()  File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 9, in main
-[2025-09-24 11:22:49] - logger:write - ERROR - run_pipeline()  File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 6, in run_pipeline
-[2025-09-24 11:22:49] - logger:write - ERROR - pipe.run_pipeline()  File "c:\internship\Prodify-V2.0\src\pipelines\ensemble_pipeline.py", line 228, in run_pipeline
-[2025-09-24 11:22:49] - logger:write - ERROR - train_tfidf_model(self.tfidf_classifier, self.df_train)  File "c:\internship\Prodify-V2.0\src\model_utils.py", line 21, in train_tfidf_model
-[2025-09-24 11:22:49] - logger:write - ERROR - tfidf_model.fit(X_train, y_train)  File "c:\internship\Prodify-V2.0\src\models\tfidf_classifier.py", line 41, in fit
-[2025-09-24 11:22:49] - logger:write - ERROR - self.clf.fit(X_train, y_train)  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\base.py", line 1365, in wrapper
-[2025-09-24 11:22:49] - logger:write - ERROR - return fit_method(estimator, *args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\pipeline.py", line 663, in fit
-[2025-09-24 11:22:49] - logger:write - ERROR - self._final_estimator.fit(Xt, y, **last_step_params["fit"])  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\base.py", line 1365, in wrapper
-[2025-09-24 11:22:49] - logger:write - ERROR - return fit_method(estimator, *args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\svm\_classes.py", line 321, in fit
-[2025-09-24 11:22:49] - logger:write - ERROR - self.coef_, self.intercept_, n_iter_ = _fit_liblinear(^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\svm\_base.py", line 1230, in _fit_liblinear
-[2025-09-24 11:22:49] - logger:flush - ERROR - raw_coef_, n_iter_ = liblinear.train_wrap(^^^^^^^^^^^^^^^^^^^^^KeyboardInterrupt
-[2025-09-24 11:22:49] - logger:_log - INFO - Operation 'Database disconnection' started
-[2025-09-24 11:22:50] - logger:_log - INFO - Operation 'Database disconection' completed
+[2025-09-24 18:08:55] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\logs\log.txt
+[2025-09-24 18:08:56] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:380: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 1.7.1 when using version 1.6.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+[2025-09-24 18:08:56] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:380: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 1.7.1 when using version 1.6.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+[2025-09-24 18:08:56] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:380: InconsistentVersionWarning: Trying to unpickle estimator LinearSVC from version 1.7.1 when using version 1.6.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+[2025-09-24 18:08:56] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:380: InconsistentVersionWarning: Trying to unpickle estimator Pipeline from version 1.7.1 when using version 1.6.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+[2025-09-24 18:08:56] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:380: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 1.7.1 when using version 1.6.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+[2025-09-24 18:08:56] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:380: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 1.7.1 when using version 1.6.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+[2025-09-24 18:08:56] - SentenceTransformer:__init__ - INFO - Load pretrained SentenceTransformer: intfloat/multilingual-e5-large-instruct
+[2025-09-24 18:08:56] - connectionpool:_new_conn - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
+[2025-09-24 18:08:56] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/modules.json HTTP/1.1" 307 0
+[2025-09-24 18:08:56] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/modules.json HTTP/1.1" 200 0
+[2025-09-24 18:08:57] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+[2025-09-24 18:08:57] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/config_sentence_transformers.json HTTP/1.1" 200 0
+[2025-09-24 18:08:57] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+[2025-09-24 18:08:57] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/config_sentence_transformers.json HTTP/1.1" 200 0
+[2025-09-24 18:08:57] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/README.md HTTP/1.1" 307 0
+[2025-09-24 18:08:57] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/README.md HTTP/1.1" 200 0
+[2025-09-24 18:08:58] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/modules.json HTTP/1.1" 307 0
+[2025-09-24 18:08:58] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/modules.json HTTP/1.1" 200 0
+[2025-09-24 18:08:58] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_bert_config.json HTTP/1.1" 404 0
+[2025-09-24 18:08:58] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_roberta_config.json HTTP/1.1" 404 0
+[2025-09-24 18:08:59] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_distilbert_config.json HTTP/1.1" 404 0
+[2025-09-24 18:08:59] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_camembert_config.json HTTP/1.1" 404 0
+[2025-09-24 18:08:59] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_albert_config.json HTTP/1.1" 404 0
+[2025-09-24 18:08:59] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/sentence_xlm-roberta_config.json HTTP/1.1" 307 0
+[2025-09-24 18:08:59] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/sentence_xlm-roberta_config.json HTTP/1.1" 200 0
+[2025-09-24 18:09:00] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/adapter_config.json HTTP/1.1" 404 0
+[2025-09-24 18:09:00] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/config.json HTTP/1.1" 307 0
+[2025-09-24 18:09:00] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/config.json HTTP/1.1" 200 0
+[2025-09-24 18:09:02] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+[2025-09-24 18:09:02] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/tokenizer_config.json HTTP/1.1" 200 0
+[2025-09-24 18:09:02] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "GET /api/models/intfloat/multilingual-e5-large-instruct/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+[2025-09-24 18:09:03] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /intfloat/multilingual-e5-large-instruct/resolve/main/1_Pooling/config.json HTTP/1.1" 307 0
+[2025-09-24 18:09:03] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/intfloat/multilingual-e5-large-instruct/274baa43b0e13e37fafa6428dbc7938e62e5c439/1_Pooling%2Fconfig.json HTTP/1.1" 200 0
+[2025-09-24 18:09:03] - connectionpool:_make_request - DEBUG - https://huggingface.co:443 "GET /api/models/intfloat/multilingual-e5-large-instruct HTTP/1.1" 200 287680
+[2025-09-24 18:09:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:12] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:12] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:12] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:12] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:12] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:12] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:12] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:12] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:12] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 18:09:12] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 18:09:12] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:09:12] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\nn\modules\module.py:1762: FutureWarning: `encoder_attention_mask` is deprecated and will be removed in version 4.55.0 for `XLMRobertaSdpaSelfAttention.forward`.
+  return forward_call(*args, **kwargs)
+
+[2025-09-24 18:09:13] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:09:13] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:09:13] - logger:flush - ERROR - 100%|##################################################################################################| 1/1 [00:00<00:00, 1363.11it/s]
+[2025-09-24 18:09:13] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:09:13] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:09:13] - logger:flush - ERROR - 100%|####################################################################################################| 1/1 [00:00<00:00, 19.11it/s]
+[2025-09-24 18:09:38] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:38] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:38] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:38] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:38] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:38] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:38] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:38] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:38] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 18:09:38] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 18:09:38] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:09:38] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\nn\modules\module.py:1762: FutureWarning: `encoder_attention_mask` is deprecated and will be removed in version 4.55.0 for `XLMRobertaSdpaSelfAttention.forward`.
+  return forward_call(*args, **kwargs)
+
+[2025-09-24 18:09:38] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:09:38] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:09:39] - logger:flush - ERROR - 100%|####################################################################################################| 1/1 [00:00<00:00,  6.41it/s]
+[2025-09-24 18:09:39] - logger:flush - ERROR - 100%|####################################################################################################| 1/1 [00:00<00:00,  6.39it/s]
+[2025-09-24 18:09:39] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:09:39] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:09:39] - logger:flush - ERROR - 100%|####################################################################################################| 1/1 [00:00<00:00, 14.54it/s]
+[2025-09-24 18:09:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:09:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:09:57] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 18:09:57] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 18:09:57] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:09:57] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\nn\modules\module.py:1762: FutureWarning: `encoder_attention_mask` is deprecated and will be removed in version 4.55.0 for `XLMRobertaSdpaSelfAttention.forward`.
+  return forward_call(*args, **kwargs)
+
+[2025-09-24 18:09:57] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:09:57] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:09:57] - logger:flush - ERROR - 100%|####################################################################################################| 1/1 [00:00<00:00, 20.43it/s]
+[2025-09-24 18:09:57] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:09:57] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:09:57] - logger:flush - ERROR - 100%|##################################################################################################| 1/1 [00:00<00:00, 1499.04it/s]
+[2025-09-24 18:10:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:06] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 18:10:06] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 18:10:06] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:06] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\nn\modules\module.py:1762: FutureWarning: `encoder_attention_mask` is deprecated and will be removed in version 4.55.0 for `XLMRobertaSdpaSelfAttention.forward`.
+  return forward_call(*args, **kwargs)
+
+[2025-09-24 18:10:06] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:06] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:10:06] - logger:flush - ERROR - 100%|##################################################################################################| 1/1 [00:00<00:00, 1651.95it/s]
+[2025-09-24 18:10:06] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:06] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:10:06] - logger:flush - ERROR - 100%|##################################################################################################| 1/1 [00:00<00:00, 1973.79it/s]
+[2025-09-24 18:10:21] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:21] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:21] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:21] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:21] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:21] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:21] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:21] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:22] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 18:10:22] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 18:10:22] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:22] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\nn\modules\module.py:1762: FutureWarning: `encoder_attention_mask` is deprecated and will be removed in version 4.55.0 for `XLMRobertaSdpaSelfAttention.forward`.
+  return forward_call(*args, **kwargs)
+
+[2025-09-24 18:10:22] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:22] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:10:22] - logger:flush - ERROR - 100%|##################################################################################################| 1/1 [00:00<00:00, 1647.41it/s]
+[2025-09-24 18:10:22] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:22] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:10:22] - logger:flush - ERROR - 100%|####################################################################################################| 1/1 [00:00<00:00, 20.35it/s]
+[2025-09-24 18:10:55] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:55] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:55] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:55] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:56] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:56] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:56] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:56] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:56] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 18:10:56] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 18:10:56] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:56] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\nn\modules\module.py:1762: FutureWarning: `encoder_attention_mask` is deprecated and will be removed in version 4.55.0 for `XLMRobertaSdpaSelfAttention.forward`.
+  return forward_call(*args, **kwargs)
+
+[2025-09-24 18:10:56] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:56] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:10:56] - logger:flush - ERROR - 100%|##################################################################################################| 1/1 [00:00<00:00, 1687.17it/s]
+[2025-09-24 18:10:56] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:56] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:10:56] - logger:flush - ERROR - 100%|##################################################################################################| 1/1 [00:00<00:00, 1874.97it/s]
+[2025-09-24 18:10:59] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:59] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:59] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:59] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:59] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:59] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:59] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:10:59] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:10:59] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 18:10:59] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 18:10:59] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:59] - warnings:_showwarnmsg - WARNING - C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\torch\nn\modules\module.py:1762: FutureWarning: `encoder_attention_mask` is deprecated and will be removed in version 4.55.0 for `XLMRobertaSdpaSelfAttention.forward`.
+  return forward_call(*args, **kwargs)
+
+[2025-09-24 18:10:59] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:59] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:10:59] - logger:flush - ERROR - 100%|####################################################################################################| 1/1 [00:00<00:00, 24.73it/s]
+[2025-09-24 18:10:59] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 18:10:59] - logger:flush - ERROR -   0%|                                                                                                            | 0/1 [00:00<?, ?it/s]
+[2025-09-24 18:10:59] - logger:flush - ERROR - 100%|####################################################################################################| 1/1 [00:00<00:00, 17.12it/s]
+[2025-09-24 18:11:10] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:11:10] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:11:10] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 18:11:10] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 18:11:34] - logger:write - ERROR - Traceback (most recent call last):
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "<frozen runpy>", line 198, in _run_module_as_main
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "<frozen runpy>", line 88, in _run_code
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Scripts\streamlit.exe\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1363, in main
+    rv = self.invoke(ctx)
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1830, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\streamlit\web\cli.py", line 237, in main_run
+    _main_run(target, args, flag_options=kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\streamlit\web\cli.py", line 279, in _main_run
+    bootstrap.run(file, is_hello, args, flag_options)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\streamlit\web\bootstrap.py", line 363, in run
+    asyncio.run(main())
+    ~~~~~~~~~~~^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 712, in run_until_complete
+    self.run_forever()
+    ~~~~~~~~~~~~~~~~^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 683, in run_forever
+    self._run_once()
+    ~~~~~~~~~~~~~~^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py", line 2004, in _run_once
+    event_list = self._selector.select(timeout)
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\selectors.py", line 314, in select
+    r, w, _ = self._select(self._readers, self._writers, [], timeout)
+              ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\selectors.py", line 305, in _select
+    r, w, x = select.select(r, w, w, timeout)
+              ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\streamlit\web\bootstrap.py", line 43, in signal_handler
+    server.stop()
+    ~~~~~~~~~~~^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\streamlit\web\server\server.py", line 508, in stop
+    cli_util.print_to_cli("  Stopping...", fg="blue")
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\streamlit\cli_util.py", line 35, in print_to_cli
+    click.secho(message, **kwargs)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\termui.py", line 684, in secho
+    return echo(message, file=file, nl=nl, err=err, color=color)
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\click\utils.py", line 321, in echo
+    file.write(out)  # type: ignore
+    ~~~~~~~~~~^^^^^
+[2025-09-24 18:11:34] - logger:write - ERROR -   File "C:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\src\modules\logger.py", line 155, in write
+    self.buffer += message
+[2025-09-24 18:11:34] - logger:write - ERROR - TypeError: can only concatenate str (not "bytes") to str
