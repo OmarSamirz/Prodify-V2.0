@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [2025-09-24 11:10:05] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
 [2025-09-24 11:10:15] - __init__:wrapper - DEBUG - matplotlib data path: c:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\matplotlib\mpl-data
 [2025-09-24 11:10:15] - __init__:wrapper - DEBUG - CONFIGDIR=C:\Users\os255022\.matplotlib
@@ -189,3 +190,24 @@
 [2025-09-24 11:13:23] - logger:flush - ERROR -   2%|##                                                                                              | 325/14993 [00:18<15:25, 15.85it/s]
 [2025-09-24 11:13:23] - logger:flush - ERROR -   2%|##1                                                                                             | 330/14993 [00:18<12:59, 18.81it/s]
 [2025-09-24 11:13:23] - logger:flush - ERROR -   2%|##1                                                                                             | 333/14993 [00:18<13:23, 18.24it/s]
+=======
+[2025-09-24 09:25:37] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\logs\log.txt
+[2025-09-24 09:25:40] - __init__:wrapper - DEBUG - matplotlib data path: C:\Users\ss255385\AppData\Local\Programs\Python\Python313\Lib\site-packages\matplotlib\mpl-data
+[2025-09-24 09:25:40] - __init__:wrapper - DEBUG - CONFIGDIR=C:\Users\ss255385\.matplotlib
+[2025-09-24 09:25:40] - __init__:<module> - DEBUG - interactive is False
+[2025-09-24 09:25:40] - __init__:<module> - DEBUG - platform is win32
+[2025-09-24 09:25:40] - __init__:wrapper - DEBUG - CACHEDIR=C:\Users\ss255385\.matplotlib
+[2025-09-24 09:25:40] - font_manager:_load_fontmanager - DEBUG - Using fontManager instance from C:\Users\ss255385\.matplotlib\fontlist-v390.json
+[2025-09-24 09:26:40] - logger:write - ERROR - Traceback (most recent call last):
+[2025-09-24 09:26:40] - logger:write - ERROR -   File "c:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\src\run_pipeline.py", line 1, in <module>
+    from pipelines import EnsemblePipeline
+[2025-09-24 09:26:40] - logger:write - ERROR -   File "c:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\src\pipelines\__init__.py", line 1, in <module>
+    from pipelines.ensemble_pipeline import EnsemblePipeline
+[2025-09-24 09:26:40] - logger:write - ERROR -   File "c:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\src\pipelines\ensemble_pipeline.py", line 8, in <module>
+    from pipelines.base_pipeline import Pipeline
+[2025-09-24 09:26:40] - logger:write - ERROR -   File "c:\Users\ss255385\OneDrive - Teradata Corporation\Desktop\Prodify-V2.0\src\pipelines\base_pipeline.py", line 12, in <module>
+    from src.db_queries import (
+    ...<12 lines>...
+    )
+[2025-09-24 09:26:40] - logger:write - ERROR - ModuleNotFoundError: No module named 'src'
+>>>>>>> origin/sajed-dev
