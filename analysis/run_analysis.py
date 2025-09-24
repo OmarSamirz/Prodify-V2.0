@@ -14,7 +14,7 @@ from src.constants import (
     MODEL_PERFORMANCE_FAMILY_GRAPH_PATH,
     MODEL_PERFORMANCE_CLASS_GRAPH_PATH,
     FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH,
-    GRAPHS_DIR
+    ANALYSIS_DIR
 )
 
 
@@ -33,8 +33,8 @@ def draw_eda(df: pd.DataFrame) -> None:
     plot_classification_results(df, "family", MODEL_PERFORMANCE_FAMILY_GRAPH_PATH, "percentage")
     plot_classification_results(df, "class", MODEL_PERFORMANCE_CLASS_GRAPH_PATH, "percentage")
 
-    plot_classification_by_sublevel(df, "segment", "family", GRAPHS_DIR)
-    plot_classification_by_sublevel(df, "family", "class", GRAPHS_DIR)
+    plot_classification_by_sublevel(df, "segment", "family", ANALYSIS_DIR)
+    plot_classification_by_sublevel(df, "family", "class", ANALYSIS_DIR)
 
 def plot_confidence_distribution(df: pd.DataFrame, img_path: str) -> None:
     levels = ["segment", "family", "class"]
