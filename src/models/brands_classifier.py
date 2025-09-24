@@ -8,14 +8,14 @@ import os
 from typing import Optional, List, Union
 from typing_extensions import override
 
-from constants import MODEL_PATH
+from constants import ARTIFACTS_PATH
 from modules.logger import logger
-from models import TfidfBaseModel
+from models.base_tfidf_model import BaseTfidfModel
 
 load_dotenv()
 
 
-class BrandsClassifier(TfidfBaseModel):
+class BrandsClassifier(BaseTfidfModel):
 
     def __init__(self):
         super().__init__()
@@ -26,7 +26,7 @@ class BrandsClassifier(TfidfBaseModel):
             self.documents = self.df_brands["documents"].tolist()
         except:
             self.documents = None
-        if os.path.exists(MODEL_PATH / self.model_name):
+        if os.path.exists(ARTIFACTS_PATH / self.model_name):
             self.load()
 
     @override
@@ -65,16 +65,16 @@ class BrandsClassifier(TfidfBaseModel):
 
     @override
     def save(self) -> None:
-        if not os.path.exists(MODEL_PATH):
-            os.makedirs(MODEL_PATH, exist_ok=True)
+        if not os.path.exists(ARTIFACTS_PATH):
+            os.makedirs(ARTIFACTS_PATH, exist_ok=True)
 
-        model_path = MODEL_PATH / self.model_name
+        model_path = ARTIFACTS_PATH / self.model_name
         joblib.dump(self.vectorizer, model_path)
 
     @override
     def load(self) -> None:
-        if not os.path.exists(MODEL_PATH / self.model_name):
+        if not os.path.exists(ARTIFACTS_PATH / self.model_name):
             raise ValueError("You need to fit the model first.")
 
-        model_path = MODEL_PATH / self.model_name
+        model_path = ARTIFACTS_PATH / self.model_name
         self.vectorizer = joblib.load(model_path)

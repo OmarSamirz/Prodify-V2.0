@@ -8,14 +8,14 @@ import os
 from typing import List, Union
 from typing_extensions import override
 
-from constants import MODEL_PATH
+from constants import ARTIFACTS_PATH
 from modules.logger import logger
-from models import TfidfBaseModel
+from models.base_tfidf_model import BaseTfidfModel
 
 load_dotenv()
 
 
-class TfidfClassifier(TfidfBaseModel):
+class TfidfClassifier(BaseTfidfModel):
 
     def __init__(self):
         super().__init__()
@@ -27,7 +27,7 @@ class TfidfClassifier(TfidfBaseModel):
             class_weight=os.getenv("TC_CLASS_WEIGHT")
         )
         self.clf = None
-        if os.path.exists(MODEL_PATH / self.model_name):
+        if os.path.exists(ARTIFACTS_PATH / self.model_name):
             self.load()
 
     @override
@@ -58,10 +58,10 @@ class TfidfClassifier(TfidfBaseModel):
     def save(self) -> None:
         if self.clf is None:
             raise ValueError("You need to fit the model first.")
-        if not os.path.exists(MODEL_PATH):
-            os.makedirs(MODEL_PATH, exist_ok=True)
+        if not os.path.exists(ARTIFACTS_PATH):
+            os.makedirs(ARTIFACTS_PATH, exist_ok=True)
 
-        model_path = MODEL_PATH / self.model_name
+        model_path = ARTIFACTS_PATH / self.model_name
         joblib.dump(self.clf, model_path)
 
     @override
@@ -69,5 +69,5 @@ class TfidfClassifier(TfidfBaseModel):
         if self.clf is not None:
             return
 
-        model_path = MODEL_PATH / self.model_name
+        model_path = ARTIFACTS_PATH / self.model_name
         self.clf = joblib.load(model_path)

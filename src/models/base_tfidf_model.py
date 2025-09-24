@@ -6,7 +6,7 @@ from typing import Any
 from abc import ABC, abstractmethod
 
 
-class TfidfBaseModel(ABC):
+class BaseTfidfModel(ABC):
 
     def __init__(self):
         super().__init__()

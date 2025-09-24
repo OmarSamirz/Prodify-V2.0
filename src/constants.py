@@ -62,7 +62,7 @@ CONFIG_PATH = BASE_DIR / "config"
 
 ENV_PATH = CONFIG_PATH / ".env"
 
-MODEL_PATH = BASE_DIR / "models"
+ARTIFACTS_PATH = BASE_DIR / "artifacts"
 
 DTYPE_MAP = {
     'float32': torch.float32,

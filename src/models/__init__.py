@@ -3,4 +3,3 @@ from models.embedding_classifier import EmbeddingClassifier
 from models.brands_classifier import BrandsClassifier
 from models.tfidf_classifier import TfidfClassifier
 from models.ensemble_model import EnsembleModel
-from models.base_tfidf_model import TfidfBaseModel

@@ -6,7 +6,7 @@ def run_pipeline():
     pipe.run_pipeline()
 
 def main():
-    run_pipeline()    
+    run_pipeline()
 
 
 if __name__ == "__main__":

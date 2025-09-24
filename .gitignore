@@ -3,4 +3,5 @@
 data/*
 config/.env
 .vscode/*
-models/*
+artifacts/*
+!artifacts/download_model.py

@@ -5,9 +5,9 @@ from typing_extensions import override
 from typing import Optional, Dict, List, Any, Union
 
 from modules.logger import logger
-from train_models import train_tfidf_models
 from pipelines.base_pipeline import Pipeline
 from utils import get_confidence_level, draw_eda
+from model_utils import train_tfidf_model, test_tfidf_model
 from constants import FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH
 from models import EnsembleModel, BrandsClassifier, EmbeddingClassifier
 
@@ -178,25 +178,12 @@ class EnsemblePipeline(Pipeline):
         self.ensemble_model = EnsembleModel(self.brands_classifier, self.embedding_classifier, self.tfidf_classifier)
         logger.info("Loading ensemble model is done.")
 
-    @override
-    def run_inference(self, invoice_items: Union[str, List[str]]) -> Dict[str, Any]:
-        self.load_ensemble_model()
-        preds = self.ensemble_model.run_ensemble(invoice_items)
+    def test_pipeline(self) -> None:
+        if self.df_test is None:
+            logger.info("You need to give the path of the test dataset.")
+            return
 
-        return preds
-
-    @override
-    def run_pipeline(self) -> None:
-        logger.info("Starting to train `TF-IDF Classifier`.")
-        self.load_tfidf_classifier()
-        train_tfidf_models(self.tfidf_classifier, self.df_train, self.df_test)
-        logger.info("`TF-IDF Classifier` is done.")
-
-        logger.info("Starting to train `Brands Classifier`.")
-        self.load_brands_classifier()
-        train_tfidf_models(self.brands_classifier, self.df_train, self.df_test)
-        logger.info("`Brands Classifier` is done.")
-
+        logger.info("Start to test the whole pipeline on the test dataset")
         self.df_test["product_name"] = self.df_test["product_name"].astype(str)
         invoices = self.df_test["product_name"].tolist()
 
@@ -227,6 +214,39 @@ class EnsemblePipeline(Pipeline):
         logger.info(f"Level family: {accuracy_score(true_family, results["voted_families"])}")
         logger.info(f"Level class: {accuracy_score(true_class, results["voted_classes"])}")
 
+    def draw_analysis(self) -> None:
+        if self.df_test is None:
+            logger.info("You need to give the path of the test dataset.")
+            return
+
         logger.info("Drawing and saving the eda graphs.")
         draw_eda(self.df_test)
-        logger.info("Saving the eda graphs is done.")
+        logger.info("Saving the eda graphs is done.")    
+
+    @override
+    def run_inference(self, invoice_items: Union[str, List[str]]) -> Dict[str, Any]:
+        self.load_ensemble_model()
+        preds = self.ensemble_model.run_ensemble(invoice_items)
+
+        return preds
+
+    @override
+    def run_pipeline(self) -> None:
+        logger.info("Starting to train `TF-IDF Classifier`.")
+        self.load_tfidf_classifier()
+        train_tfidf_model(self.tfidf_classifier, self.df_train)
+        logger.info("`TF-IDF Classifier` training is done.")
+        if self.df_test is not None:
+            logger.info("`TF-IDF Classifier` accuracy on testing data.")
+            test_tfidf_model(self.tfidf_classifier, self.df_test)
+
+        logger.info("Starting to train `Brands Classifier`.")
+        self.load_brands_classifier()
+        train_tfidf_model(self.brands_classifier, self.df_train)
+        logger.info("`Brands Classifier` training is done.")
+        if self.df_test is not None:
+            logger.info("`Brands Classifier` accuracy on testing data.")
+            test_tfidf_model(self.brands_classifier, self.df_test)
+
+        self.test_pipeline()
+        self.draw_analysis()

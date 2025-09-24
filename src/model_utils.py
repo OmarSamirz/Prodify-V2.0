@@ -1,15 +1,13 @@
 import pandas as pd
 from sklearn.metrics import accuracy_score
 
-from typing import Optional
-
 from modules.logger import logger
-from models import TfidfBaseModel, BrandsClassifier, TfidfClassifier
+from models.base_tfidf_model import BaseTfidfModel
+from models import BrandsClassifier, TfidfClassifier
 
-def train_tfidf_models(
-    tfidf_model: TfidfBaseModel, 
+def train_tfidf_model(
+    tfidf_model: BaseTfidfModel, 
     df_train: pd.DataFrame,
-    df_test: Optional[pd.DataFrame] = None
 ) -> None:
     df_train["product_name"] = df_train["product_name"].astype(str)
 
@@ -22,6 +20,12 @@ def train_tfidf_models(
     elif isinstance(tfidf_model, TfidfClassifier):
         tfidf_model.fit(X_train, y_train)
 
+    tfidf_model.save()
+
+def test_tfidf_model(
+        tfidf_model: BaseTfidfModel,
+        df_test: pd.DataFrame
+) -> None:
     df_test["product_name"] = df_test["product_name"].astype(str)
 
     X_test = df_test["product_name"].tolist()
@@ -31,8 +35,6 @@ def train_tfidf_models(
 
     y_pred = tfidf_model.predict(X_test)
 
-    logger.info(f"Class: {accuracy_score(true_cls, y_pred[2])}")
-    logger.info(f"Family: {accuracy_score(true_fam, y_pred[1])}")
     logger.info(f"Segment: {accuracy_score(true_seg, y_pred[0])}")
-
-    tfidf_model.save()
+    logger.info(f"Family: {accuracy_score(true_fam, y_pred[1])}")
+    logger.info(f"Class: {accuracy_score(true_cls, y_pred[2])}")
