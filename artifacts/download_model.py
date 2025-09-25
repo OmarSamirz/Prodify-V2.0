@@ -62,5 +62,7 @@ def download_model_offline(repo_id: str, save_path: str) -> None:
 
 
 if __name__ == "__main__":
+    EMBEDDING_MODEL_PATH.mkdir(parents=True, exist_ok=True)
+    TRANSLATION_MODEL_PATH.mkdir(parents=True, exist_ok=True)
     download_model_offline(os.getenv("E_MODEL_NAME"), EMBEDDING_MODEL_PATH)
     download_model_offline(os.getenv("T_MODEL_NAME"), TRANSLATION_MODEL_PATH)
