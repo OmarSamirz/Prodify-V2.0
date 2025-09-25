@@ -7,7 +7,7 @@ from typing import Optional, Dict, List, Any, Union
 
 from modules.logger import logger
 from modules.db import TeradataDatabase
-from models import SentenceEmbeddingModel, TfidfClassifier
+from models import SentenceEmbeddingModel, TfidfClassifier, TranslationModel
 from db_queries import (
     cleansing_query,
     num_rows_query,
@@ -28,7 +28,7 @@ class Pipeline(ABC):
 
     def __init__(
         self,
-        df_train_path: str,
+        df_train_path: Optional[str] = None,
         df_val_path: Optional[str] = None,
         df_test_path: Optional[str] = None,
     ) -> None:
@@ -36,7 +36,7 @@ class Pipeline(ABC):
         self.td_db = TeradataDatabase()
         self.td_db.connect()
 
-        self.df_train = self.load_dataframe(df_train_path)
+        self.df_train = None if df_train_path is None else self.load_dataframe(df_train_path) 
         self.df_val = None if df_val_path is None else self.load_dataframe(df_val_path)
         self.df_test = None if df_test_path is None else self.load_dataframe(df_test_path)
 
@@ -272,6 +272,16 @@ class Pipeline(ABC):
         logger.info("Loading tfidf classifier model is done.")
 
     @abstractmethod
+    def load_translation_model(self) -> None:
+        if self.translation_model is not None:
+            logger.info("The translation model is loaded.")
+            return
+
+        logger.info("Loading translation model.")
+        self.translation_model = TranslationModel()
+        logger.info("Loading translation model is done.")
+
+    @abstractmethod
     def create_embeddings(self, table_name: str, embedding_col: str, new_table_name: str, embeddings_name: str = "embed_") -> None:
         self.load_embedding_model()
 
@@ -279,7 +289,7 @@ class Pipeline(ABC):
 
         logger.info(f"Starting to convert column `{embedding_col}` of table `{table_name}` to embeddings.")
         queries = df[embedding_col].tolist()
-        embeddings = self.embedding_classifier.get_embeddings(queries)
+        embeddings = self.embedding_model.get_embeddings(queries)
         embeddings = embeddings.tolist()
         logger.info("Converting to embeddings completed.")
 

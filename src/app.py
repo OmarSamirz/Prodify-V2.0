@@ -4,18 +4,19 @@ import os
 
 from constants import IMG_PATH
 from utils import get_confidence_level
-from models import BrandsClassifier, TfidfClassifier, EmbeddingClassifier, EnsembleModel, SentenceEmbeddingModel
+from models import BrandsClassifier, TfidfClassifier, EmbeddingClassifier, EnsembleModel, SentenceEmbeddingModel, TranslationModel
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Prodify+ - Advanced Invoice Classifier", page_icon="🧾", layout="centered")
 
 @st.cache_resource
 def get_ensemble_model():
+    translation_model = TranslationModel()
     tfidf_classifier =  TfidfClassifier()
     brands_classifier = BrandsClassifier()
     embedding_model = SentenceEmbeddingModel()
     embedding_classifier = EmbeddingClassifier(embedding_model)
-    ensemble_model = EnsembleModel(brands_classifier, embedding_classifier, tfidf_classifier)
+    ensemble_model = EnsembleModel(brands_classifier, embedding_classifier, tfidf_classifier, translation_model)
     return ensemble_model
 
 # --- CLASSIFICATION LOGIC ---
@@ -46,6 +47,7 @@ def render_sidebar() -> None:
                 <p style='color: grey; margin-bottom: 20px;'><b>1. Embedding Classifier:</b> E5-Large-Instruct for hierarchical semantic classification through cosine similarity.</p>
                 <p style='color: grey; margin-bottom: 20px;'><b>2. Brand Classifier Model:</b> TF-IDF cosine similarity matching against a handpicked brand, product dataset.</p>
                 <p style='color: grey; margin-bottom: 20px;'><b>3. TF-IDF + SVM Classifier:</b> Traditional ML pipeline for direct GPC prediction.</p>
+                <p style='color: grey; margin-bottom: 20px;'><b>4. Translation Model:</b> OPUS-MT for translating Arabic product names into English before classification.</p>
                 """,
                 unsafe_allow_html=True
             )

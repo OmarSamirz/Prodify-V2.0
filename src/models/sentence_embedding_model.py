@@ -6,7 +6,7 @@ from sentence_transformers import SentenceTransformer
 import os
 from typing import List, Optional
 
-from constants import DTYPE_MAP
+from constants import DTYPE_MAP, EMBEDDING_MODEL_PATH
 
 load_dotenv()
 
@@ -26,10 +26,16 @@ class SentenceEmbeddingModel:
         else:
             raise ValueError(f"This dtype {dtype} is not supported.")
 
-        self.model = SentenceTransformer(
-            self.model_id,
-            device=self.device,
-        )
+        try:
+            self.model = SentenceTransformer(
+                str(EMBEDDING_MODEL_PATH),
+                device=self.device,
+            )
+        except:
+            self.model = SentenceTransformer(
+                self.model_id,
+                device=self.device
+            )
 
     def get_embeddings(self, texts: List[str], prompt_name: Optional[str] = None) -> Tensor:
         embeddings = self.model.encode(

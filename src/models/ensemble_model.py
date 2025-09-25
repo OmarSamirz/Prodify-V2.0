@@ -4,7 +4,7 @@ import os
 from collections import Counter
 from typing import List, Tuple, Dict, Union, Any
 
-from models import TfidfClassifier, BrandsClassifier, EmbeddingClassifier
+from models import TfidfClassifier, BrandsClassifier, EmbeddingClassifier, TranslationModel
 
 load_dotenv()
 
@@ -15,11 +15,13 @@ class EnsembleModel:
         self,
         brands_classifier: BrandsClassifier,
         embedding_classifier: EmbeddingClassifier,
-        tfidf_classifier: TfidfClassifier
+        tfidf_classifier: TfidfClassifier,
+        translation_model: TranslationModel
     ) -> None:
         self.brand_tfidf_similiraity = brands_classifier
         self.embed_clf = embedding_classifier
         self.tfidf_clf = tfidf_classifier
+        self.translation_model = translation_model
         self.num_models = int(os.getenv("EM_NUM_MODELS"))
         self.df_gpc = self.embed_clf.df_gpc
 
@@ -78,7 +80,11 @@ class EnsembleModel:
         return results
 
     def run_ensemble(self, invoice_items: Union[str, List[str]]) -> Dict[str, Any]:
-        preds = self.predict(invoice_items)
+        if isinstance(invoice_items, str):
+            invoice_items = [invoice_items]
+
+        translated_invoice_items = [self.translation_model.translate(item) for item in invoice_items]
+        preds = self.predict(translated_invoice_items)
         voted = self.vote(preds)
 
         return voted

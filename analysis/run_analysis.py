@@ -13,8 +13,9 @@ from src.constants import (
     MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH,
     MODEL_PERFORMANCE_FAMILY_GRAPH_PATH,
     MODEL_PERFORMANCE_CLASS_GRAPH_PATH,
-    FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH,
-    ANALYSIS_DIR
+    ENSEMBLE_MODEL_OUTPUT_DATASET_PATH,
+    ANALYSIS_DIR,
+   ENSEMBLE_PIPELINE_OUTPUT_PATH
 )
 
 
@@ -257,8 +258,7 @@ def plot_classification_by_sublevel(df: pd.DataFrame, upper_level: str, sub_leve
         print(f"Saved plot for {upper_level} '{upper_label}' showing performance across all {sub_level}s to {img_path}")
 
 def main():
-
-    df = pd.read_csv(FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH)
+    df = pd.read_csv(ENSEMBLE_PIPELINE_OUTPUT_PATH)
     draw_eda(df)
 
 if __name__ == "__main__":
