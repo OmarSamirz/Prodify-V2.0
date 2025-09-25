@@ -1,6 +1,7 @@
 .venv/*
 **/__pycache__/*
-data/*
+data/original_datasets
+data/outputs
 config/.env
 .vscode/*
 artifacts/*

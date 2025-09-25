@@ -1,31 +1,505 @@
-[2025-09-24 11:21:04] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
-[2025-09-24 11:21:11] - __init__:wrapper - DEBUG - matplotlib data path: C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\matplotlib\mpl-data
-[2025-09-24 11:21:11] - __init__:wrapper - DEBUG - CONFIGDIR=C:\Users\os255022\.matplotlib
-[2025-09-24 11:21:11] - __init__:<module> - DEBUG - interactive is False
-[2025-09-24 11:21:11] - __init__:<module> - DEBUG - platform is win32
-[2025-09-24 11:21:11] - __init__:wrapper - DEBUG - CACHEDIR=C:\Users\os255022\.matplotlib
-[2025-09-24 11:21:11] - font_manager:_load_fontmanager - DEBUG - Using fontManager instance from C:\Users\os255022\.matplotlib\fontlist-v390.json
-[2025-09-24 11:21:30] - logger:_log - INFO - TeradataDatabase instance initialized
-[2025-09-24 11:21:30] - logger:_log - INFO - Operation 'Database connection' started - Details: {'host': 'iteration7-gwyyqrtdecxxq4xk.env.clearscape.teradata.com', 'database': 'demo_user'}
-[2025-09-24 11:21:38] - logger:_log - INFO - Operation 'Database connection' completed
-[2025-09-24 11:21:38] - logger:_log - INFO - Loading a CSV file of path `c:\internship\Prodify-V2.0\data\full_train_dataset.csv`.
-[2025-09-24 11:21:38] - logger:_log - INFO - Loading a CSV file of path `c:\internship\Prodify-V2.0\data\full_test_dataset.csv`.
-[2025-09-24 11:21:38] - logger:_log - INFO - Starting to train `TF-IDF Classifier`.
-[2025-09-24 11:21:38] - logger:_log - INFO - Loading tfidf classifier model.
-[2025-09-24 11:21:38] - logger:_log - INFO - Loading tfidf classifier model is done.
-[2025-09-24 11:21:38] - logger:_log - INFO - Training the model
-[2025-09-24 11:22:49] - logger:write - ERROR - Traceback (most recent call last):
-[2025-09-24 11:22:49] - logger:write - ERROR -   File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 13, in <module>
-[2025-09-24 11:22:49] - logger:write - ERROR - main()  File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 9, in main
-[2025-09-24 11:22:49] - logger:write - ERROR - run_pipeline()  File "c:\internship\Prodify-V2.0\src\run_ensemble.py", line 6, in run_pipeline
-[2025-09-24 11:22:49] - logger:write - ERROR - pipe.run_pipeline()  File "c:\internship\Prodify-V2.0\src\pipelines\ensemble_pipeline.py", line 228, in run_pipeline
-[2025-09-24 11:22:49] - logger:write - ERROR - train_tfidf_model(self.tfidf_classifier, self.df_train)  File "c:\internship\Prodify-V2.0\src\model_utils.py", line 21, in train_tfidf_model
-[2025-09-24 11:22:49] - logger:write - ERROR - tfidf_model.fit(X_train, y_train)  File "c:\internship\Prodify-V2.0\src\models\tfidf_classifier.py", line 41, in fit
-[2025-09-24 11:22:49] - logger:write - ERROR - self.clf.fit(X_train, y_train)  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\base.py", line 1365, in wrapper
-[2025-09-24 11:22:49] - logger:write - ERROR - return fit_method(estimator, *args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\pipeline.py", line 663, in fit
-[2025-09-24 11:22:49] - logger:write - ERROR - self._final_estimator.fit(Xt, y, **last_step_params["fit"])  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\base.py", line 1365, in wrapper
-[2025-09-24 11:22:49] - logger:write - ERROR - return fit_method(estimator, *args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\svm\_classes.py", line 321, in fit
-[2025-09-24 11:22:49] - logger:write - ERROR - self.coef_, self.intercept_, n_iter_ = _fit_liblinear(^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\sklearn\svm\_base.py", line 1230, in _fit_liblinear
-[2025-09-24 11:22:49] - logger:flush - ERROR - raw_coef_, n_iter_ = liblinear.train_wrap(^^^^^^^^^^^^^^^^^^^^^KeyboardInterrupt
-[2025-09-24 11:22:49] - logger:_log - INFO - Operation 'Database disconnection' started
-[2025-09-24 11:22:50] - logger:_log - INFO - Operation 'Database disconection' completed
+[2025-09-24 19:06:06] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
+[2025-09-24 19:06:11] - SentenceTransformer:__init__ - INFO - Load pretrained SentenceTransformer: C:\internship\Prodify-V2.0\artifacts\embedding_model
+[2025-09-24 19:06:12] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:12] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:12] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:12] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:21] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:21] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:21] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:21] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:21] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:21] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:21] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:21] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:21] - langid:load_model - INFO - initializing identifier
+[2025-09-24 19:06:23] - logger:_log - INFO - translated product name: Biscuit.
+[2025-09-24 19:06:23] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:06:23] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:06:23] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:06:23] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:06:23] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:06:24] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 17.61it/s]
+[2025-09-24 19:06:24] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:06:24] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:06:24] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00,  9.07it/s]
+[2025-09-24 19:06:24] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00,  8.98it/s]
+[2025-09-24 19:06:33] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:33] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:33] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:33] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:33] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:33] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:33] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:33] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:34] - logger:_log - INFO - translated product name: A carrot dish.
+[2025-09-24 19:06:34] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:06:34] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:06:34] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:06:34] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:06:34] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:06:34] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 19.28it/s]
+[2025-09-24 19:06:34] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:06:34] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:06:34] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 17.79it/s]
+[2025-09-24 19:06:51] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:51] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:51] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:51] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:52] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:52] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:52] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:06:52] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:06:52] - logger:_log - INFO - translated product name: Islands
+[2025-09-24 19:06:52] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:06:52] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:06:52] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:06:53] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:06:53] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:06:53] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:06:53] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:06:53] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:06:53] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 18.95it/s]
+[2025-09-24 19:07:11] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:11] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:11] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:11] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:16] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:16] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:16] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:16] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:16] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:16] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:16] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:16] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:16] - logger:_log - INFO - translated product name: Nestl Mineral Water Gallon 19L Switch
+[2025-09-24 19:07:16] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:07:16] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:07:16] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:07:17] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:07:17] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:07:17] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 22.23it/s]
+[2025-09-24 19:07:17] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:07:17] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:07:17] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:07:34] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:34] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:34] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:34] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:34] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:34] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:34] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:34] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:34] - logger:_log - INFO - translated product name: Natural Danone Yogurt 105g(62)Show
+[2025-09-24 19:07:34] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:07:35] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:07:35] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:07:35] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:07:35] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:07:35] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 20.93it/s]
+[2025-09-24 19:07:35] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:07:35] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:07:35] - logger:flush - ERROR - 100%|####################################################################################################################| 1/1 [00:00<00:00, 1004.14it/s]
+[2025-09-24 19:07:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:07:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:07:50] - logger:_log - INFO - translated product name: Italian Semolina Noodles
+[2025-09-24 19:07:50] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:07:50] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:07:50] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:07:51] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:07:51] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:07:51] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 25.77it/s]
+[2025-09-24 19:07:51] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:07:51] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:07:51] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 17.70it/s]
+[2025-09-24 19:08:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:07] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:07] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:07] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:07] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:07] - logger:_log - INFO - translated product name: Kiwi Text
+[2025-09-24 19:08:07] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:08:07] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:08:07] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:07] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:07] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:07] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:07] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:07] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:07] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:18] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:18] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:18] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:18] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:18] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:18] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:18] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:18] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:18] - logger:_log - INFO - translated product name: Couch Jumbo Double Queen RT500(750R16C)
+[2025-09-24 19:08:18] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:08:18] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:08:18] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:18] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:18] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:18] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 23.80it/s]
+[2025-09-24 19:08:18] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:18] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:19] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 23.31it/s]
+[2025-09-24 19:08:42] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:42] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:42] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:42] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:44] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:44] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:44] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:44] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:44] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:44] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:44] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:44] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:45] - logger:_log - INFO - translated product name: Multi-color hair lightening powder 200g
+[2025-09-24 19:08:45] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:08:45] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:08:45] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:45] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:45] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:45] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 18.45it/s]
+[2025-09-24 19:08:45] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:45] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:45] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 25.05it/s]
+[2025-09-24 19:08:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:58] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:58] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:58] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:08:58] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:08:58] - logger:_log - INFO - translated product name: Natural Danone Yogurt 105g(62)Show
+[2025-09-24 19:08:58] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:08:58] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:08:58] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:58] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:58] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:58] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 30.07it/s]
+[2025-09-24 19:08:58] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:08:58] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:08:58] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:09] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:09] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:09] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:09] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:09] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:09] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:09] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:09] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:09] - logger:_log - INFO - translated product name: White Toast Morning 425gm
+[2025-09-24 19:09:09] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:09:09] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:09:09] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:09] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:09] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:09] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00,  8.83it/s]
+[2025-09-24 19:09:09] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00,  8.83it/s]
+[2025-09-24 19:09:09] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:09] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:09] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 20.09it/s]
+[2025-09-24 19:09:22] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:22] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:22] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:22] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:22] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:22] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:22] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:22] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:22] - logger:_log - INFO - translated product name: Persil Powder Automatic
+[2025-09-24 19:09:22] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:09:22] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:09:22] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:22] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:22] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:22] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:22] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:22] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:22] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 25.74it/s]
+[2025-09-24 19:09:31] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:31] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:31] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:31] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:32] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:32] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:32] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:32] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:32] - logger:_log - INFO - translated product name: Full HD WiFi Tabo C200 1080p Pan/Telt Camera, Live View
+[2025-09-24 19:09:32] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:09:32] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:09:32] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:32] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:32] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:32] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 28.73it/s]
+[2025-09-24 19:09:32] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:32] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:32] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:41] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:41] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:41] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:41] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:41] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:41] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:41] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:41] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:42] - logger:_log - INFO - translated product name: Boulero Juice & Water Set with 6 Pieces of Baabi 230ml, Turkish Origin
+[2025-09-24 19:09:42] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:09:42] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:09:42] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:42] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:42] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:42] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 29.93it/s]
+[2025-09-24 19:09:42] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:42] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:42] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 25.71it/s]
+[2025-09-24 19:09:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:51] - logger:_log - INFO - translated product name: Black wood slide remote and 2GB RAM
+[2025-09-24 19:09:51] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:09:51] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:09:51] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:51] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:51] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:51] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 24.75it/s]
+[2025-09-24 19:09:51] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:09:51] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:09:51] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 16.55it/s]
+[2025-09-24 19:09:59] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:59] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:59] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:59] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:59] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:59] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:09:59] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:09:59] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:00] - logger:_log - INFO - translated product name: KitKat 4x4 – 41.5 gm
+[2025-09-24 19:10:00] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:10:00] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:10:00] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:00] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:00] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:00] - logger:flush - ERROR - 100%|#####################################################################################################################| 1/1 [00:00<00:00, 995.80it/s]
+[2025-09-24 19:10:00] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:00] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:00] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 19.96it/s]
+[2025-09-24 19:10:27] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:27] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:27] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:27] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:27] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:27] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:27] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:27] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:27] - logger:_log - INFO - translated product name: Burn after writing.
+[2025-09-24 19:10:27] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:10:27] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:10:27] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:28] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:28] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:28] - logger:flush - ERROR - 100%|#####################################################################################################################| 1/1 [00:00<00:00, 987.82it/s]
+[2025-09-24 19:10:28] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:28] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:28] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 22.83it/s]
+[2025-09-24 19:10:43] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:43] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:43] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:43] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:44] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:44] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:44] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:44] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:44] - logger:_log - INFO - translated product name: Text Kilo chicks builder
+[2025-09-24 19:10:44] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:10:44] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:10:44] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:44] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:44] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:44] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 22.17it/s]
+[2025-09-24 19:10:44] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:44] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:44] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:50] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:50] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:50] - logger:_log - INFO - translated product name: Bunny chicks.
+[2025-09-24 19:10:50] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:10:50] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:10:50] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:50] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:50] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:50] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:50] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:50] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:50] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 27.05it/s]
+[2025-09-24 19:10:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:57] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:10:57] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:10:57] - logger:_log - INFO - translated product name: Kebab Daani
+[2025-09-24 19:10:57] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:10:57] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:10:57] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:58] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:58] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:58] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00,  8.87it/s]
+[2025-09-24 19:10:58] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00,  8.87it/s]
+[2025-09-24 19:10:58] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:10:58] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:10:58] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 24.60it/s]
+[2025-09-24 19:11:13] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:13] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:13] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:13] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:13] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:13] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:13] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:13] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:14] - logger:_log - INFO - translated product name: Blue Dry Pencil
+[2025-09-24 19:11:14] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:11:14] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:11:14] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:14] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:14] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:14] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 20.76it/s]
+[2025-09-24 19:11:14] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:14] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:14] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 20.68it/s]
+[2025-09-24 19:11:25] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:25] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:25] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:25] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:25] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:25] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:25] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:25] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:25] - logger:_log - INFO - translated product name: Esteka
+[2025-09-24 19:11:25] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:11:25] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:11:25] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:26] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:26] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:26] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:26] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:26] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:26] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:40] - logger:_log - INFO - translated product name: 10 Plastic Cups
+[2025-09-24 19:11:40] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:11:40] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:11:40] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:40] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:40] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:40] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 22.80it/s]
+[2025-09-24 19:11:40] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:40] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:40] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 22.54it/s]
+[2025-09-24 19:11:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:11:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:11:50] - logger:_log - INFO - translated product name: Oxygel 100 ml
+[2025-09-24 19:11:50] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:11:50] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:11:50] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:50] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:50] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:50] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 16.90it/s]
+[2025-09-24 19:11:50] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:11:50] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:11:50] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 27.58it/s]
+[2025-09-24 19:12:03] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:03] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:03] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:03] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:06] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:06] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:06] - logger:_log - INFO - translated product name: Zappado Mango 450 ml
+[2025-09-24 19:12:06] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:12:06] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:12:06] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:12:06] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:12:06] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:12:06] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 10.00it/s]
+[2025-09-24 19:12:06] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:12:06] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:12:06] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
+[2025-09-24 19:12:19] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:19] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:19] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:19] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:20] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:20] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:20] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:20] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:20] - logger:_log - INFO - translated product name: Frisica Chocolate
+[2025-09-24 19:12:20] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:12:20] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:12:20] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:12:20] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:12:20] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:12:20] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00,  7.79it/s]
+[2025-09-24 19:12:20] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00,  7.79it/s]
+[2025-09-24 19:12:20] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:12:20] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:12:20] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 26.66it/s]
+[2025-09-24 19:12:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-24 19:12:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-24 19:12:39] - logger:_log - INFO - translated product name: Candlestick Biscuit
+[2025-09-24 19:12:39] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
+[2025-09-24 19:12:39] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
+[2025-09-24 19:12:39] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:12:39] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:12:39] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:12:39] - logger:flush - ERROR - 100%|#####################################################################################################################| 1/1 [00:00<00:00, 988.06it/s]
+[2025-09-24 19:12:39] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
+[2025-09-24 19:12:39] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
+[2025-09-24 19:12:40] - logger:flush - ERROR - 100%|######################################################################################################################| 1/1 [00:00<00:00, 20.11it/s]

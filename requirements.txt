@@ -16,3 +16,4 @@ safetensors
 transformers
 huggingface_hub
 openpyxl
+langid

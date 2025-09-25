@@ -1,12 +1,12 @@
-from huggingface_hub import snapshot_download
 from dotenv import load_dotenv
+from huggingface_hub import snapshot_download
 
 import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.constants import ARTIFACTS_PATH, ENV_PATH
+from src.constants import EMBEDDING_MODEL_PATH, TRANSLATION_MODEL_PATH, ENV_PATH
 
 load_dotenv(dotenv_path=ENV_PATH)
 
@@ -62,5 +62,5 @@ def download_model_offline(repo_id: str, save_path: str) -> None:
 
 
 if __name__ == "__main__":
-    x = os.getenv("E_MODEL_NAME")
-    download_model_offline(os.getenv("E_MODEL_NAME"), ARTIFACTS_PATH)
+    download_model_offline(os.getenv("E_MODEL_NAME"), EMBEDDING_MODEL_PATH)
+    download_model_offline(os.getenv("T_MODEL_NAME"), TRANSLATION_MODEL_PATH)

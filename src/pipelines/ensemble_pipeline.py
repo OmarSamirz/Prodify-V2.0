@@ -8,23 +8,25 @@ from modules.logger import logger
 from utils import get_confidence_level
 from pipelines.base_pipeline import Pipeline
 from model_utils import train_tfidf_model, test_tfidf_model
-from constants import FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH
 from models import EnsembleModel, BrandsClassifier, EmbeddingClassifier
+from constants import ENSEMBLE_MODEL_OUTPUT_DATASET_PATH, ENSEMBLE_PIPELINE_OUTPUT_PATH
 
 
 class EnsemblePipeline(Pipeline):
 
     def __init__(
         self,
-        df_train_path: str,
+        df_train_path: Optional[str] = None,
         df_val_path: Optional[str] = None,
         df_test_path: Optional[str] = None,
+        is_save_predections: bool = True
     ) -> None:
         super().__init__(
             df_train_path,
             df_val_path,
             df_test_path,
         )
+        self.is_save_predections = is_save_predections
         self.embedding_classifier = None
         self.brands_classifier = None
         self.ensemble_model = None
@@ -130,12 +132,12 @@ class EnsemblePipeline(Pipeline):
         super().load_embedding_model()
 
     @override
-    def load_tfidf_classifier(self):
-        return super().load_tfidf_classifier()
+    def load_tfidf_classifier(self) -> None:
+        super().load_tfidf_classifier()
 
     @override
-    def process_dataframe(self, dataframe: pd.DataFrame, df_type: str) -> pd.DataFrame:
-        super().process_dataframe(dataframe, df_type)
+    def load_translation_model(self) -> None:
+        super().load_translation_model()
 
     @override
     def create_embeddings(
@@ -175,7 +177,13 @@ class EnsemblePipeline(Pipeline):
         self.load_embedding_classifier()
         self.load_tfidf_classifier()
         self.load_brands_classifier()
-        self.ensemble_model = EnsembleModel(self.brands_classifier, self.embedding_classifier, self.tfidf_classifier)
+        self.load_translation_model()
+        self.ensemble_model = EnsembleModel(
+            self.brands_classifier,
+            self.embedding_classifier,
+            self.tfidf_classifier, 
+            self.translation_model
+        )
         logger.info("Loading ensemble model is done.")
 
     def test_pipeline(self) -> None:
@@ -204,7 +212,7 @@ class EnsemblePipeline(Pipeline):
         self.df_test["embed_class"] = results["embed_clf_preds"][2]
         self.df_test["confidence_rate"] = results["confidences"]
         self.df_test["confidence_level"] = get_confidence_level(results["confidences"])
-        self.df_test.to_csv(FULL_ENSEMBLE_MODEL_OUTPUT_DATASET_PATH, index=False)
+        self.df_test.to_csv(ENSEMBLE_MODEL_OUTPUT_DATASET_PATH, index=False)
 
         true_segment = self.df_test["segment"].tolist()
         true_family = self.df_test["pred_family"].tolist()
@@ -218,11 +226,34 @@ class EnsemblePipeline(Pipeline):
     def run_inference(self, invoice_items: Union[str, List[str]]) -> Dict[str, Any]:
         self.load_ensemble_model()
         preds = self.ensemble_model.run_ensemble(invoice_items)
+    
+        df_preds = pd.DataFrame({
+            "product_name": invoice_items,
+            "pred_segment": preds["voted_segments"],
+            "pred_family": preds["voted_families"],
+            "pred_class": preds["voted_classes"],
+            "brand_segment": preds["brand_tfidf_sim_preds"][0],
+            "brand_family": preds["brand_tfidf_sim_preds"][1],
+            "brand_class": preds["brand_tfidf_sim_preds"][2],
+            "embed_segment": preds["embed_clf_preds"][0],
+            "embed_family": preds["embed_clf_preds"][1],
+            "embed_class": preds["embed_clf_preds"][2],
+            "clf_segment": preds["tfidf_clf_preds"][0],
+            "clf_family": preds["tfidf_clf_preds"][1],
+            "clf_class": preds["tfidf_clf_preds"][2],
+            "confidence_rate": preds["confidences"],
+            "confidence_level": get_confidence_level(preds["confidences"])
+        })
+        df_preds.to_csv(ENSEMBLE_PIPELINE_OUTPUT_PATH, index=False)
 
         return preds
 
     @override
     def run_pipeline(self) -> None:
+        if self.df_train is None:
+            logger.warning("You need to pass `df_train_path`.")
+            return
+
         logger.info("Starting to train `TF-IDF Classifier`.")
         self.load_tfidf_classifier()
         train_tfidf_model(self.tfidf_classifier, self.df_train)
