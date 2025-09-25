@@ -258,7 +258,7 @@ def plot_classification_by_sublevel(df: pd.DataFrame, upper_level: str, sub_leve
         print(f"Saved plot for {upper_level} '{upper_label}' showing performance across all {sub_level}s to {img_path}")
 
 def main():
-    df = pd.read_csv(ENSEMBLE_PIPELINE_OUTPUT_PATH)
+    df = pd.read_csv(ENSEMBLE_MODEL_OUTPUT_DATASET_PATH)
     draw_eda(df)
 
 if __name__ == "__main__":
