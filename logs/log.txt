@@ -1,85 +1,6 @@
-[2025-09-25 15:06:37] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
-[2025-09-25 15:06:41] - SentenceTransformer:__init__ - INFO - Load pretrained SentenceTransformer: C:\internship\Prodify-V2.0\artifacts\embedding_model
-[2025-09-25 15:06:43] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-09-25 15:06:43] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-09-25 15:06:43] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-09-25 15:06:43] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-09-25 15:06:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-09-25 15:06:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-09-25 15:06:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-09-25 15:06:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-09-25 15:06:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-09-25 15:06:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-09-25 15:06:49] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-09-25 15:06:49] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-09-25 15:06:49] - langid:load_model - INFO - initializing identifier
-[2025-09-25 15:06:51] - logger:_log - INFO - translated product name: Chairoak High
-[2025-09-25 15:06:51] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `Brands Classifer`.
-[2025-09-25 15:06:51] - logger:_log - INFO - Predicting `segments`, `families` and `classes` for invoice(s) in `TF-IDF Classifer`.
-[2025-09-25 15:06:51] - logger:_log - INFO - Predicting `segments` for invoice(s) in `Embedding Classifer`.
-[2025-09-25 15:06:51] - logger:_log - INFO - Predicting `families` for invoice(s) in `Embedding Classifer`.
-[2025-09-25 15:06:51] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
-[2025-09-25 15:06:51] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
-[2025-09-25 15:06:51] - logger:_log - INFO - Predicting `classes` for invoice(s) in `Embedding Classifer`.
-[2025-09-25 15:06:51] - logger:flush - ERROR -   0%|                                                                                                                              | 0/1 [00:00<?, ?it/s]
-[2025-09-25 15:06:51] - logger:flush - ERROR - 100%|##############################################################################################################################| 1/1 [00:00<?, ?it/s]
-[2025-09-25 17:24:49] - logger:write - ERROR - Traceback (most recent call last):
-[2025-09-25 17:24:49] - logger:write - ERROR -   File "<frozen runpy>", line 198, in _run_module_as_main
-[2025-09-25 17:24:49] - logger:write - ERROR -   File "<frozen runpy>", line 88, in _run_code
-[2025-09-25 17:24:49] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Scripts\streamlit.exe\__main__.py", line 7, in <module>
-[2025-09-25 17:24:49] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\core.py", line 1442, in __call__
-[2025-09-25 17:24:49] - logger:write - ERROR - return self.main(*args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\core.py", line 1363, in main
-[2025-09-25 17:24:49] - logger:write - ERROR - rv = self.invoke(ctx)^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\core.py", line 1830, in invoke
-[2025-09-25 17:24:49] - logger:write - ERROR - return _process_result(sub_ctx.command.invoke(sub_ctx))^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\core.py", line 1226, in invoke
-[2025-09-25 17:24:49] - logger:write - ERROR - return ctx.invoke(self.callback, **ctx.params)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\core.py", line 794, in invoke
-[2025-09-25 17:24:49] - logger:write - ERROR - return callback(*args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\web\cli.py", line 237, in main_run
-[2025-09-25 17:24:50] - logger:write - ERROR - _main_run(target, args, flag_options=kwargs)  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\web\cli.py", line 279, in _main_run
-[2025-09-25 17:24:50] - logger:write - ERROR - bootstrap.run(file, is_hello, args, flag_options)  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\web\bootstrap.py", line 363, in run
-[2025-09-25 17:24:50] - logger:write - ERROR - asyncio.run(main())  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\asyncio\runners.py", line 195, in run
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\asyncio\runners.py", line 118, in run
-[2025-09-25 17:24:50] - logger:write - ERROR - return self._loop.run_until_complete(task)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\asyncio\base_events.py", line 678, in run_until_complete
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\asyncio\base_events.py", line 645, in run_forever
-[2025-09-25 17:24:50] - logger:write - ERROR - self._run_once()  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\asyncio\base_events.py", line 1961, in _run_once
-[2025-09-25 17:24:50] - logger:write - ERROR - event_list = self._selector.select(timeout)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\selectors.py", line 323, in select
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\selectors.py", line 314, in _select
-[2025-09-25 17:24:50] - logger:write - ERROR - r, w, x = select.select(r, w, w, timeout)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\web\bootstrap.py", line 43, in signal_handler
-[2025-09-25 17:24:50] - logger:write - ERROR - server.stop()  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\web\server\server.py", line 508, in stop
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\cli_util.py", line 35, in print_to_cli
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\termui.py", line 684, in secho
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\utils.py", line 321, in echo
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\internship\Prodify-V2.0\src\modules\logger.py", line 155, in write
-[2025-09-25 17:24:50] - logger:flush - ERROR - TypeError: can only concatenate str (not "bytes") to str
-[2025-09-25 17:24:50] - logger:write - ERROR - Exception ignored in: <module 'threading' from 'C:\\Users\\os255022\\AppData\\Local\\anaconda3\\envs\\iteration8\\Lib\\threading.py'>Traceback (most recent call last):
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\threading.py", line 1594, in _shutdown
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\concurrent\futures\thread.py", line 27, in _python_exit
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\weakref.py", line 463, in items
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\weakref.py", line 463, in items
---- Logging error ---
-[2025-09-25 17:24:50] - logger:flush - ERROR - TypeError: can only concatenate str (not "bytes") to str
-[2025-09-25 17:24:50] - logger:write - ERROR - Exception ignored in atexit callback: <function dump_compile_times at 0x0000022D858E9620>Traceback (most recent call last):
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\torch\_dynamo\utils.py", line 765, in dump_compile_times
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\torch\_dynamo\utils.py", line 751, in compile_times
-[2025-09-25 17:24:50] - logger:write - ERROR - out += tabulate(rows, headers=("Function", "Runtimes (s)"))^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\torch\_dynamo\utils.py", line 217, in tabulate
-[2025-09-25 17:24:50] - logger:write - ERROR - import tabulate  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "<frozen importlib._bootstrap>", line 1322, in _find_and_load_unlocked
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "<frozen importlib._bootstrap>", line 1262, in _find_spec
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "<frozen importlib._bootstrap_external>", line 1532, in find_spec
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "<frozen importlib._bootstrap_external>", line 1506, in _get_spec
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "<frozen importlib._bootstrap_external>", line 1605, in find_spec
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "<frozen importlib._bootstrap_external>", line 147, in _path_stat
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\web\bootstrap.py", line 43, in signal_handler
-[2025-09-25 17:24:50] - logger:write - ERROR - server.stop()  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\web\server\server.py", line 508, in stop
-[2025-09-25 17:24:50] - logger:write - ERROR - cli_util.print_to_cli("  Stopping...", fg="blue")  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\cli_util.py", line 35, in print_to_cli
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\termui.py", line 684, in secho
-[2025-09-25 17:24:50] - logger:write - ERROR - return echo(message, file=file, nl=nl, err=err, color=color)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\utils.py", line 321, in echo
-[2025-09-25 17:24:50] - logger:write - ERROR - file.write(out)  # type: ignore^^^^^^^^^^^^^^^  File "C:\internship\Prodify-V2.0\src\modules\logger.py", line 155, in write
-[2025-09-25 17:24:50] - logger:flush - ERROR - self.buffer += messageTypeError: can only concatenate str (not "bytes") to str
-[2025-09-25 17:24:50] - logger:write - ERROR - Exception ignored in atexit callback: <function _atexit_callback at 0x0000022D96B24540>Traceback (most recent call last):
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\tornado\platform\asyncio.py", line 73, in _atexit_callback
-[2025-09-25 17:24:50] - logger:write - ERROR -   File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\web\bootstrap.py", line 43, in signal_handler
-[2025-09-25 17:24:50] - logger:write - ERROR - server.stop()  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\web\server\server.py", line 508, in stop
-[2025-09-25 17:24:50] - logger:write - ERROR - cli_util.print_to_cli("  Stopping...", fg="blue")  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\streamlit\cli_util.py", line 35, in print_to_cli
-[2025-09-25 17:24:50] - logger:write - ERROR - click.secho(message, **kwargs)  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\termui.py", line 684, in secho
-[2025-09-25 17:24:50] - logger:write - ERROR - return echo(message, file=file, nl=nl, err=err, color=color)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\os255022\AppData\Local\anaconda3\envs\iteration8\Lib\site-packages\click\utils.py", line 321, in echo
-[2025-09-25 17:24:50] - logger:write - ERROR - file.write(out)  # type: ignore^^^^^^^^^^^^^^^  File "C:\internship\Prodify-V2.0\src\modules\logger.py", line 155, in write
-[2025-09-25 17:24:50] - logger:flush - ERROR - self.buffer += messageTypeError: can only concatenate str (not "bytes") to str
+[2025-09-28 19:26:10] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\internship\Prodify-V2.0\logs\log.txt
+[2025-09-28 19:26:15] - SentenceTransformer:__init__ - INFO - Load pretrained SentenceTransformer: C:\internship\Prodify-V2.0\artifacts\embedding_model
+[2025-09-28 19:26:17] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-28 19:26:17] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-09-28 19:26:17] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-09-28 19:26:17] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
