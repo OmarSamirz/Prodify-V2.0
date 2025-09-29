@@ -13,6 +13,12 @@ Prodify+ is an AI learning system for classifying invoice products into the firs
 - **Scalable Pipeline**: Batch processing capabilities for large datasets
 - **GPC Standard Compliance**: Follows Global Product Classification standards for consistent categorization
 
+## Powerpoint Presentaion
+
+For a more comprehensive overview of the Prodify+ system, including architecture diagrams, performance metrics, and technical details, view our powerpoint presentation:
+
+**[Google Slides - PowerPoint Presentation](https://docs.google.com/presentation/d/1pgG_iw8QQXiTe2UU_AfXQjz3OF5Dd3iP/edit?usp=sharing&ouid=106564138256942859967&rtpof=true&sd=true)**
+
 ## Technology Stack
 
 - **Frontend**: Streamlit - Interactive web application framework
@@ -55,7 +61,7 @@ The Prodify system consists of two main pipelines that utilizies three component
 
 ### Pre-trained Model Files
 
-- **Pre-trained Models**: [Google Drive - Models](https://drive.google.com/models-placeholder)
+- **Pre-trained Models**: [Google Drive - Models](https://drive.google.com/drive/folders/1fKKW8ir-ek0dFyWtOejbDorq8FcD7hEw?usp=sharing)
   - `tfidf_similarity.joblib` - Pre-trained TF-IDF vectorizer model for brand similarity matching and cosine similarity calculations
   - `tfidf_svm.joblib` - Pre-trained TF-IDF + SVM classification pipeline for direct GPC prediction
 
