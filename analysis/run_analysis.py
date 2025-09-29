@@ -20,12 +20,9 @@ from src.constants import (
 
 
 def draw_eda(df: pd.DataFrame) -> None:
-    df["is_correct"] = df.apply(lambda x: x["segment"]==x["pred_segment"], axis=1)
-    df_correct = df[df["is_correct"]==True]
-    df_incorrect = df[df["is_correct"]==False]
-    plot_confidence_distribution(df, FULL_CONFIDENCE_DISTRIBUTION_GRAPH_PATH)
-    plot_confidence_distribution(df_correct, CORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH)
-    plot_confidence_distribution(df_incorrect, INCORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH)
+    plot_confidence_distribution(df, FULL_CONFIDENCE_DISTRIBUTION_GRAPH_PATH, mode="full")
+    plot_confidence_distribution(df, CORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH, mode="correct")
+    plot_confidence_distribution(df, INCORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH, mode="incorrect")
     
     plot_classification_results(df, "segment", MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH, "absolute_value")
     plot_classification_results(df, "family", MODEL_PERFORMANCE_FAMILY_GRAPH_PATH, "absolute_value")
@@ -34,18 +31,34 @@ def draw_eda(df: pd.DataFrame) -> None:
     plot_classification_results(df, "family", MODEL_PERFORMANCE_FAMILY_GRAPH_PATH, "percentage")
     plot_classification_results(df, "class", MODEL_PERFORMANCE_CLASS_GRAPH_PATH, "percentage")
 
-    plot_classification_by_sublevel(df, "segment", "family", ANALYSIS_DIR)
-    plot_classification_by_sublevel(df, "family", "class", ANALYSIS_DIR)
+    # plot_classification_by_sublevel(df, "segment", "family", ANALYSIS_DIR)
+    # plot_classification_by_sublevel(df, "family", "class", ANALYSIS_DIR)
 
-def plot_confidence_distribution(df: pd.DataFrame, img_path: str) -> None:
+def plot_confidence_distribution(df: pd.DataFrame, img_path: str, mode: str = "full") -> None:
     levels = ["segment", "family", "class"]
     conf_levels = ["Low", "Medium", "High"]
     ratios = {}
+
     for level in levels:
-        counts = df[df[level].notna()]["confidence_level"].value_counts(normalize=True) * 100
+        pred_col = f"pred_{level}"
+        if pred_col not in df.columns:
+            continue
+
+        if mode == "full":
+            subset = df[df[level].notna()]
+        elif mode == "correct":
+            subset = df[(df[level] == df[pred_col]) & df[level].notna()]
+        elif mode == "incorrect":
+            subset = df[(df[level] != df[pred_col]) & df[level].notna()]
+        else:
+            raise ValueError("mode must be one of: 'full', 'correct', 'incorrect'")
+
+        counts = subset["confidence_level"].value_counts(normalize=True) * 100
         ratios[level] = counts.reindex(conf_levels, fill_value=0)
+
     ratios_df = pd.DataFrame(ratios).T
     colors = {"Low": "#d73027", "Medium": "#fc8d59", "High": "#1a9850"}
+
     fig, ax = plt.subplots(figsize=(10, 6))
     ratios_df.plot(
         kind="bar",
@@ -57,7 +70,11 @@ def plot_confidence_distribution(df: pd.DataFrame, img_path: str) -> None:
     )
     ax.set_ylabel("Percentage (%)", fontsize=12)
     ax.set_xlabel("Hierarchy Level", fontsize=12)
-    ax.set_title("Confidence Level Distribution by Hierarchy", fontsize=14, weight="bold", pad=15)
+    title_map = {"full": "Confidence Level Distribution (All)",
+                 "correct": "Confidence Level Distribution (Correct Only)",
+                 "incorrect": "Confidence Level Distribution (Incorrect Only)"}
+    # ax.set_title(title_map.get(mode, "Confidence Level Distribution"),
+    #              fontsize=14, weight="bold", pad=15)
     ax.set_ylim(0, 100)
     ax.set_xticklabels([lbl.capitalize() for lbl in ratios_df.index], rotation=0, fontsize=11)
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, _: f"{int(y)}%"))
@@ -83,10 +100,12 @@ def plot_confidence_distribution(df: pd.DataFrame, img_path: str) -> None:
             )
     for spine in ["top", "right"]:
         ax.spines[spine].set_visible(False)
+
     plt.tight_layout()
     plt.subplots_adjust(bottom=0.2)
     plt.savefig(img_path, bbox_inches='tight')
     plt.close()
+
 
 def plot_classification_results(df: pd.DataFrame, level: str, img_path: str, mode: str = "absolute_value") -> None:
     df = df.copy()
