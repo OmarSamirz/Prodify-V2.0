@@ -7,7 +7,7 @@ from utils import get_confidence_level
 from models import BrandsClassifier, TfidfClassifier, EmbeddingClassifier, EnsembleModel, SentenceEmbeddingModel, TranslationModel
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title="Prodify+ - Advanced Invoice Classifier", page_icon="🧾", layout="centered")
+st.set_page_config(page_title="Prodify+ - Advanced Invoice Classifier", page_icon="🧾", layout="wide")
 
 @st.cache_resource
 def get_ensemble_model():
@@ -88,39 +88,50 @@ def main():
         "<p style='margin-bottom:0px; font-size:20px;'><b>Enter invoice item:</b></p>",
         unsafe_allow_html=True
     )
-    invoice_item = st.text_input("Invoice Item", key="invoice_item", label_visibility="collapsed")
+    col1, col2 = st.columns([4, 1])  # adjust ratios as needed
+
+    with col1:
+        invoice_item = st.text_input(
+            "Invoice Item", 
+            key="invoice_item", 
+            label_visibility="collapsed"
+        )
+
+    with col2:
+        clf_button = st.button("**Classify**", width="stretch")
 
     # --- CLASSIFICATION BUTTON ---
-    if st.button("Classify"):
+    if clf_button:
         if not invoice_item.strip():
             st.warning("Please enter an invoice item.")
         else:
             try:
                 result = classify_product(ensemble_model, invoice_item)
-                
+
                 # Display main results
-                st.success(f"**Segment:** {result['voted_segments'][0]}")
-                st.success(f"**Family:** {result['voted_families'][0]}")
-                st.success(f"**Class:** {result['voted_classes'][0]}")
+                st.markdown(
+                    f"""
+                    <div style="
+                        border-radius: 5px;
+                        padding: 10px;
+                        background-color: #e8f9ee;
+                        color: #177233;
+                        margin: 10px 0;
+                    ">
+                        <strong>Segment > Family > Class:</strong><br>
+                        <strong>{result['voted_segments'][0]} &nbsp;&nbsp; > &nbsp;&nbsp; {result['voted_families'][0]} &nbsp;&nbsp; > &nbsp;&nbsp; {result['voted_classes'][0]}</strong>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
                 st.info(f"**Confidence:** {get_confidence_level(result['confidences'])[0]}")
-                
+
                 # Display individual model predictions in expandable section
                 with st.expander("Individual Model Predictions"):
-                    st.write("**Embedding Classifier:**")
-                    st.write(f"- Segment: {result['embed_clf_preds'][0][0]}")
-                    st.write(f"- Family: {result['embed_clf_preds'][1][0]}")
-                    st.write(f"- Class: {result['embed_clf_preds'][2][0]}")
-                    
-                    st.write("**Brand Classifier Model:**")
-                    st.write(f"- Segment: {result['brand_tfidf_sim_preds'][0][0]}")
-                    st.write(f"- Family: {result['brand_tfidf_sim_preds'][1][0]}")
-                    st.write(f"- Class: {result['brand_tfidf_sim_preds'][2][0]}")
-                    
-                    st.write("**TF-IDF + SVM Classifier:**")
-                    st.write(f"- Segment: {result['tfidf_clf_preds'][0][0]}")
-                    st.write(f"- Family: {result['tfidf_clf_preds'][1][0]}")
-                    st.write(f"- Class: {result['tfidf_clf_preds'][2][0]}")
-                    
+                    st.markdown(f"**Embedding Classifier:** {result['embed_clf_preds'][0][0]} &nbsp;&nbsp; > &nbsp;&nbsp; {result['embed_clf_preds'][1][0]} &nbsp;&nbsp; > &nbsp;&nbsp; {result['embed_clf_preds'][2][0]}")
+                    st.markdown(f"**Brand Classifier Model:** {result['brand_tfidf_sim_preds'][0][0]} &nbsp;&nbsp; > &nbsp;&nbsp; {result['brand_tfidf_sim_preds'][1][0]} &nbsp;&nbsp; > &nbsp;&nbsp; {result['brand_tfidf_sim_preds'][2][0]}")
+                    st.markdown(f"**TF-IDF + SVM Classifier:** {result['tfidf_clf_preds'][0][0]} &nbsp;&nbsp; > &nbsp;&nbsp; {result['tfidf_clf_preds'][1][0]} &nbsp;&nbsp; > &nbsp;&nbsp; {result['tfidf_clf_preds'][2][0]}")
+
             except Exception as e:
                 st.error(f"Error: {e}")
 
