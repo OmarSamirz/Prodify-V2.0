@@ -411,11 +411,9 @@ def draw_eda(df: pd.DataFrame, df_full: pd.DataFrame, df_gpc: pd.DataFrame) -> N
     plot_level_distribution(df_full, "segment", 0.65, 0.72, PRODUCT_DISTRIBUTION_ACCROSS_SEGMENTS_GRAPH_PATH)
     plot_level_distribution(df_full, "family", 0.52, 0.75, PRODUCT_DISTRIBUTION_ACCROSS_FAMILIES_GRAPH_PATH)
     plot_level_distribution(df_full, "class", 0.7, 0.6, PRODUCT_DISTRIBUTION_ACCROSS_CLASSES_GRAPH_PATH)
-    df_correct = df[df["is_correct_segment"]==True]
-    df_incorrect = df[df["is_correct"]==False]
     plot_confidence_distribution(df, FULL_CONFIDENCE_DISTRIBUTION_GRAPH_PATH, "full")
-    plot_confidence_distribution(df_correct, CORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH, "correct")
-    plot_confidence_distribution(df_incorrect, INCORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH, "incorrect")
+    plot_confidence_distribution(df, CORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH, "correct")
+    plot_confidence_distribution(df, INCORRECT_CONFIDENCE_DISTRIBUTION_GRAPH_PATH, "incorrect")
 
     plot_classification_results(df, "segment", MODEL_PERFORMANCE_SEGMENT_GRAPH_PATH, "absolute_value")
     plot_classification_results(df, "family", MODEL_PERFORMANCE_FAMILY_GRAPH_PATH, "absolute_value")
