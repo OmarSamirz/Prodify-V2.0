@@ -24,6 +24,14 @@ MODEL_PERFORMANCE_FAMILY_GRAPH_PATH = ANALYSIS_DIR / "model_performance_family.j
 
 MODEL_PERFORMANCE_CLASS_GRAPH_PATH = ANALYSIS_DIR / "model_performance_class.jpg"
 
+GPC_COVERAGE_GRAPH_PATH = ANALYSIS_DIR / "gpc_coverage.jpg"
+
+PRODUCT_DISTRIBUTION_ACCROSS_SEGMENTS_GRAPH_PATH = ANALYSIS_DIR / "product_distribution_accross_segments.jpg"
+
+PRODUCT_DISTRIBUTION_ACCROSS_FAMILIES_GRAPH_PATH = ANALYSIS_DIR / "product_distribution_accross_families.jpg"
+
+PRODUCT_DISTRIBUTION_ACCROSS_CLASSES_GRAPH_PATH = ANALYSIS_DIR / "product_distribution_accross_classes.jpg"
+
 DATA_PATH = BASE_DIR / "data"
 
 MODEL_OUTPUTS_DATA_PATH = DATA_PATH / "outputs"
